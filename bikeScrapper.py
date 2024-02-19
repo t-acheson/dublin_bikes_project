@@ -25,9 +25,8 @@ def bikesToTables():
             data = json.loads(r.text)  # Use r.text instead of r.test
             store(data)  # Call the store function with the parsed data
 
-            print("yes")
             # Sleep for  5 minutes
-            time.sleep(5 *  60)
+            time.sleep(5 *  60) #use cron its on ubuntu
            
 
         except Exception as e:
