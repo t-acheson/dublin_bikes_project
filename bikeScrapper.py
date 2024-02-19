@@ -2,43 +2,37 @@
 import requests
 import json
 from pprint import pprint 
+import time 
 
 
 NAME = "Dublin" #name of contract
 STATIONS = "https://api.jcdecaux.com/vls/v1/stations?"
 APIKEY = "9923c4b16f8c5fd842f2f448564bed43a349fa47"
 
+
+def store(data):
+    # Convert the data to a JSON string
+    json_data = json.dumps(data, indent=4)
+
+    # Write the JSON string to a file
+    with open('stations_data.json', 'w') as f:
+        f.write(json_data)
+
 def bikesToTables():
-    while True:
+    while True:  # Run forever
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
+            data = json.loads(r.text)  # Use r.text instead of r.test
+            store(data)  # Call the store function with the parsed data
 
-            store(json.loads(r.test))
+            print("yes")
+            # Sleep for  5 minutes
+            time.sleep(5 *  60)
+           
 
-            #sleep for 5 mins
-            time.sleep(5*60)
+        except Exception as e:
+            print("error")
+            # print(traceback.format_exc())  # Print exception details
+            # You can add additional error handling logic here
 
-        except:
-            print traceback.format_exc()
-        return 
-#step 1 request data from api 
-GET https://api.jcdecaux.com/vls/v1/stations?contract={dublin}&apiKey={9923c4b16f8c5fd842f2f448564bed43a349fa47}
-Accept: application/json
-
-# r = requests.get(STATIONS_URI, params={"apiKey": dbinfo.JCKEY,"contract": NAME})
-# json.loads(r.text)
-
-#step 2 parse data into json if not already
-
-#step 3 connect to sql database
-
-#step 4 insert data into the database
-cursor = conn.cursor() #to make sql commands work i believe? 
-#make table for station number 
-#sql statememt to insert into table 
-#try, exepct
-
-#step 5 commit transaction?
-
-#step 6 close connect 
-conn.close()
+bikesToTables()
