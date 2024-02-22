@@ -5,7 +5,7 @@ import json
 from pprint import pprint 
 import time 
 import mysql.connector 
-# import awsFlask.pem as key
+
 
 #dublinbike API info 
 NAME = "Dublin" #name of contract
@@ -17,7 +17,7 @@ user = "admin" #user name for sql
 password = "dublinbikesgroup20" #sql database password
 host = "ubuntu@ec2-13-51-172-202.eu-north-1.compute.amazonaws.com"
 databasename = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com"
-key = ""
+
 
 
 
@@ -39,10 +39,10 @@ def stationsToTables():
             print("working 1")
             #open db connection here 
             connection = mysql.connector.connect(
-                host,
-                databasename,
-                user,
-                password
+                host = "ubuntu@ec2-13-51-172-202.eu-north-1.compute.amazonaws.com",
+                databasename = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
+                user = "admin",
+                password = "dublinbikesgroup20",
             )
             print("problem here")
             # Create a cursor object to execute SQL commands
