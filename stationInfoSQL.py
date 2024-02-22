@@ -36,18 +36,18 @@ def stationsToTables():
             data = json.loads(r.text)  # Use r.text instead of r.test
             store(data)  # Call the store function with the parsed data
             
-            print("working 1")
+            
             #open db connection here 
             connection = mysql.connector.connect(
-                host = "ubuntu@ec2-13-51-172-202.eu-north-1.compute.amazonaws.com",
+                host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
                 database = "dublinbikesgroup20",
                 user = "admin",
                 password = "dublinbikesgroup20",
             )
-            print("problem here")
+            
             # Create a cursor object to execute SQL commands
             cursor = connection.cursor()
-            print("working 2")
+            
              # Loop over the data and insert each record into the database
             for record in data:
                 number = record['number']
@@ -62,7 +62,7 @@ def stationsToTables():
             INSERT INTO station (number, name, address, banking, bike_stands, position_lat, position_lng)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            print("working 3")
+            
             # Execute the SQL command
             cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
 
