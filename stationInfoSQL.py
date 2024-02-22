@@ -59,13 +59,13 @@ def stationsToTables():
                 position_lng = record['position']['lng']
 
             # Construct the SQL command
-            sql = """
-            INSERT INTO station (number, name, address, banking, bike_stands, position_lat, position_lng)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-            
-            # Execute the SQL command
-            cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
+                sql = """
+                INSERT INTO station (number, name, address, banking, bike_stands, position_lat, position_lng)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
+                
+                # Execute the SQL command
+                cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
 
             # Commit the changes and close the connection
             connection.commit()
