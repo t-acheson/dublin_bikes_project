@@ -56,6 +56,7 @@ def stationsToTables():
                 banking = int(record['banking'])  # Convert boolean to int
                 bike_stands = record['bike_stands']
                 position_lat = record['position']['lat']
+                position_lng = record['position']['lng']
 
             # Construct the SQL command
             sql = """
