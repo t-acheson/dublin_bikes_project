@@ -40,7 +40,7 @@ def stationsToTables():
             #open db connection here 
             connection = mysql.connector.connect(
                 host = "ubuntu@ec2-13-51-172-202.eu-north-1.compute.amazonaws.com",
-                databasename = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
+                database = "dublinbikesgroup20",
                 user = "admin",
                 password = "dublinbikesgroup20",
             )
@@ -78,8 +78,8 @@ def stationsToTables():
 
 
         except Exception as e:
-            print("error") #additional error handling to go here & eventually print into the no hang up file on EC2
-            
+            #additional error handling to go here & eventually print into the no hang up file on EC2
+            print(e)
 
         # Sleep for  5 minutes
         # time.sleep(5 *  60) #use cron its on ubuntu
