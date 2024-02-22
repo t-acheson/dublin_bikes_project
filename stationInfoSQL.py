@@ -7,6 +7,17 @@ import time
 import mysql.connector 
 # import awsFlask.pem as key
 
+#dublinbike API info 
+NAME = "Dublin" #name of contract
+STATIONS = "https://api.jcdecaux.com/vls/v1/stations?"
+APIKEY = "9923c4b16f8c5fd842f2f448564bed43a349fa47"
+
+#mysql details
+user = "admin" #user name for sql 
+password = "dublinbikesgroup20" #sql database password
+host = "ubuntu@ec2-13-51-172-202.eu-north-1.compute.amazonaws.com"
+databasename = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com"
+key = ""
 
 
 
