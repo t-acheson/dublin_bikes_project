@@ -3,6 +3,7 @@ import requests
 import json
 from pprint import pprint 
 import time 
+import mysql.connector 
 
 
 NAME = "Dublin" #name of contract
@@ -25,13 +26,21 @@ def bikesToTables():
             data = json.loads(r.text)  # Use r.text instead of r.test
             store(data)  # Call the store function with the parsed data
 
-            # Sleep for  5 minutes
-            time.sleep(5 *  60) #use cron its on ubuntu
-           
+            #open db connection here 
+            connection = mysql.connector.connect(
+                host ="localhost goes here"
+                database ="x"
+                user="y"
+                password="z"
+            )
+            
+            #sql commands go here 
 
         except Exception as e:
-            print("error")
-            # print(traceback.format_exc())  # Print exception details
-            # You can add additional error handling logic here
+            print("error") #additional error handling to go here & eventually print into the no hang up file on EC2
+            
 
+        # Sleep for  5 minutes
+        # time.sleep(5 *  60) #use cron its on ubuntu
+        
 bikesToTables()
