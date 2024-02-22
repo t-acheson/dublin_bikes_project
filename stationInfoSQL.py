@@ -63,7 +63,7 @@ def stationsToTables():
                 INSERT INTO station (number, name, address, banking, bike_stands, position_lat, position_lng)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
-                
+                 
                 # Execute the SQL command
                 cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
 
