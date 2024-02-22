@@ -68,7 +68,7 @@ def stationsToTables():
                 cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
 
             # Commit the changes and close the connection
-            connection.commit()
+                connection.commit()
             connection.close()
 
 
