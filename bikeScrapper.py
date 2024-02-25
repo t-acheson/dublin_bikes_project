@@ -4,6 +4,9 @@ import json
 from pprint import pprint 
 import time 
 import mysql.connector 
+import datetime
+
+
 
 
 NAME = "Dublin" #name of contract
@@ -20,7 +23,7 @@ def store(data):
         f.write(json_data)
 
 def bikesToTables():
-    while True:  # Run forever
+    # while True:  # Run forever
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
             data = json.loads(r.text)  # Use r.text instead of r.test
@@ -38,30 +41,39 @@ def bikesToTables():
             cursor = connection.cursor()
             
             #TODO need to change the below code to reflect the relevant table 
-             # Loop over the data and insert each record into the database
-            # for record in data:
-            #     number = record['number']
-            #     name = record['name']
-            #     address = record['address']
-            #     banking = int(record['banking'])  # Convert boolean to int
-            #     bike_stands = record['bike_stands']
-            #     position_lat = record['position']['lat']
-            #     position_lng = record['position']['lng']
 
-            # # Construct the SQL command
-            #     sql = """
-            #     INSERT INTO station (number, name, address, banking, bike_stands, position_lat, position_lng)
-            #     VALUES (%s, %s, %s, %s, %s, %s, %s)
-            #     """
+            # get updated time into usable format
+            utc_now = datetime.now(timezone.utc)
+            formatted_utc_now = utc_now.strftime('%Y-%m-%d %H:%M:%S')
+            last_update_timestamp = station.get('last_update') / 1000.0
+            last_update_datetime = datetime.utcfromtimestamp(last_update_timestamp)
+
+            #  Loop over the data and insert each record into the database
+            for record in data:
+                number = record['number']
+                # last_update = record['last_update'] #need to convert to actual time? 
+                available_bikes = record['available_bikes']
+                available_bike_stands = record['available_bike_stands']
+                status = record['status']
+                
+            # Construct the SQL command
+                sql = """
+                INSERT INTO availability (number, available_bikes, available_bike_stands, status, last_update_datetime, last_update_timestamp)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """
                  
-            #     # Execute the SQL command
-            #     cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
+                # Execute the SQL command
+                cursor.execute(sql, (number, available_bikes, available_bike_stands, status, last_update_datetime, last_update_timestamp))
 
                 # Commit the changes 
                 connection.commit()
             # close the connection
             connection.close()
 
+
+        except Exception as e:
+            
+            print(e)
 
         # Sleep for  5 minutes
         # time.sleep(5 *  60) #use cron its on ubuntu
