@@ -41,13 +41,6 @@ def bikesToTables():
             cursor = connection.cursor()
             
             #TODO need to change the below code to reflect the relevant table 
-
-            # get updated time into usable format
-            utc_now = datetime.now(timezone.utc)
-            formatted_utc_now = utc_now.strftime('%Y-%m-%d %H:%M:%S')
-            last_update_timestamp = station.get('last_update') / 1000.0
-            last_update_datetime = datetime.utcfromtimestamp(last_update_timestamp)
-
             #  Loop over the data and insert each record into the database
             for record in data:
                 number = record['number']
@@ -55,6 +48,13 @@ def bikesToTables():
                 available_bikes = record['available_bikes']
                 available_bike_stands = record['available_bike_stands']
                 status = record['status']
+                
+                  # get updated time into usable format
+                utc_now = datetime.now(timezone.utc)
+                formatted_utc_now = utc_now.strftime('%Y-%m-%d %H:%M:%S')
+                last_update_timestamp = record.get('last_update') / 1000.0
+                last_update_datetime = datetime.utcfromtimestamp(last_update_timestamp)
+
                 
             # Construct the SQL command
                 sql = """
