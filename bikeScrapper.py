@@ -3,7 +3,8 @@ import requests
 import json
 from pprint import pprint 
 import mysql.connector 
-import datetime
+# import datetime
+import time 
 
 
 
@@ -22,7 +23,7 @@ def store(data):
         f.write(json_data)
 
 def bikesToTables():
-    # while True:  # Run forever
+    while True:  # Run forever
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
             data = json.loads(r.text)  # Use r.text instead of r.test
@@ -68,13 +69,13 @@ def bikesToTables():
                 connection.commit()
             # close the connection
             connection.close()
-
+#           Sleep for  5 minutes
+            time.sleep(5 *  60) #use cron its on ubuntu
+        
 
         except Exception as e:
             
             print(e)
 
-        # Sleep for  5 minutes
-        # time.sleep(5 *  60) #use cron its on ubuntu
-        
+  
 bikesToTables()
