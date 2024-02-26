@@ -58,7 +58,7 @@ def bikesToTables():
             # Construct the SQL command
                 sql = """
                 INSERT INTO availability (number, available_bikes, available_bike_stands, status, last_update)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s)
                 """
                  
                 # Execute the SQL command
