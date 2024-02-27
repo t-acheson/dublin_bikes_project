@@ -39,7 +39,6 @@ def weatherToTables():
             # Create a cursor object to execute SQL commands
             cursor = connection.cursor()
             
-            #TODO change the following code to reflect the relevant table 
             for record in w:
                 name = w['location']['name']
                 temp_c = w['current']['temp_c']
@@ -65,9 +64,7 @@ def weatherToTables():
             # time.sleep(5 *  60) #use cron its on ubuntu
            
 
-        except Exception as e:
-            print("error")
-            # print(traceback.format_exc())  # Print exception details
-            # You can add additional error handling logic here
+        except Exception as e:            
+            print(e)
 
 weatherToTables()
