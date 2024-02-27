@@ -12,13 +12,12 @@ class WeatherConfig:
 
 
 def store(w):
-    print(w)
-    print(w['location']['name'])
-    print(w['current']['temp_c'])
-    print(w['current']['condition']['text'])
-    print(w['current']['wind_mph'])
-    print(w['current']['wind_dir'])
-    print(w['current']['precip_mm'])
+# Convert the data to a JSON string
+    json_data = json.dumps(w, indent=4)
+
+    # Write the JSON string to a file
+    with open('stations_data.json', 'w') as f:
+        f.write(json_data)
 
 
 
