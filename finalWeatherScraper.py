@@ -47,15 +47,16 @@ def weatherToTables():
                 wind_mph = w['current']['wind_mph']
                 wind_dir = w['current']['wind_dir']
                 precip_mm = w['current']['precip_mm']
+                last_updated = w['current']['last_updated']
 
                 # Construct the SQL command
                 sql = """
-                INSERT INTO weather_data (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO weather_data (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm, last_updated)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
                 
                 # Execute the SQL command
-                cursor.execute(sql, (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm))
+                cursor.execute(sql, (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm, last_updated))
 
               # Commit the changes 
                 connection.commit()
