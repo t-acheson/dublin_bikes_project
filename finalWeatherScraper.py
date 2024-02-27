@@ -21,7 +21,7 @@ def store(w):
 
 
 def weatherToTables():
-    while True:  # Run forever
+    # while True:  # Run forever
         try:
             weather_data=  requests.get(WeatherConfig.URI, params={"key":WeatherConfig.API_KEY, "q":WeatherConfig.Q})
             w = json.loads(weather_data.text)
@@ -40,31 +40,27 @@ def weatherToTables():
             cursor = connection.cursor()
             
             #TODO change the following code to reflect the relevant table 
-            #  # Loop over the data and insert each record into the database
-            # for record in data:
-            #     number = record['number']
-            #     name = record['name']
-            #     address = record['address']
-            #     banking = int(record['banking'])  # Convert boolean to int
-            #     bike_stands = record['bike_stands']
-            #     position_lat = record['position']['lat']
-            #     position_lng = record['position']['lng']
+            for record in w:
+                name = w['location']['name']
+                temp_c = w['current']['temp_c']
+                weather_condition = w['current']['condition']['text']
+                wind_mph = w['current']['wind_mph']
+                wind_dir = w['current']['wind_dir']
+                precip_mm = w['current']['precip_mm']
 
-            # # Construct the SQL command
-            #     sql = """
-            #     INSERT INTO station (number, name, address, banking, bike_stands, position_lat, position_lng)
-            #     VALUES (%s, %s, %s, %s, %s, %s, %s)
-            #     """
-                 
-            #     # Execute the SQL command
-            #     cursor.execute(sql, (number, name, address, banking, bike_stands, position_lat, position_lng))
+                # Construct the SQL command
+                sql = """
+                INSERT INTO weather_data (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """
+                
+                # Execute the SQL command
+                cursor.execute(sql, (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm))
 
-            #     # Commit the changes 
-            #     connection.commit()
+              # Commit the changes 
+                connection.commit()
             # close the connection
             connection.close()
-
-
             # Sleep for  5 minutes
             # time.sleep(5 *  60) #use cron its on ubuntu
            

@@ -23,7 +23,7 @@ def store(data):
         f.write(json_data)
 
 def bikesToTables():
-    while True:  # Run forever
+    # while True:  # Run forever
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
             data = json.loads(r.text)  # Use r.text instead of r.test
@@ -70,7 +70,7 @@ def bikesToTables():
             # close the connection
             connection.close()
 #           Sleep for  5 minutes
-            time.sleep(5 *  60) #use cron its on ubuntu
+            # time.sleep(5 *  60) #use cron its on ubuntu
         
 
         except Exception as e:
