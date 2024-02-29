@@ -23,7 +23,7 @@ def store(data):
         f.write(json_data)
 
 def bikesToTables():
-    # while True:  # Run forever
+    while True:  # Run forever
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
             data = json.loads(r.text)  # Use r.text instead of r.test
@@ -42,11 +42,15 @@ def bikesToTables():
             
             #  Loop over the data and insert each record into the database
             for record in data:
-                number = record['number']
-                last_update = record['last_update'] #need to convert to actual time - handle later 
-                available_bikes = record['available_bikes']
-                available_bike_stands = record['available_bike_stands']
-                status = record['status']
+                try:
+                    number = record['number']
+                    last_update = record['last_update'] #need to convert to actual time - handle later 
+                    available_bikes = record['available_bikes']
+                    available_bike_stands = record['available_bike_stands']
+                    status = record['status']
+                except:
+                    print("Duplicate for station number: " + number +", not printing.")
+
 
 
                 #   # get updated time into usable format
@@ -70,7 +74,7 @@ def bikesToTables():
             # close the connection
             connection.close()
 #           Sleep for  5 minutes
-            # time.sleep(5 *  60) #use cron its on ubuntu
+            time.sleep(5 *  60) 
         
 
         except Exception as e:
