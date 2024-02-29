@@ -21,7 +21,7 @@ def store(data):
     # Write the JSON string to a file
     with open('stations_data.json', 'w') as f:
         f.write(json_data)
-
+    print(data)
 def bikesToTables():
     # while True:  # Run forever
         try:
