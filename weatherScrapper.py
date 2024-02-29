@@ -64,7 +64,7 @@ def weatherToTables():
             connection.close()
 
             # Sleep for  5 minutes
-            time.sleep(5 *  60) #use cron its on ubuntu
+            time.sleep(5 *  60) #pauses thread 
            
 
         except Exception as e:            
