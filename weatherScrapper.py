@@ -22,7 +22,6 @@ def store(w):
 
 
 def weatherToTables():
-    while True:  # Run forever
         try:
             weather_data=  requests.get(WeatherConfig.URI, params={"key":WeatherConfig.API_KEY, "q":WeatherConfig.Q})
             w = json.loads(weather_data.text)
@@ -62,9 +61,6 @@ def weatherToTables():
                 connection.commit()
             # close the connection
             connection.close()
-
-            # Sleep for  5 minutes
-            time.sleep(5 *  60) #pauses thread 
            
 
         except Exception as e:            
