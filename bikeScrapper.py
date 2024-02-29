@@ -23,13 +23,12 @@ def store(data):
         f.write(json_data)
 
 def bikesToTables():
-    while True:  # Run forever
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
             data = json.loads(r.text)  # Use r.text instead of r.test
             store(data)  # Call the store function with the parsed data
 
-           #open db connection here 
+            #open db connection here 
             connection = mysql.connector.connect(
                 host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
                 database = "dublinbikesgroup20",
@@ -73,8 +72,6 @@ def bikesToTables():
                 connection.commit()
             # close the connection
             connection.close()
-#           Sleep for  5 minutes
-            time.sleep(5 *  60) 
         
 
         except Exception as e:
