@@ -1,6 +1,7 @@
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
+# from flask_sqlalchemy import SQLAlchemy #TODO check if this is actually needed, as connector was been working fine on ubuntu for data scrapping, may not need alchemy..
+import mysql.connector 
 app = Flask (__name__, static_url_path = '')
 
 def connect_to_db():
@@ -8,15 +9,21 @@ def connect_to_db():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+     #open db connection here 
     connection = mysql.connector.connect(
-                host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
-                database = "dublinbikesgroup20",
-                user = "admin",
-                password = "dublinbikesgroup20",
-            )
+        host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
+        database = "dublinbikesgroup20",
+        user = "admin",
+        password = "dublinbikesgroup20",
+    )
+    
+    # Create a cursor object to execute SQL commands
+    cursor = connection.cursor()
+    
+
 
     # Create SQLAlchemy database instance
-    db = SQLAlchemy(app)
+    # db = SQLAlchemy(app)
 
     return db
 
@@ -62,7 +69,7 @@ def get_weatherdata():
     weather = Weather.query.all()
 
     # Save station data to a JSON file (modify this based on your specific data)
-    data = [{'name': location.id, 'tempature': .name, 'location': station.location} for station in stations]
+    data = [{'name': location.id, 'tempature': name, 'location': station.location} for station in stations]
 
     # Example: Save data to a JSON file named 'station_data.json'
     with open('weather_data.json', 'w') as json_file:
