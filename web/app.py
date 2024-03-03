@@ -1,32 +1,9 @@
 
-from flask import Flask
+from flask import Flask, render_template
 # from flask_sqlalchemy import SQLAlchemy #TODO check if this is actually needed, as connector was been working fine on ubuntu for data scrapping, may not need alchemy..
 import mysql.connector 
 import json 
 app = Flask (__name__, static_url_path = '')
-
-def connect_to_db():
-# Configure the database URI (Change this based on your database)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-     #open db connection here 
-    connection = mysql.connector.connect(
-        host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
-        database = "dublinbikesgroup20",
-        user = "admin",
-        password = "dublinbikesgroup20",
-    )
-    
-    # Create a cursor object to execute SQL commands
-    cursor = connection.cursor()
-    
- 
-
-    # Create SQLAlchemy database instance
-    # db = SQLAlchemy(app)
-
-
 
 
 #@app.route('/')
@@ -37,8 +14,8 @@ def connect_to_db():
 @app.route('/station_data')
 def get_stationdata():
     #connect to db
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///example.db'
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
      #open db connection here 
     connection = mysql.connector.connect(
@@ -66,55 +43,17 @@ def get_stationdata():
     # Convert the list of dictionaries to JSON
     stations_json = json.dumps(stations_data, indent=4)
 
-    # Save the JSON data to a file
-    with open('stations_data.json', 'w') as json_file:
-        json_file.write(stations_json)
+    # # Save the JSON data to a file
+    # with open('stations_data.json', 'w') as json_file:
+    #     json_file.write(stations_json)
 
     # Close the cursor and connection
     cursor.close()
     connection.close()
 
-# # Connect to the database
-#     # Perform SQL query to get station data (modify this query based on your schema)
-#     stations = Station.query.all()
+    #reder html template & pass info into it 
+    return render_template('station_data.html', stations_data=stations_json)
 
-#     # Save station data to a JSON file (modify this based on your specific data)
-#     data = [{'id': station.id, 'name': station.name, 'location': station.location} for station in stations]
-
-#     # Example: Save data to a JSON file named 'station_data.json'
-#     with open('station_data.json', 'w') as json_file:
-#         json_file.write(json.dumps(data))
-
-#     # Return a message or redirect to a page
-#     return 'JSON file created successfully'
-
-#     return 'json file'
-#     return app.send_static_file('index.html')
-
-
-# @app.route('/weather_data')
-# def get_weatherdata():
-#     #connect to db
-#     #sql query to get station data
-#     # save it to a json
-    
-
-# # Connect to the database
-#     # Perform SQL query to get station data (modify this query based on your schema)
-#     weather = Weather.query.all()
-
-#     # Save station data to a JSON file (modify this based on your specific data)
-#     data = [{'name': location.id, 'tempature': name, 'location': station.location} for station in stations]
-
-#     # Example: Save data to a JSON file named 'station_data.json'
-#     with open('weather_data.json', 'w') as json_file:
-#         json_file.write(json.dumps(data))
-
-#     # Return a message or redirect to a page
-#     return 'JSON file created successfully'
-
-#     return 'json file'
-    return app.send_static_file('index.html')
 
 if __name__ == '__main__':
     app.run (debug = True)
