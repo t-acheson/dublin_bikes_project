@@ -21,7 +21,7 @@ def store(data):
     # Write the JSON string to a file
     with open('stations_data.json', 'w') as f:
         f.write(json_data)
-
+    print(data)
 def bikesToTables():
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
