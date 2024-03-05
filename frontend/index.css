@@ -1,0 +1,115 @@
+ 
+#heading
+{
+    font-family: "Protest Riot", sans-serif;
+    font-weight: 900;
+    font-style: normal;
+    font-size: 5vh;
+    text-align: center;
+}
+
+.weatherInfo
+{
+    display: flex;
+    flex-wrap: nowrap;
+    background-color: orange;
+    height:5vh;
+    align-items: center;
+}
+
+.weatherInfo span
+{
+    flex:1;
+    text-align: center;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    font-weight: 600;
+}
+
+#pac-input {
+    position: relative;
+    z-index: 3;
+    background-color: #fff;
+    font-family: Roboto;
+    font-size: 15px;
+    font-weight: 300;
+    margin-left: 12px;
+    padding: 0 11px 0 13px;
+    text-overflow: ellipsis;
+    width: 40vw;
+    height: 5vh;
+    border-radius: 1.5vh;
+    top:2vh;
+    background-color: lightgrey;
+    font-family:monospace;
+  }
+  
+  #pac-input:focus {
+    border-color: #4d90fe;
+  }
+
+
+#travel
+{
+    display: flex;
+    flex-wrap: nowrap;
+    column-gap: 10px;
+    flex-direction: row;
+}
+
+#googlemaps
+{
+    flex: 2;
+}
+
+#map{
+    position: relative;
+    z-index: 2;
+    top: -4vh;
+    height:80vh;
+}
+
+#journeyForm
+{
+    margin-top: 2vh;
+}
+
+#journeyForm>form
+{
+    
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(236, 228, 228);
+    border:3px solid black;
+    border-radius: 10px;
+    width: 25vw;
+    height:300px;
+    flex:1;
+    gap:2vh;
+}
+
+#journeyForm>form>input
+{
+    display: block;
+    margin: 0 auto;
+    border:1px solid black;
+    border-radius: 5px;
+    width: 50%;
+    height:5vh;
+    text-align: center;
+}
+
+@media (max-width:700px)
+{
+    #travel
+    {
+        display: flex;
+        flex-direction: column;
+        row-gap: 5px;
+    }
+
+    #journeyForm
+    {
+        display: flex;
+        width:100%;
+    }
+}

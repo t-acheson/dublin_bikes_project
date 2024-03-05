@@ -3,9 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Protest+Riot&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPT_1yhfgBnnca3hOlT8p6LNwOhnt6oeU&&callback=initMap&libraries=places,geometry,visualization&loading=async"></script>
     <title>Dublin Bikes</title>
 </head>
 <body>
+    <script>
+        function updateTime() {
+        var currentTime = new Date();
+        var day = currentTime.getDate();
+        var month = currentTime.getMonth();
+        var year = currentTime.getFullYear();
+        var hours = currentTime.getHours();
+        var minutes = currentTime.getMinutes();
+        var seconds = currentTime.getSeconds();
+        var timeString = hours + ":" + minutes + ":" + seconds;
+        document.getElementById("currentTime").innerHTML = timeString;
+        document.getElementById("time").value = hours + ":" + minutes;
+        document.getElementById("date").value = currentTime.toISOString().split("T")[0];
+        }
+        setInterval(updateTime, 1000);
+    </script>
+
+    <div ><h1 id="heading">Dublin Bikes</h1></div>
+    <div class="weatherInfo">
+        <span id="conditions">Weather conditions</span>
+        <span id="temperature">temperature</span>
+        <span id="currentTime"></span>
+    </div>
+
     
+    <div id="travel">
+        <div id="googlemaps">
+            <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
+            <div id="map"></div>
+        </div>
+        <div id="journeyForm">
+            <form>
+                <h3 style="text-align: center;">Journey Planner</h3>
+                <input type="text" id="source" name="source" placeholder="Choose Starting Point">
+                <input type="text" id="destination" name="destination" placeholder="Choose Destination">
+                <input type="time" id="time" name="time">
+                <input type="date" id="date" name="date">&nbsp;
+            </form>
+        </div>
+    </div>
+    <script src="index.js"></script>
+
+<!-- google maps api key - AIzaSyAPT_1yhfgBnnca3hOlT8p6LNwOhnt6oeU -->
+<!-- MAP id-ab56fe26e295fe56 -->
+
 </body>
 </html>
