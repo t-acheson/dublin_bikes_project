@@ -71,6 +71,7 @@ def bikesToTables():
                 connection.commit()
             # close the connection
             connection.close()
+            print("bike scrapper running")
         
 
         except Exception as e:

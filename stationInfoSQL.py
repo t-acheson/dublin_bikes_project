@@ -60,7 +60,7 @@ def stationsToTables():
                 connection.commit()
             # close the connection
             connection.close()
-
+            print("station scrapper running daily")
 
 
 
