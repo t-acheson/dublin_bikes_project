@@ -2,8 +2,6 @@
 #import stuff
 import requests
 import json
-from pprint import pprint 
-import time 
 import mysql.connector 
 
 
