@@ -176,3 +176,25 @@ async function GetLatAndLang(lat, lng)
     }, null, options); 
   }
 }
+
+//function to sort stations by closest & return list of closest 5 
+function findClosestStations (){
+//get location from user input 
+
+//list the stations in order of closest
+
+//return a list of first 5 from the above list 
+
+}
+
+//popup for closest stations
+function closestStationsWindows (){
+//call findClosestStations
+
+//make window 
+
+//list 5 stations on window 
+
+//hover option to show details of each station 
+
+}
