@@ -4,6 +4,7 @@ from weather_info import Weather
 from flask import Flask, g, jsonify, render_template
 from sqlalchemy import create_engine, func, Column, String, Integer, Double, Boolean
 from sqlalchemy.orm import sessionmaker, joinedload
+import functools
 import json
 import sys
 
