@@ -99,6 +99,9 @@ async function initMap() {
         return;
     }
     map.fitBounds(place.geometry.viewport);
+    console.log(place); // testing purposes 
+    // getUserLocation(place);
+    // return place; //returning place so i can access later to find closest stations 
   });
 
   
@@ -150,6 +153,7 @@ async function GetStationsData()
 {
   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
   bikesData = await bikePromise.json(); 
+  // console.log(bikesData);
   return bikesData;
 }
 
@@ -175,21 +179,68 @@ async function GetLatAndLang(lat, lng)
       lng = parseFloat(position.coords.longitude);
     }, null, options); 
   }
+  findClosestStations(lat, lng, bikesData);
 }
 
-//function to sort stations by closest & return list of closest 5 
-function findClosestStations (){
-//get location from user input 
+//function to find the 5 closest stations by lat, lng and return them in a list 
+ function findClosestStations(lat, lng, stationsData) {
+  if (!stationsData) {
+    console.log('!!! stationsData is undefined or null !!!');
+    return; // Exit the function if stationsData is not valid
+ }
+  
+  
+  const stationList = []; 
+  // let stationsData = stationsData
 
-//list the stations in order of closest
+ // Iterate over the stationsData object
+ Object.entries(stationsData).forEach(([stationId, stationData]) => {
+  let latDiff = stationData.position.lat - lat;
+  let lngDiff = stationData.position.lng - lng;
+  let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
 
-//return a list of first 5 from the above list 
+  // Store the station data and its distance from the given latitude and longitude
+  stationList.push({station: stationData, distance: distance});
+});
+  console.log(stationList)
+ 
+  // Sort by distance and take the first 5 closest //TODO im not sure this is sorting the right list
+  distances.sort((a, b) => a.distance - b.distance);
+  let closestStations = distances.slice(0, 5).map(item => item.station);
+ 
+  // Return the closest stations
+  return closestStations; //TODO check this is returning correct list?? 
+ }
 
-}
+
 
 //popup for closest stations
-function closestStationsWindows (){
-//call findClosestStations
+function displayClosestStations(closestStations) {
+    // Create a new div element
+    let popup = document.createElement('div');
+    popup.style.position = 'fixed';
+    popup.style.top = '10px';
+    popup.style.right = '10px';
+    popup.style.backgroundColor = '#fff';
+    popup.style.border = '1px solid #000';
+    popup.style.padding = '10px';
+    popup.style.zIndex = '1000';
+   
+    // Populate the div with the station information
+    closestStations.forEach(station => {
+       let stationInfo = document.createElement('p');
+       stationInfo.textContent = `Name: ${station.name}, Latitude: ${station.lat}, Longitude: ${station.lng}`;
+       popup.appendChild(stationInfo);
+    });
+   
+    // Append the div to the body
+    document.body.appendChild(popup);
+   }
+  // Assuming findClosestStations is called and returns closestStations
+let closestStations = findClosestStations(lat, lng);
+displayClosestStations(closestStations);
+
+
 
 //make window 
 
@@ -197,4 +248,3 @@ function closestStationsWindows (){
 
 //hover option to show details of each station 
 
-}
