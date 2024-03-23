@@ -68,12 +68,17 @@ async function initMap() {
     
   });
 
+//when user uses search bar ? //TODO need to clarify 
   if(navigator.geolocation)
-  {
+  { 
     navigator.geolocation.getCurrentPosition((position)=>{
         lat = parseFloat(position.coords.latitude);
         lng = parseFloat(position.coords.longitude);
         map.setCenter(new google.maps.LatLng(lat, lng));
+        // console.log("testing lat");
+        // console.log(lat);
+        // TODO the above will not print to console despite appearing to alter the map - need Ritwik to explain what he is attempting, as it would be very helpful to be able to access user lat & lng from here  
+        
         //marker for current location
         new google.maps.Marker({
           position: new google.maps.LatLng(lat, lng),
@@ -99,19 +104,12 @@ async function initMap() {
         return;
     }
     map.fitBounds(place.geometry.viewport);
-    testingFunt(place) //testing 
-    // console.log(place); // testing purposes 
-    // getUserLocation(place);
+  
+    findClosestStations(place, bikesData);
+  
     
   });
 
-//function for testing purposes only 
-function testingFunt(place){
-  console.log("gbhjk")
-  console.log(place.geometry.location);
-  
-}
-// end of testing function 
   
   //marker for bike station locations
   for(var i=0; i< stationsData.length; i++)
@@ -172,6 +170,7 @@ async function GetWeatherData()
   return wData;
 }
 
+//TODO check what puurpose this is serving, could not access lat & lng from it, currently accessing within findClostestStations function which may be redundant?  
 async function GetLatAndLang(lat, lng)
 {
   const options = {
@@ -187,20 +186,29 @@ async function GetLatAndLang(lat, lng)
       lng = parseFloat(position.coords.longitude);
     }, null, options); 
   }
-  findClosestStations(lat, lng, bikesData);
+
 }
 
 //function to find the 5 closest stations by lat, lng and return them in a list 
- function findClosestStations(lat, lng, stationsData) {
+ function findClosestStations(place, stationsData) {
+  
+  //finding lat & lng of user 
+  let location = place.geometry.location;
+  let lat = location.lat();
+  let lng = location.lng();
+  console.log("lat: " + lat );
+  console.log("lng: " + lng); 
+
+  //error handing for bikesData //TODO need to handle better once actually working 
   if (!stationsData) {
     console.log('!!! stationsData is undefined or null !!!');
     return; // Exit the function if stationsData is not valid
-    
- }
-  
-  
+  }
+  else{
+    console.log("stations data reading correctly ")
+  }
+
   const stationList = []; 
-  // let stationsData = stationsData
 
  // Iterate over the stationsData object
  Object.entries(stationsData).forEach(([stationId, stationData]) => {
@@ -218,7 +226,7 @@ async function GetLatAndLang(lat, lng)
   let closestStations = distances.slice(0, 5).map(item => item.station);
  
   // Return the closest stations
-  return closestStations; //TODO check this is returning correct list?? 
+  return closestStations;  
  }
 
 
@@ -245,9 +253,9 @@ function displayClosestStations(closestStations) {
     // Append the div to the body
     document.body.appendChild(popup);
    }
-  // Assuming findClosestStations is called and returns closestStations
-let closestStations = findClosestStations(lat, lng);
-displayClosestStations(closestStations);
+//   // Assuming findClosestStations is called and returns closestStations
+// let closestStations = findClosestStations(lat, lng);
+// displayClosestStations(closestStations);
 
 
 
