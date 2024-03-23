@@ -99,11 +99,19 @@ async function initMap() {
         return;
     }
     map.fitBounds(place.geometry.viewport);
-    console.log(place); // testing purposes 
+    testingFunt(place) //testing 
+    // console.log(place); // testing purposes 
     // getUserLocation(place);
-    // return place; //returning place so i can access later to find closest stations 
+    
   });
 
+//function for testing purposes only 
+function testingFunt(place){
+  console.log("gbhjk")
+  console.log(place.geometry.location);
+  
+}
+// end of testing function 
   
   //marker for bike station locations
   for(var i=0; i< stationsData.length; i++)
@@ -187,6 +195,7 @@ async function GetLatAndLang(lat, lng)
   if (!stationsData) {
     console.log('!!! stationsData is undefined or null !!!');
     return; // Exit the function if stationsData is not valid
+    
  }
   
   
