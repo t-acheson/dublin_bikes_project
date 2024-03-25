@@ -22,8 +22,6 @@
         var seconds = currentTime.getSeconds();
         var timeString = hours + ":" + minutes + ":" + seconds;
         document.getElementById("currentTime").innerHTML = timeString;
-        // document.getElementById("time").value = hours + ":" + minutes;
-        // document.getElementById("date").value = currentTime.toISOString().split("T")[0];
         }
         setInterval(updateTime, 1000);
     </script>
@@ -36,19 +34,15 @@
     </div>
 
     <div id="travel">
+        
         <div id="googlemaps">
             <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
             <div id="map"></div>
         </div>
-        <!-- <div id="journeyForm">
-            <form>
-                <h3 style="text-align: center;">Journey Planner</h3>
-                <input type="text" id="source" name="source" placeholder="Choose Starting Point">
-                <input type="text" id="destination" name="destination" placeholder="Choose Destination">
-                <input type="time" id="time" name="time">
-                <input type="date" id="date" name="date">&nbsp;
-            </form>
-        </div> -->
+
+        <div>
+            <div id="closestStations"></div>
+        </div>
     </div>
     <script src="../static/index.js"></script>
 

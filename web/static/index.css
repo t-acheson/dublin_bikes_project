@@ -1,4 +1,11 @@
- 
+ /* body
+ {
+    background-image: url("../static/images/dublin_city_map_neon.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    backdrop-filter: blur(1px);
+ } */
 #heading
 {
     font-family: "Protest Riot", sans-serif;
@@ -6,6 +13,7 @@
     font-style: normal;
     font-size: 5vh;
     text-align: center;
+    color: yellow;
 }
 
 .weatherInfo
@@ -25,6 +33,25 @@
     font-weight: 600;
 }
 
+#travel
+{
+    display: flex;
+    flex-wrap: nowrap;
+    column-gap: 10px;
+    flex-direction: row;
+    height:80vh;
+}
+
+#googlemaps
+{
+    flex: 2;
+}
+
+.autocomplete-container
+{
+    padding: 10px;
+}
+
 #pac-input {
     position: relative;
     z-index: 3;
@@ -41,61 +68,27 @@
     top:2vh;
     background-color: lightgrey;
     font-family:monospace;
+    display: flex;
   }
   
   #pac-input:focus {
     border-color: #4d90fe;
   }
 
-
-#travel
-{
+  #closestStations div{
     display: flex;
-    flex-wrap: nowrap;
-    column-gap: 10px;
     flex-direction: row;
-}
+    align-items: center;
 
-#googlemaps
-{
-    flex: 2;
-}
+
+    column-gap: 7px;
+  }
 
 #map{
     position: relative;
     z-index: 2;
-    top: -4vh;
-    height:80vh;
-}
-
-#journeyForm
-{
-    margin-top: 2vh;
-}
-
-#journeyForm>form
-{
-    
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(236, 228, 228);
-    border:3px solid black;
-    border-radius: 10px;
-    width: 25vw;
-    height:300px;
-    flex:1;
-    gap:2vh;
-}
-
-#journeyForm>form>input
-{
-    display: block;
-    margin: 0 auto;
-    border:1px solid black;
-    border-radius: 5px;
-    width: 50%;
-    height:5vh;
-    text-align: center;
+    top: -5vh;
+    height:100%;
 }
 
 @media (max-width:700px)
@@ -105,11 +98,5 @@
         display: flex;
         flex-direction: column;
         row-gap: 5px;
-    }
-
-    #journeyForm
-    {
-        display: flex;
-        width:100%;
     }
 }
