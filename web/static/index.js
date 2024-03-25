@@ -125,6 +125,8 @@ async function initMap() {
 
 function AddInfoWindow(marker, map, markerData)
 {
+  //TODO for i in stattions data let number = number in availability table & use that table instead 
+
   const bikeStationInfo = 
   ` <div class="stationsInfo">
     <h3 class="infoHeading">${markerData.name}</h3>
@@ -152,7 +154,7 @@ function AddInfoWindow(marker, map, markerData)
   })
 }
 
-async function GetStationsData()
+async function GetStationsData() //TODO change from api to db 
 {
   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
   bikesData = await bikePromise.json(); 
@@ -160,7 +162,7 @@ async function GetStationsData()
   return bikesData;
 }
 
-async function GetWeatherData()
+async function GetWeatherData() //TODO change to weather table not directly from weather API
 {
   const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
   wData = await weatherPromise.json();
