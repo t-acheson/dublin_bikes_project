@@ -207,14 +207,19 @@ async function GetLatAndLang(lat, lng)
   }
 
  // Iterate over the stationsData object to get distance from place lat & lng 
- Object.entries(stationsData).forEach(([stationData]) => {
-  let latDiff = stationData.position.lat - lat;
-  let lngDiff = stationData.position.lng - lng;
-  let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
-  let stationID = stationData.number; 
+ stationsData.forEach(stationData => {
+  // Check if stationData and its position are defined
+  if (stationData && stationData.position) {
+    let latDiff = stationData.position.lat - lat;
+    let lngDiff = stationData.position.lng - lng;
+    let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    let stationID = stationData.number; 
 
-  // Store the station ID and its distance from the given latitude and longitude
-  stationList.push({station: stationID, distance: distance});
+    // Store the station ID and its distance from the given latitude and longitude
+    stationList.push({station: stationID, distance: distance});
+  } else {
+    console.error('stationData or its position is undefined');
+  }
 });
   console.log(stationList)
    
