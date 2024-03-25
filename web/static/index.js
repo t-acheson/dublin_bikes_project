@@ -193,7 +193,7 @@ async function GetLatAndLang(lat, lng)
   let location = place.geometry.location;
   let lat = location.lat();
   let lng = location.lng();
-  // console.log("lat: " + lat ); //testing purposes only 
+  // console.log("lat: " + lat ); //*testing purposes only 
   // console.log("lng: " + lng); 
   const stationList = []; 
 
@@ -221,23 +221,23 @@ async function GetLatAndLang(lat, lng)
     console.error('stationData or its position is undefined');
   }
 });
-  console.log(stationList)
+  // console.log(stationList) //*testing purposes 
    
     // Sort by distance and take the first 5 closest 
-    distances.sort((a, b) => a.distance - b.distance);
-    const closestStations = stationList.slice(0, 5);
+  // Sort by distance and take the first 5 closest 
+stationList.sort((a, b) => a.distance - b.distance);
+const closestStations = stationList.slice(0, 5);
 
-  // Return the closest stations
-  console.log(closestStations); //testing purposes 
 
+  // Return the closest stations in pop up window 
   showPopup(closestStations);
-  // return closestStations;  
+ 
  }
 //end of findClosestStation function 
 
-
 //popup for closest stations
 function showPopup(closestStations) {
+  console.log("pop up ")
   // Generate the content for the popup
   let content = '';
   closestStations.forEach(station => {
