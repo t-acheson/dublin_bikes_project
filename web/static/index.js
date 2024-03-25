@@ -189,13 +189,13 @@ async function GetLatAndLang(lat, lng)
 
 //function to find the 5 closest stations by lat, lng and return them in a list 
  function findClosestStations(place, stationsData) {
-  
   //finding lat & lng of user 
   let location = place.geometry.location;
   let lat = location.lat();
   let lng = location.lng();
-  console.log("lat: " + lat );
-  console.log("lng: " + lng); 
+  // console.log("lat: " + lat ); //testing purposes only 
+  // console.log("lng: " + lng); 
+  const stationList = []; 
 
   //error handing for bikesData //TODO need to handle better once actually working 
   if (!stationsData) {
@@ -206,32 +206,17 @@ async function GetLatAndLang(lat, lng)
     console.log("stations data reading correctly ")
   }
 
-  const stationList = []; 
-
- // Iterate over the stationsData object
+ // Iterate over the stationsData object to get distance from place lat & lng 
  Object.entries(stationsData).forEach(([stationData]) => {
   let latDiff = stationData.position.lat - lat;
   let lngDiff = stationData.position.lng - lng;
   let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
   let stationID = stationData.number; 
 
-  // Store the station data and its distance from the given latitude and longitude
+  // Store the station ID and its distance from the given latitude and longitude
   stationList.push({station: stationID, distance: distance});
 });
   console.log(stationList)
- 
-  // Sort by distance and take the first 5 closest 
-  // Iterate over the stationsData object
-  Object.entries(stationsData).forEach(([stationData]) => {
-    let latDiff = stationData.position.lat - lat;
-    let lngDiff = stationData.position.lng - lng;
-    let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
-    let stationID = stationData.number; 
-  
-    // Store the station data and its distance from the given latitude and longitude
-    stationList.push({station: stationID, distance: distance});
-  });
-    console.log(stationList)
    
     // Sort by distance and take the first 5 closest 
     distances.sort((a, b) => a.distance - b.distance);
@@ -239,33 +224,37 @@ async function GetLatAndLang(lat, lng)
 
   // Return the closest stations
   console.log(closestStations); //testing purposes 
-  return closestStations;  
- }
 
+  showPopup(closestStations);
+  // return closestStations;  
+ }
+//end of findClosestStation function 
 
 
 //popup for closest stations
-function displayClosestStations(closestStations) {
-    // Create a new div element
-    let popup = document.createElement('div');
-    popup.style.position = 'fixed';
-    popup.style.top = '10px';
-    popup.style.right = '10px';
-    popup.style.backgroundColor = '#fff';
-    popup.style.border = '1px solid #000';
-    popup.style.padding = '10px';
-    popup.style.zIndex = '1000';
-   
-    // Populate the div with the station information
-    closestStations.forEach(station => {
-       let stationInfo = document.createElement('p');
-       stationInfo.textContent = `Name: ${station.name}, Latitude: ${station.lat}, Longitude: ${station.lng}`;
-       popup.appendChild(stationInfo);
-    });
-   
-    // Append the div to the body
-    document.body.appendChild(popup);
-   }
+function showPopup(closestStations) {
+  // Generate the content for the popup
+  let content = '';
+  closestStations.forEach(station => {
+     content += `<p>Station ID: ${station.station}, Distance: ${station.distance} meters</p>`;
+  });
+ 
+  // Set the content of the popup
+  document.getElementById('station-info').innerHTML = content;
+ 
+  // Show the popup
+  document.getElementById('popup-window').style.display = 'block';
+ }
+ 
+ // Get the close button element
+ var closeButton = document.getElementById('close-button');
+ 
+ // Add a click event listener to the close button
+ closeButton.addEventListener('click', function() {
+  document.getElementById('popup-window').style.display = 'none';
+ });
+ 
+
 //   // Assuming findClosestStations is called and returns closestStations
 // let closestStations = findClosestStations(lat, lng);
 // displayClosestStations(closestStations);

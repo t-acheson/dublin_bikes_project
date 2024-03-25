@@ -37,12 +37,16 @@
     </div>
 
     <div id="travel">
-        <div id="closestStations">
-        
-        </div>
         <div id="googlemaps">
             <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
             <div id="map"></div>
+        </div>
+
+        <!-- pop up window for closest stations  -->
+        <div id="popup-window" style="display: none;">
+            <h1>Closest Stations</h1>
+            <div id="station-info"></div>
+            <button id="close-button">Close</button>
         </div>
 
         <!-- <div id="journeyForm">
