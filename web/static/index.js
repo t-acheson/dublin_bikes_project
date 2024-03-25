@@ -75,10 +75,7 @@ async function initMap() {
         lat = parseFloat(position.coords.latitude);
         lng = parseFloat(position.coords.longitude);
         map.setCenter(new google.maps.LatLng(lat, lng));
-        // console.log("testing lat");
-        // console.log(lat);
-        // TODO the above will not print to console despite appearing to alter the map - need Ritwik to explain what he is attempting, as it would be very helpful to be able to access user lat & lng from here  
-        
+       
         //marker for current location
         new google.maps.Marker({
           position: new google.maps.LatLng(lat, lng),
@@ -189,6 +186,7 @@ async function GetLatAndLang(lat, lng)
 
 }
 
+
 //function to find the 5 closest stations by lat, lng and return them in a list 
  function findClosestStations(place, stationsData) {
   
@@ -211,21 +209,36 @@ async function GetLatAndLang(lat, lng)
   const stationList = []; 
 
  // Iterate over the stationsData object
- Object.entries(stationsData).forEach(([stationId, stationData]) => {
+ Object.entries(stationsData).forEach(([stationData]) => {
   let latDiff = stationData.position.lat - lat;
   let lngDiff = stationData.position.lng - lng;
   let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+  let stationID = stationData.number; 
 
   // Store the station data and its distance from the given latitude and longitude
-  stationList.push({station: stationData, distance: distance});
+  stationList.push({station: stationID, distance: distance});
 });
   console.log(stationList)
  
-  // Sort by distance and take the first 5 closest //TODO im not sure this is sorting the right list
-  distances.sort((a, b) => a.distance - b.distance);
-  let closestStations = distances.slice(0, 5).map(item => item.station);
- 
+  // Sort by distance and take the first 5 closest 
+  // Iterate over the stationsData object
+  Object.entries(stationsData).forEach(([stationData]) => {
+    let latDiff = stationData.position.lat - lat;
+    let lngDiff = stationData.position.lng - lng;
+    let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    let stationID = stationData.number; 
+  
+    // Store the station data and its distance from the given latitude and longitude
+    stationList.push({station: stationID, distance: distance});
+  });
+    console.log(stationList)
+   
+    // Sort by distance and take the first 5 closest 
+    distances.sort((a, b) => a.distance - b.distance);
+    const closestStations = stationList.slice(0, 5);
+
   // Return the closest stations
+  console.log(closestStations); //testing purposes 
   return closestStations;  
  }
 
