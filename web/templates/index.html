@@ -11,7 +11,7 @@
     <title>Dublin Bikes</title>
 </head>
 <body>
-    <!---{% block body %} --->
+    <!-- TODO does this script need to be in HTML or can we move to JS -->
     <script>
         function updateTime() {
         var currentTime = new Date();
@@ -23,8 +23,8 @@
         var seconds = currentTime.getSeconds();
         var timeString = hours + ":" + minutes + ":" + seconds;
         document.getElementById("currentTime").innerHTML = timeString;
-        document.getElementById("time").value = hours + ":" + minutes;
-        document.getElementById("date").value = currentTime.toISOString().split("T")[0];
+        // document.getElementById("time").value = hours + ":" + minutes;
+        // document.getElementById("date").value = currentTime.toISOString().split("T")[0];
         }
         setInterval(updateTime, 1000);
     </script>
@@ -39,13 +39,20 @@
         <span id="currentTime"></span>
     </div>
 
-    
     <div id="travel">
         <div id="googlemaps">
             <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
             <div id="map"></div>
         </div>
-        <div id="journeyForm">
+
+        <!-- pop up window for closest stations  -->
+        <div id="popup-window" style="display: none;">
+            <h1>Closest Stations</h1>
+            <div id="station-info"></div>
+            <button id="close-button">Close</button>
+        </div>
+
+        <!-- <div id="journeyForm">
             <form>
                 <h3 style="text-align: center;">Journey Planner</h3>
                 <input type="text" id="source" name="source" placeholder="Choose Starting Point">
@@ -53,7 +60,7 @@
                 <input type="time" id="time" name="time">
                 <input type="date" id="date" name="date">&nbsp;
             </form>
-        </div>
+        </div> -->
     </div>
     
     <script src="../static/index.js"></script>

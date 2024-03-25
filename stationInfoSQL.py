@@ -2,8 +2,6 @@
 #import stuff
 import requests
 import json
-from pprint import pprint 
-import time 
 import mysql.connector 
 
 
@@ -62,7 +60,7 @@ def stationsToTables():
                 connection.commit()
             # close the connection
             connection.close()
-
+            print("station scrapper running daily")
 
 
 

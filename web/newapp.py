@@ -40,6 +40,7 @@ def get_occupancy(station_id):
         # Establish a database connection
         database = connect_to_db()
 
+        #TODO this is collecting from wrong table? need from availablity table 
         # Define the SQL query for occupancy
         query = "SELECT * FROM station WHERE number = :station_id ORDER BY last_update LIMIT 1;"
 
@@ -64,6 +65,7 @@ def get_weather():
         #Establish a database connection
         database = connect_to_db()
 
+        #TODO do we need to get all from weather or just most recent entry? 
         # Define the SQL query
         query = "SELECT * FROM weather;"
 
