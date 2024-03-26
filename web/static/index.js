@@ -216,9 +216,10 @@ async function GetLatAndLang(lat, lng)
     let lngDiff = stationData.position.lng - lng;
     let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
     let stationID = stationData.number; 
+    let stationName = stationData.name;
 
     // Store the station ID and its distance from the given latitude and longitude
-    stationList.push({station: stationID, distance: distance});
+    stationList.push({station: stationID, name: stationName, distance: distance});
   } else {
     console.error('stationData or its position is undefined');
   }
@@ -243,7 +244,7 @@ function showPopup(closestStations) {
   // Generate the content for the popup
   let content = '';
   closestStations.forEach(station => {
-     content += `<p>Station ID: ${station.station}, Distance: ${station.distance} meters</p>`;
+     content += `<p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>`;
   });
  
   // Set the content of the popup
