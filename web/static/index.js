@@ -224,19 +224,16 @@ async function GetLatAndLang(lat, lng)
     console.error('stationData or its position is undefined');
   }
 });
-  // console.log(stationList) //*testing purposes 
    
-    // Sort by distance and take the first 5 closest 
   // Sort by distance and take the first 5 closest 
 stationList.sort((a, b) => a.distance - b.distance);
 const closestStations = stationList.slice(0, 5);
 
-
   // Return the closest stations in pop up window 
   showPopup(closestStations);
- 
  }
 //end of findClosestStation function 
+
 
 //popup for closest stations
 function showPopup(closestStations) {
@@ -263,15 +260,18 @@ function showPopup(closestStations) {
  });
  
 
-//   // Assuming findClosestStations is called and returns closestStations
-// let closestStations = findClosestStations(lat, lng);
-// displayClosestStations(closestStations);
+//journey planner functions start 
 
+//TODO get user input from start
 
+//TODO get user input from destination 
 
-//make window 
+//TODO get user input from time choice 
 
-//list 5 stations on window 
+//TODO get user input from date 
 
-//hover option to show details of each station 
+//TODO using inputs get ML prediction for start station 
 
+//TODO using inputs get ML prediction for destination station 
+//? might end to set time difference for this? 
+//end of journey planner functions
