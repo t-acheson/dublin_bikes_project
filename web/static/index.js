@@ -41,7 +41,7 @@ async function initMap() {
           "featureType": "transit",
           "stylers": [
               {
-                  "visibility": "off"
+                  "visibility": "on"
               }
           ]
       },
@@ -49,7 +49,7 @@ async function initMap() {
           "featureType": "poi",
           "stylers": [
               {
-                  "visibility": "off"
+                  "visibility": "on"
               }
           ]
       },
@@ -68,6 +68,8 @@ async function initMap() {
     
   });
 
+  const stationsData = await GetStationsData();
+
   if(navigator.geolocation)
   {
     navigator.geolocation.getCurrentPosition((position)=>{
@@ -83,10 +85,11 @@ async function initMap() {
             scaledSize: new google.maps.Size(35, 35),
           }
         });
+        //TODO: please add the function to get 5 closest stations here for current location
       }, null, options);
   }
   //const stationsData = {{ stations|tojson }};
-  const stationsData = await GetStationsData();
+  
   // const weatherData = await GetWeatherData();
 
   const input = document.getElementById("pac-input");            
@@ -98,6 +101,21 @@ async function initMap() {
         window.alert("No details available for input: '" + place.name + "'");
         return;
     }
+
+    //placing a marker at the searched location
+    new google.maps.Marker({
+      position: new google.maps.LatLng(
+        place.geometry.location.lat(),
+        place.geometry.location.lng()
+      ),
+      map: map,
+      icon: {
+        url: "https://img.icons8.com/color/48/marker--v1.png",
+        scaledSize: new google.maps.Size(35, 35),
+      },
+    });
+
+    //TODO: please add the function to get 5 closest stations here for the searched location
     map.fitBounds(place.geometry.viewport);
   });
 
@@ -109,7 +127,7 @@ async function initMap() {
       position: new google.maps.LatLng(stationsData[i].position.lat, stationsData[i].position.lng),
       map,
       icon:{
-        url:"../static/bicycle-svgrepo-com.png",
+        url:"../static/bicycle-bike-svgrepo-com.png",
         scaledSize: new google.maps.Size(35,35)
       }
     });
