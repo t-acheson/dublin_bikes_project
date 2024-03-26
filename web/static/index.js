@@ -99,6 +99,7 @@ async function initMap() {
         return;
     }
     map.fitBounds(place.geometry.viewport);
+     findClosestStations(place, bikesData);
   });
 
    
@@ -355,7 +356,7 @@ async function GetLatAndLang(lat, lng)
   let location = place.geometry.location;
   let lat = location.lat();
   let lng = location.lng();
-  // console.log("lat: " + lat ); //*testing purposes only 
+  console.log("lat: " + lat ); //*testing purposes only 
   // console.log("lng: " + lng); 
   const stationList = []; 
 
