@@ -357,6 +357,7 @@ async function GetLatAndLang(lat, lng)
   // console.log("lng: " + lng); 
   const stationList = []; 
 
+
   //error handing for bikesData //TODO need to handle better once actually working 
   if (!stationsData) {
     console.log('!!! stationsData is undefined or null !!!');
