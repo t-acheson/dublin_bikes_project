@@ -31,9 +31,12 @@
 
     <div ><h1 id="heading">Dublin Bikes</h1></div>
     <div class="weatherInfo">
-        <span id="conditions">Weather conditions</span>
-        <span id="temperature">temperature</span>
-        <span id="currentTime"></span> 
+        <span id="temperature">Temperature: {{temp}}°C</span>
+        <span id="conditions">Weather Conditions: {{condition}}</span>
+        <span id="wind speed">Wind Speed: {{speed}}mph</span>
+        <span id="wind direction">Wind Direction: {{direction}}</span>
+        <span id="precipitation">Precipitation: {{rain}}mm</span>
+        <span id="currentTime"></span>
     </div>
 
     <div id="travel">
@@ -63,6 +66,7 @@
         <!-- end of journey planning form  -->
 
     </div>
+    
     <script src="../static/index.js"></script>
 
 <!-- google maps api key - AIzaSyAPT_1yhfgBnnca3hOlT8p6LNwOhnt6oeU -->

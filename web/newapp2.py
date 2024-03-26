@@ -17,8 +17,8 @@ def connect_db():
     return mysql.connector.connect(**DATABASE_CONFIG)
 
 # API route to retrieve stations data
-@app.route('/')
-def get_data():
+@app.route('/stations')
+def get_stations():
     try:
         # Connect to the MySQL database
         db = connect_db()
@@ -53,8 +53,17 @@ def get_data():
             stations_list.append(station_dict)
 
         # Return the stations data as JSON
-        #return jsonify({'stations': stations_list})
+        return jsonify({'stations': stations_list})
 
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+# API route to retrieve weather data
+#@app.route('/')
+@app.route('/weather')
+def get_weather():
+    try:
         # Connect to the MySQL database
         db = connect_db()
 
@@ -66,23 +75,22 @@ def get_data():
 
         # Fetch all the results
         weather = cur.fetchall()
+
+        # Close the cursor and database connection
         cur.close()
         db.close()
 
-        temp=weather[0][1] 
-        cond=weather[0][2] 
-        ws=weather[0][3]
-        wd=weather[0][4]
-        prec=weather[0][5]
-        # Close the cursor and database connection
-        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list )
+        # Render the weather.html template and pass the weather data to it
+        #return render_template('weather.html', weather1="test")
+        return render_template('weather.html', temp=weather[0][1], cond=weather[0][2], ws=weather[0][3], wd=weather[0][4], prec=weather[0][5])
+        #return jsonify({'weather': weather}) 
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
+    
 # API route to retrieve availability data
-@app.route('/occupancy/stationid') # id of station needs to be included here
-def get_occupancy(stationid):
+@app.route('/occupancy')
+def get_occupancy():
     try:
         # Connect to the MySQL database
         db = connect_db()
@@ -90,7 +98,7 @@ def get_occupancy(stationid):
         # Create a cursor object to execute SQL queries
         cur = db.cursor()
 
-        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+        id = 56 #for testing purposes. In final version expecting value to be passed in with the route call
 
         # Execute the query to select all occupancy
         cur.execute('SELECT * FROM availability where number = {} LIMIT 1;'.format(id))
