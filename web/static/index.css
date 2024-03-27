@@ -68,35 +68,6 @@
     height:80vh;
 }
 
-#journeyForm
-{
-    margin-top: 2vh;
-}
-
-#journeyForm>form
-{
-    
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(236, 228, 228);
-    border:3px solid black;
-    border-radius: 10px;
-    width: 25vw;
-    height:300px;
-    flex:1;
-    gap:2vh;
-}
-
-#journeyForm>form>input
-{
-    display: block;
-    margin: 0 auto;
-    border:1px solid black;
-    border-radius: 5px;
-    width: 50%;
-    height:5vh;
-    text-align: center;
-}
 
 @media (max-width:700px)
 {
