@@ -33,24 +33,22 @@
     font-weight: 600;
 }
 
-#travel
+/* #travel
 {
     display: flex;
     flex-wrap: nowrap;
     column-gap: 10px;
     flex-direction: row;
     height:80vh;
-}
+} */
 
 #googlemaps
 {
-    flex: 2;
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
 }
 
-.autocomplete-container
-{
-    padding: 10px;
-}
 
 #pac-input {
     position: relative;
@@ -75,20 +73,55 @@
     border-color: #4d90fe;
   }
 
-  #closestStations div{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-
-    column-gap: 7px;
+  #closestStations
+  {
+    margin-left: 12px;
+    width:fit-content;
+    background-color: gainsboro;
   }
 
+  #closestStations>h2
+  {
+    text-align: center;
+    font-size: larger;
+  }
+
+  .stationDiv
+  {
+    display: none;
+  }
+
+  #closestStations>div{
+    /* display: flex; */
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    height:5vh;
+    column-gap: 7px;
+    border:1px solid black;
+    padding: 1vh;
+  }
+
+  #closestStations>div:hover {
+    background-color: gray;
+    box-shadow:0 0 10px rgba(0,0,0,0.5);
+  }
+
+  #panel
+  {
+    display: none;
+    width:fit-content;
+    background-color: gainsboro;
+    overflow-y: scroll;
+    bottom: 0;
+    right:0;
+    margin-top:40vh;
+  }
 #map{
     position: relative;
     z-index: 2;
-    top: -5vh;
-    height:100%;
+    /* top: -5vh; */
+    height:81vh;
 }
 
 @media (max-width:700px)

@@ -1,5 +1,7 @@
 let map;
 let lat, lng;
+let previousStation = null;
+let directionsService , directionsRenderer;
 async function initMap() {
   const options = {
     enableHighAccuracy: true,
@@ -7,9 +9,12 @@ async function initMap() {
     maximumAge: 0,
   };
 
+  lat = 53.3498;
+  lng = -6.2603;
+
   const { Map } = await google.maps.importLibrary("maps");
   map = new Map(document.getElementById("map"), {
-    center: new google.maps.LatLng(53.3498, -6.2603),
+    center: new google.maps.LatLng(lat, lng),
     zoom: 13,
     disableDefaultUI: true,
     mapTypeControlOptions: {
@@ -69,52 +74,56 @@ async function initMap() {
     ],
   });
 
+  directionsService = new google.maps.DirectionsService();
+  directionsRenderer = new google.maps.DirectionsRenderer({map, panel: document.getElementById("panel")});
+  var initialMarker = new google.maps.Marker({
+    position: new google.maps.LatLng(lat, lng),
+    map: map,
+    icon: {
+      url: "https://img.icons8.com/color/48/marker--v1.png",
+      scaledSize: new google.maps.Size(35, 35),
+    },
+  });
+
   const stationsData = await GetStationsData();
 
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        lat = parseFloat(position.coords.latitude);
-        lng = parseFloat(position.coords.longitude);
-        map.setCenter(new google.maps.LatLng(lat, lng));
+  //Fetching nearest bikes for current location
+  DisplayClosestStations(map, FindClosestStations(lat, lng, stationsData));
 
-        //marker for current location
-        new google.maps.Marker({
-          position: new google.maps.LatLng(lat, lng),
-          map: map,
-          icon: {
-            url: "https://img.icons8.com/color/48/marker--v1.png",
-            scaledSize: new google.maps.Size(35, 35),
-          },
-        });
-        //Fetching nearest bikes for current location
-        DisplayClosestStations(FindClosestStations(lat, lng, stationsData));
-      },
-      null,
-      options
-    );
-  }
+ 
+  // if (navigator.geolocation) {
+  //   navigator.geolocation.getCurrentPosition(
+  //     (position) => {
+  //       lat = parseFloat(position.coords.latitude);
+  //       lng = parseFloat(position.coords.longitude);
+  //       map.setCenter(new google.maps.LatLng(lat, lng));
+
+  //       //marker for current location
+  //       new google.maps.Marker({
+  //         position: new google.maps.LatLng(lat, lng),
+  //         map: map,
+  //         icon: {
+  //           url: "https://img.icons8.com/color/48/marker--v1.png",
+  //           scaledSize: new google.maps.Size(35, 35),
+  //         },
+  //       });
+  //       //Fetching nearest bikes for current location
+  //       DisplayClosestStations(map, FindClosestStations(lat, lng, stationsData));
+  //     },
+  //     null,
+  //     options
+  //   );
+  // }
 
   const input = document.getElementById("pac-input");
   const autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.bindTo("bounds", map);
 
+  const container = document.getElementById('googlemaps')
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(container);
 
-// // Create a container for the Autocomplete input
-// const autocompleteContainer = document.createElement('div');
-// autocompleteContainer.classList.add('autocomplete-container');
-// autocompleteContainer.innerHTML = "Dimag mei lund, zindagi jhund";
-// autocompleteContainer.appendChild(input);
-
-// Add styling for the autocomplete container
-// autocompleteContainer.style.position = 'absolute';
-// autocompleteContainer.style.top = '10px'; // Adjust as needed
-// autocompleteContainer.style.left = '10px';
-// autocompleteContainer.style.padding = '10px !important'; // Adjust as needed
-
-// Push the autocomplete container to the top left corner of the map
-// map.controls[google.maps.ControlPosition.TOP_LEFT].push(autocompleteContainer);
-
+  const panel = document.getElementById('panel');
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(panel);
 
   autocomplete.addListener("place_changed", () => {
     const place = autocomplete.getPlace();
@@ -122,6 +131,11 @@ async function initMap() {
       window.alert("No details available for input: '" + place.name + "'");
       return;
     }
+
+    initialMarker.setMap(null);
+
+    lat = place.geometry.location.lat();
+    lng = place.geometry.location.lng();
     //placing a marker at the searched location
     new google.maps.Marker({
       position: new google.maps.LatLng(
@@ -135,7 +149,7 @@ async function initMap() {
       },
     });
     //fetching nearby bike stations for searched location
-    DisplayClosestStations(
+    DisplayClosestStations(map,
       FindClosestStations(
         place.geometry.location.lat(),
         place.geometry.location.lng(),
@@ -225,17 +239,75 @@ function FindClosestStations(lat, lng, stationsData) {
 }
 
 //popup for closest stations
-function DisplayClosestStations(closestStations) {
+function DisplayClosestStations(map, closestStations) {
   let popup = document.getElementById("closestStations");
 
-  popup.innerHTML = "<h3> Nearest Stations </h3>";
-  // Populate the div with the station information
+  popup.innerHTML = "<h2> Nearest Stations </h2>";
+
+  const panel = document.getElementById('panel');
   closestStations.forEach((station) => {
     let stationInfo = document.createElement("div");
+    stationInfo.className="stationDiv";
+    stationInfo.addEventListener("click", (event)=>{
+      if(event.target === stationInfo)
+      {
+        //checks if we have rendered directions for some other station before
+        if(previousStation)
+        {
+          directionsRenderer.setMap(null);
+        }
+        previousStation = station
+        GetRoute(lat, lng , station.position.lat, station.position.lng);
+
+
+      }
+    });
+    
     stationInfo.innerHTML = `
-    <p>${station.name} </p>
-    <p>${station.position.lat} </p>
-    <p> ${station.position.lng}</p>`
+    <div>${station.name}</div>
+    <div>${station.position.lat}</div>
+    <div>${station.position.lng}</div>`
     popup.appendChild(stationInfo);
   });
+
+  const stationElements = document.getElementsByClassName("stationDiv");
+  popup.onclick = (event)=>{
+    for(let i = 0; i < stationElements.length; i++)
+    {
+      if(stationElements[i].style.display==="none")
+      {
+        stationElements[i].style.display = "flex";
+      }
+      else
+      {
+        stationElements[i].style.display = "none";
+      }
+    }
+  }
+
+  // Populate the div with the station information
 }
+
+function GetRoute(lat, lng, destLat, destLng)
+{
+
+  directionsRenderer.setMap(map);
+
+  var start = new google.maps.LatLng(lat, lng);
+  var end = new google.maps.LatLng(destLat, destLng);
+
+  var request = {
+    origin: start,
+    destination: end,
+    travelMode: 'BICYCLING'
+  };
+  directionsService.route(request, function(result, status) {
+    if (status == 'OK') {
+      directionsRenderer.setDirections(result);
+    }
+  });
+
+  const panel = document.getElementById('panel');
+  panel.style.display = "block";
+}
+
