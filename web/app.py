@@ -107,5 +107,10 @@ def get_occupancy(stationid):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+#API route for ML model 
+    
+#end of ML model route 
+
 if __name__ == '__main__':
     app.run(debug=True)
