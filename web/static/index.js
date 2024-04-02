@@ -85,7 +85,7 @@ async function initMap() {
             scaledSize: new google.maps.Size(35, 35),
           }
         });
-        //TODO: please add the function to get 5 closest stations here for current location
+       
       }, null, options);
   }
   //const stationsData = {{ stations|tojson }};
@@ -115,7 +115,7 @@ async function initMap() {
       },
     });
 
-    //TODO: please add the function to get 5 closest stations here for the searched location
+    //calling 5 closest stations here to activate when location choosen
     map.fitBounds(place.geometry.viewport);
      findClosestStations(place, bikesData);
   });
@@ -165,6 +165,7 @@ function AddInfoWindow(marker, map, markerData)
   })
 }
 
+//TODO need to change to get the static data only from flask
 async function GetStationsData()
 {
   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
@@ -172,6 +173,9 @@ async function GetStationsData()
   return bikesData;
 }
 
+//TODO need to get availability data from flask 
+
+//TODO need to get weather data from flask 
 async function GetWeatherData()
 {
   const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
@@ -247,7 +251,7 @@ async function GetLatAndLang(lat, lng)
     
   });
 
-//when user uses search bar ? //TODO need to clarify 
+//when user uses search bar 
   if(navigator.geolocation)
   { 
     navigator.geolocation.getCurrentPosition((position)=>{
@@ -331,39 +335,6 @@ function AddInfoWindow(marker, map, markerData)
   marker.addListener("mouseout", ()=>{
     infoWindow.close();
   })
-}
-
-async function GetStationsData() //TODO change from api to db 
-{
-  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-  bikesData = await bikePromise.json(); 
-  return bikesData;
-}
-
-async function GetWeatherData() //TODO change to weather table not directly from weather API
-{
-  const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
-  wData = await weatherPromise.json();
-  return wData;
-}
-
-//TODO check what puurpose this is serving, could not access lat & lng from it, currently accessing within findClostestStations function which may be redundant?  
-async function GetLatAndLang(lat, lng)
-{
-  const options = {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0,
-  };
-
-  if(navigator.geolocation)
-  {
-    navigator.geolocation.getCurrentPosition((position)=>{
-      lat = parseFloat(position.coords.latitude);
-      lng = parseFloat(position.coords.longitude);
-    }, null, options); 
-  }
-
 }
 
 
