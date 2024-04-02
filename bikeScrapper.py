@@ -1,10 +1,9 @@
 #import stuff
 import requests
 import json
-from pprint import pprint 
+
 import mysql.connector 
-# import datetime
-import time 
+
 
 
 
@@ -21,7 +20,7 @@ def store(data):
     # Write the JSON string to a file
     with open('stations_data.json', 'w') as f:
         f.write(json_data)
-    print(data)
+  
 def bikesToTables():
         try:
             r = requests.get(STATIONS, params={"apiKey": APIKEY, "contract": NAME})
@@ -72,6 +71,7 @@ def bikesToTables():
                 connection.commit()
             # close the connection
             connection.close()
+            print("bike scrapper running")
         
 
         except Exception as e:
