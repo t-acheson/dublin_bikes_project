@@ -166,13 +166,35 @@ function AddInfoWindow(marker, map, markerData)
 }
 
 //TODO need to change to get the static data only from flask
-async function GetStationsData()
-{
-  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-  bikesData = await bikePromise.json(); 
-  return bikesData;
-}
 
+async function GetStationsData() {
+  try {
+     const response = await fetch("http://localhost:5000/", {mode: "cors"});
+   
+     if (!response.ok) {
+       throw new Error(HTTP error! status: ${response.status});
+     }
+
+     // Parse the response as JSON
+     const bikesData = await response.json();
+
+     // Return the parsed JSON data
+     console.log(bikesData)
+     return bikesData;
+  } catch (error) {
+     console.error("Failed to fetch stations data:", error);
+     return {};
+  }
+
+//For Testing
+
+// async function GetStationsData()
+// {
+//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+//   bikesData = await bikePromise.json(); 
+//   return bikesData;
+// }
+ }
 //TODO need to get availability data from flask 
 
 //TODO need to get weather data from flask 
