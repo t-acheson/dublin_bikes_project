@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -48,7 +48,6 @@ def get_data():
                 'name': station[4],
                 'position_lat': station[5],
                 'position_lng': station[6],
-                # Add more fields if needed
             }
             stations_list.append(station_dict)
 
@@ -81,7 +80,7 @@ def get_data():
         return jsonify({'error': str(e)}), 500
 
 # API route to retrieve availability data
-@app.route('/occupancy/stationid') # id of station needs to be included here
+@app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
     try:
         # Connect to the MySQL database
@@ -93,7 +92,7 @@ def get_occupancy(stationid):
         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
         # Execute the query to select all occupancy
-        cur.execute('SELECT * FROM availability where number = {} LIMIT 1;'.format(id))
+        cur.execute('SELECT available_bikes FROM availability where number = {} LIMIT 1;'.format(id)) 
 
         # Fetch all the results
         occupancy = cur.fetchall()
@@ -109,7 +108,100 @@ def get_occupancy(stationid):
 
 
 #API route for ML model 
-    
+@app.route('/MLModel/<stationid>') # id of station needs to be included here
+def get_occupancy(stationid):
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+
+        # Execute the query to select all occupancy
+        cur.execute('SELECT available_bikes FROM availability where number = {};'.format(id)) 
+
+        # Fetch all the results
+        occupancy = cur.fetchall()
+
+        cur.execute('SELECT * FROM weather_data;')
+
+        # Fetch all the results
+        weather = cur.fetchall()
+
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        availabilityhistory_list = []
+        for occ in occupancy:
+            availability_dict = {
+                'available_bikes': occ[0],
+            }
+            availabilityhistory_list.append(availability_dict)
+
+        weatherhistory_list = []
+        for cond in weather:
+            weather_dict = {
+                'name': cond[0],
+                'temp_c': cond[1],
+                'weather_conditions': cond[2],
+                'wind_mph': cond[3],
+                'wind_dir': cond[4],
+                'precip_mm': cond[5],
+                'ID': cond[6],
+                'last_updated': cond[7],
+            }
+            weatherhistory_list.append(weather_dict)
+        return jsonify({'availabilty': availabilityhistory_list}, {'weather': weatherhistory_list})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+### This route probably not relevant
+@app.route('/MLModel1/<stationid>') # id of station needs to be included here
+def get_weather(stationid):
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+
+        # Execute the query to select all occupancy
+        cur.execute('SELECT * FROM weather_data where number = {} LIMIT 1;'.format(id)) # format (id, hour, day)
+
+        # Fetch all the results
+        weather = cur.fetchall()
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        weatherhistory_list = []
+        for cond in weather:
+            weather_dict = {
+                'name': cond[0],
+                'temp_c': cond[1],
+                'weather_conditions': cond[2],
+                'wind_mph': cond[3],
+                'wind_dir': cond[4],
+                'precip_mm': cond[5],
+                'ID': cond[6],
+                'last_updated': cond[7],
+            }
+            weatherhistory_list.append(weather_dict)
+
+        return jsonify({'weather': weather})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 #end of ML model route 
 
 if __name__ == '__main__':
