@@ -2,6 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
+import predict
 
 app = Flask(__name__)
 
@@ -164,109 +165,23 @@ def get_occupancy(stationid):
 #         return jsonify({'error': str(e)}), 500
 
 
-# ### This route probably not relevant
 
-#post request to get the return parameters 
 
-from . import predict
-@app.route('/MLModel1/<stationid>', methods = ['POST']) # id of station needs to be included here
 
-#TODO need to get live weather data 
+@app.route('/predict', methods = ['POST']) # id of station needs to be included here
 
 def predictAvailability(stationid):
     data = request.get_json()
-    temp_c = float(request.args.get('temp_c', 0))
-    wind_mph = float(request.args.get('wind_mph', 0))
-    precip_mm = float(request.args.get('precip_mm', 0))
-    hours = float(request.args.get('hours', 0))
+    stationid = 1 
+    # stationid = data.get('stationid') #TODO need to use input somehow here 
+    temp_c = float(data.get('temp_c', 0))
+    wind_mph = float(data.get('wind_mph', 0))
+    precip_mm = float(data.get('precip_mm', 0))
+    hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
 
     predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
     return jsonify({'predicted_bikes': predicted_bikes})
 
-    # # Load the model
-    # # dublin_bikes_project\web\mlModel\model_1.pkl
-    # filename = f'mlModel/model_{stationid}.pkl' # Replace {station} with the actual station ID
-    # with open(filename, 'rb') as file:
-    #     model = pickle.load(file)
-
-    #predict based off parameters 
-#      import pickle
-# import pandas as pd 
-
-# def predict(stationid, temp_c, wind_mph, precip_mm, hours):
-#     # station = 2
-#     # Load the model
-#     filename = f'model_{stationid}.pkl' # Replace {station} with the actual station ID
-#     with open(filename, 'rb') as file:
-#         model = pickle.load(file)
-
-#     # Prepare the input data for prediction
-#     # Assuming you have a DataFrame df_prediction with the same columns as X_train
-#     # For example, let's say you want to predict for a specific hour
-#     df_prediction = pd.DataFrame({
-#         'temp_c': [temp_c], # Example temperature
-#         'wind_mph': [wind_mph], # Example wind speed
-#         'precip_mm': [precip_mm], # Example precipitation
-#         'hours': [hours] # Example hour
-#     })
-
-#     # Predict the number of available bikes
-#     predicted_bikes = model.predict(df_prediction)
-
-#     print(f"Predicted number of available bikes: {predicted_bikes[0]}")
-#     df_prediction = pd.DataFrame({
-#         'temp_c': [temp_c],
-#         'wind_mph': [wind_mph],
-#         'precip_mm': [precip_mm], 
-#         'hours': [hours] 
-#     })
-
-#     # Predict the number of available bikes
-#     predicted_bikes = model.predict(df_prediction)
-#     print(f"Predicted number of available bikes: {predicted_bikes[0]}")
-
-#     return jsonify({'predicted_bikes': predicted_bikes[0]})
-
-# # def get_weather(stationid):
-# #     try:
-# #         # Connect to the MySQL database
-# #         db = connect_db()
-
-# #         # Create a cursor object to execute SQL queries
-# #         cur = db.cursor()
-
-# #         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
-
-# #         # Execute the query to select all occupancy
-# #         cur.execute('SELECT * FROM weather_data where number = {} LIMIT 1;'.format(id)) # format (id, hour, day)
-
-# #         # Fetch all the results
-# #         weather = cur.fetchall()
-
-# #         # Close the cursor and database connection
-# #         cur.close()
-# #         db.close()
-
-# #         weatherhistory_list = []
-# #         for cond in weather:
-# #             weather_dict = {
-# #                 'name': cond[0],
-# #                 'temp_c': cond[1],
-# #                 'weather_conditions': cond[2],
-# #                 'wind_mph': cond[3],
-# #                 'wind_dir': cond[4],
-# #                 'precip_mm': cond[5],
-# #                 'ID': cond[6],
-# #                 'last_updated': cond[7],
-# #             }
-# #             weatherhistory_list.append(weather_dict)
-
-# #         return jsonify({'weather': weather})
-
-#     # except Exception as e:
-#     #     return jsonify({'error': str(e)}), 500
-
-# #end of ML model route 
 
 if __name__ == '__main__':
     app.run(debug=True)

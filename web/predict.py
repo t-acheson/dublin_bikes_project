@@ -21,5 +21,5 @@ def predict(stationid, temp_c, wind_mph, precip_mm, hours):
     # Predict the number of available bikes
     predicted_bikes = model.predict(df_prediction)
 
-    print(f"Predicted number of available bikes: {predicted_bikes[0]}")
+    # print(f"Predicted number of available bikes: {predicted_bikes[0]}")
     return predicted_bikes
