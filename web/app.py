@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
@@ -164,15 +164,19 @@ def get_occupancy(stationid):
 
 
 # ### This route probably not relevant
-@app.route('/MLModel1/<stationid>') # id of station needs to be included here
-
-stationID = stationID
+@app.route('/MLModel1/<stationid>', methods = ['GET']) # id of station needs to be included here
 
 #TODO need to get live weather data 
 
-def predictAvailability(stationID, temp_c, wind_mph, precip_mm, hours): 
-# Load the model
-    filename = f'model_{stationID}.pkl' # Replace {station} with the actual station ID
+def predictAvailability(stationid):
+    # Extract parameters from the URL
+    temp_c = float(request.args.get('temp_c', 0))
+    wind_mph = float(request.args.get('wind_mph', 0))
+    precip_mm = float(request.args.get('precip_mm', 0))
+    hours = float(request.args.get('hours', 0))
+
+    # Load the model
+    filename = f'model_{stationid}.pkl' # Replace {station} with the actual station ID
     with open(filename, 'rb') as file:
         model = pickle.load(file)
 
@@ -187,6 +191,8 @@ def predictAvailability(stationID, temp_c, wind_mph, precip_mm, hours):
     # Predict the number of available bikes
     predicted_bikes = model.predict(df_prediction)
     print(f"Predicted number of available bikes: {predicted_bikes[0]}")
+
+    return jsonify({'predicted_bikes': predicted_bikes[0]})
 
 # def get_weather(stationid):
 #     try:
