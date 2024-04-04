@@ -81,33 +81,34 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# API route to retrieve availability data
-@app.route('/occupancy/<stationid>') # id of station needs to be included here
-def get_occupancy(stationid):
-    try:
-        # Connect to the MySQL database
-        db = connect_db()
+#* Jacks route 
+# # API route to retrieve availability data
+# @app.route('/occupancy/<stationid>') # id of station needs to be included here
+# def get_occupancy(stationid):
+#     try:
+#         # Connect to the MySQL database
+#         db = connect_db()
 
-        # Create a cursor object to execute SQL queries
-        cur = db.cursor()
+#         # Create a cursor object to execute SQL queries
+#         cur = db.cursor()
 
-        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+#         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
-        # Execute the query to select all occupancy
-        cur.execute('SELECT available_bikes FROM availability where number = {} LIMIT 1;'.format(id)) 
+#         # Execute the query to select all occupancy
+#         cur.execute('SELECT available_bikes FROM availability where number = {} LIMIT 1;'.format(id)) 
 
-        # Fetch all the results
-        occupancy = cur.fetchall()
+#         # Fetch all the results
+#         occupancy = cur.fetchall()
 
-        # Close the cursor and database connection
-        cur.close()
-        db.close()
+#         # Close the cursor and database connection
+#         cur.close()
+#         db.close()
 
-        return jsonify({'occupancy': occupancy}) 
+#         return jsonify({'occupancy': occupancy}) 
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+    #* end of jacks route 
 
 #API route for ML model 
 @app.route('/MLModel/<stationid>') # id of station needs to be included here
