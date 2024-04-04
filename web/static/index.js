@@ -449,3 +449,44 @@ function showPopup(closestStations) {
 //TODO using inputs get ML prediction for destination station 
 //? might end to set time difference for this? 
 //end of journey planner functions
+
+
+//predict bike availability function 
+function predictAvailability(){
+  console.log("in the function ")
+  var stationid = 1; //! placeholder 
+  var temp_c = parseFloat(document.getElementById('temp_c').value);
+  var wind_mph = parseFloat(document.getElementById('wind_mph').value);
+  var precip_mm = parseFloat(document.getElementById('precip_mm').value);
+  var hours = parseFloat(document.getElementById('hours').value);
+
+  var requestData = {
+      stationid: stationid,
+      temp_c: temp_c,
+      wind_mph: wind_mph,
+      precip_mm: precip_mm,
+      hours: hours
+  };
+
+  fetch('/predict', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestData)
+})
+.then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+})
+.then(data => {
+    console.log('Predicted Bikes:', data.predicted_bikes);
+})
+.catch(error => {
+    console.error('Error:', error);
+});
+}
+document.getElementById('predictButton').addEventListener('click', predictAvailability);
+
