@@ -453,13 +453,14 @@ function showPopup(closestStations) {
 
 //predict bike availability function 
 function predictAvailability(){
-  console.log("in the function ")
+  console.log("Predict button clicked");
   var stationid = 1; //! placeholder 
   var temp_c = parseFloat(document.getElementById('temp_c').value);
   var wind_mph = parseFloat(document.getElementById('wind_mph').value);
   var precip_mm = parseFloat(document.getElementById('precip_mm').value);
   var hours = parseFloat(document.getElementById('hours').value);
 
+  // TODO the issue is here, work with jack tomorrow to figure out
   var requestData = {
       stationid: stationid,
       temp_c: temp_c,
@@ -467,7 +468,7 @@ function predictAvailability(){
       precip_mm: precip_mm,
       hours: hours
   };
-
+  
   fetch('/predict', {
     method: 'POST',
     headers: {
@@ -488,5 +489,6 @@ function predictAvailability(){
     console.error('Error:', error);
 });
 }
-document.getElementById('predictButton').addEventListener('click', predictAvailability);
+
+document.getElementById("predictButton").addEventListener('click', predictAvailability);
 
