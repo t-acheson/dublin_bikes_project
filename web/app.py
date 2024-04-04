@@ -161,48 +161,71 @@ def get_occupancy(stationid):
         return jsonify({'error': str(e)}), 500
 
 
-### This route probably not relevant
+# ### This route probably not relevant
 @app.route('/MLModel1/<stationid>') # id of station needs to be included here
-def get_weather(stationid):
-    try:
-        # Connect to the MySQL database
-        db = connect_db()
 
-        # Create a cursor object to execute SQL queries
-        cur = db.cursor()
+stationID = stationID
 
-        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+#TODO need to get live weather data 
 
-        # Execute the query to select all occupancy
-        cur.execute('SELECT * FROM weather_data where number = {} LIMIT 1;'.format(id)) # format (id, hour, day)
+def predictAvailability(stationID, temp_c, wind_mph, precip_mm, hours): 
+# Load the model
+    filename = f'model_{stationID}.pkl' # Replace {station} with the actual station ID
+    with open(filename, 'rb') as file:
+        model = pickle.load(file)
 
-        # Fetch all the results
-        weather = cur.fetchall()
+    #predict based off parameters 
+    df_prediction = pd.DataFrame({
+        'temp_c': [temp_c],
+        'wind_mph': [wind_mph],
+        'precip_mm': [precip_mm], 
+        'hours': [hours] 
+    })
 
-        # Close the cursor and database connection
-        cur.close()
-        db.close()
+    # Predict the number of available bikes
+    predicted_bikes = model.predict(df_prediction)
+    print(f"Predicted number of available bikes: {predicted_bikes[0]}")
 
-        weatherhistory_list = []
-        for cond in weather:
-            weather_dict = {
-                'name': cond[0],
-                'temp_c': cond[1],
-                'weather_conditions': cond[2],
-                'wind_mph': cond[3],
-                'wind_dir': cond[4],
-                'precip_mm': cond[5],
-                'ID': cond[6],
-                'last_updated': cond[7],
-            }
-            weatherhistory_list.append(weather_dict)
+# def get_weather(stationid):
+#     try:
+#         # Connect to the MySQL database
+#         db = connect_db()
 
-        return jsonify({'weather': weather})
+#         # Create a cursor object to execute SQL queries
+#         cur = db.cursor()
 
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+#         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
-#end of ML model route 
+#         # Execute the query to select all occupancy
+#         cur.execute('SELECT * FROM weather_data where number = {} LIMIT 1;'.format(id)) # format (id, hour, day)
+
+#         # Fetch all the results
+#         weather = cur.fetchall()
+
+#         # Close the cursor and database connection
+#         cur.close()
+#         db.close()
+
+#         weatherhistory_list = []
+#         for cond in weather:
+#             weather_dict = {
+#                 'name': cond[0],
+#                 'temp_c': cond[1],
+#                 'weather_conditions': cond[2],
+#                 'wind_mph': cond[3],
+#                 'wind_dir': cond[4],
+#                 'precip_mm': cond[5],
+#                 'ID': cond[6],
+#                 'last_updated': cond[7],
+#             }
+#             weatherhistory_list.append(weather_dict)
+
+#         return jsonify({'weather': weather})
+
+    # except Exception as e:
+    #     return jsonify({'error': str(e)}), 500
+
+# #end of ML model route 
 
 if __name__ == '__main__':
     app.run(debug=True)
