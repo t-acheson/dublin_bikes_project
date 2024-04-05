@@ -136,6 +136,8 @@ async function initMap() {
   }
 }
 
+
+//TODO this needs to change to read from occupancy data not the static data!
 function AddInfoWindow(marker, map, markerData)
 {
   const bikeStationInfo = 

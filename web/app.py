@@ -114,7 +114,7 @@ def get_occupancy(stationid):
         return jsonify({'error': str(e)}), 500
   
 
-
+#*not working 
 @app.route('/predict', methods = ['POST']) # id of station needs to be included here
 def predictAvailability(stationid):
     data = request.get_json()
@@ -151,6 +151,9 @@ def get_weather():
             return jsonify({'error': 'No weather data found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
 
 
 if __name__ == '__main__':
