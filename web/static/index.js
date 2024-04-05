@@ -449,3 +449,61 @@ function showPopup(closestStations) {
 //TODO using inputs get ML prediction for destination station 
 //? might end to set time difference for this? 
 //end of journey planner functions
+
+
+//predict bike availability function 
+function predictAvailability() {
+  console.log("Predict button clicked");
+  var stationid = 1; // Placeholder for now, //TODO need to use user input 
+  var hours = 10; //placeholder for now //todo need to get user input 
+
+  console.log("123")
+  // Fetch weather data
+  fetch('/weather')
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+      return response.json();
+  })
+  .then(weatherData => {
+      var temp_c = parseFloat(weatherData.temp_c);
+      var wind_mph = parseFloat(weatherData.wind_mph);
+      var precip_mm = parseFloat(weatherData.precip_mm);
+     // var hours = parseFloat(document.getElementById('hours').value); //TODO need to change the hours
+
+      var requestData = {
+          stationid: stationid,
+          temp_c: temp_c,
+          wind_mph: wind_mph,
+          precip_mm: precip_mm,
+          hours: hours
+      };
+
+      // calling prediction
+      fetch('/predict', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          console.log('Predicted Bikes:', data.predicted_bikes);
+      })
+      .catch(error => {
+          console.error('Error:', error);
+      });
+  })
+  .catch(error => {
+      console.error('Error fetching weather data:', error);
+  });
+}
+
+document.getElementById("predictButton").addEventListener('click', predictAvailability);
