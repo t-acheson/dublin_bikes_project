@@ -167,45 +167,88 @@ function AddInfoWindow(marker, map, markerData)
 
 
 //getting static stations data from flask routen 
-// async function GetStationsData() {
-//   try {
-//      const response = await fetch("http://localhost:5000/", {mode: "cors"});
+async function GetStationsData() {
+  try {
+     const response = await fetch("http://localhost:5000/", {mode: "cors"});
    
-//      if (!response.ok) {
-//        throw new Error(`HTTP error! status: ${response.status}`);
-//      }
+     if (!response.ok) {
+       throw new Error(`HTTP error! status: ${response.status}`);
+     }
 
-//      // Parse the response as JSON
-//      const bikesData = await response.json();
+     // Parse the response as JSON
+     const bikesData = await response.json();
 
-//      // Return the parsed JSON data
-//      console.log(bikesData)
-//      return bikesData;
-//   } catch (error) {
-//      console.error("Failed to fetch stations data:", error);
-//      return {};
-//   }}
+     // Return the parsed JSON data
+     console.log(bikesData)
+     return bikesData;
+  } catch (error) {
+     console.error("Failed to fetch stations data:", error);
+     return {};
+  }}
 
 //For Testing
-async function GetStationsData()
-{
-  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-  bikesData = await bikePromise.json(); 
-  return bikesData;
-}
+// async function GetStationsData()
+// {
+//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+//   bikesData = await bikePromise.json(); 
+//   return bikesData;
+// }
 
 //TODO need to get availability data from flask 
-async function getAvailabilityData(stationID){
+async function GetOccupancyData(stationId) {
+  try {
+      // Fetch occupancy data from the specified endpoint
+      const response = await fetch(`http://localhost:5000/occupancy/${stationId}`, { method: "GET", mode: "cors" });
 
+      // Check if the response is successful
+      if (!response.ok) {
+          // If not, throw an error with the response status
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      // Parse the response as JSON
+      const occupancyData = await response.json();
+
+      // Log the parsed JSON data
+      console.log(occupancyData);
+
+      // Return the parsed JSON data
+      return occupancyData;
+  } catch (error) {
+      // If there's an error, log the error message and return an empty object
+      console.error("Failed to fetch occupancy data:", error);
+      return {};
+  }
 }
 
-//TODO need to get weather data from flask 
-async function GetWeatherData()
-{
-  const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
-  wData = await weatherPromise.json();
-  return wData;
-}
+
+
+async function GetWeatherData() {
+  try {
+      const response = await fetch("http://localhost:5000/weather", {method: "GET", mode: "cors"});
+ 
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+ 
+      // Parse the response as JSON
+      const wData = await response.json();
+ 
+      // Return the parsed JSON data
+      console.log(wData);
+      return wData;
+  } catch (error) {
+      console.error("Failed to fetch weather data:", error);
+      return {};
+  }
+ }
+//Testing purposes only
+// async function GetWeatherData()
+// {
+//   const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
+//   wData = await weatherPromise.json();
+//   return wData;
+// }
 
 async function GetLatAndLang(lat, lng)
 {
