@@ -169,7 +169,6 @@ def get_occupancy(stationid):
 
 
 @app.route('/predict', methods = ['POST']) # id of station needs to be included here
-
 def predictAvailability(stationid):
     data = request.get_json()
     stationid = 1 
@@ -181,6 +180,28 @@ def predictAvailability(stationid):
 
     predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
     return jsonify({'predicted_bikes': predicted_bikes})
+
+# weather only route so i can use for predictions 
+@app.route('/weather', methods=['GET'])
+def get_weather():
+    try:
+        db = connect_db()
+        cur = db.cursor()
+        cur.execute('SELECT * FROM weather_data ORDER BY id DESC LIMIT 1;')
+        weather = cur.fetchall()
+        cur.close()
+        db.close()
+
+        if weather:
+            return jsonify({
+                'temp_c': weather[0][1],
+                'wind_mph': weather[0][3],
+                'precip_mm': weather[0][5]
+            })
+        else:
+            return jsonify({'error': 'No weather data found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
