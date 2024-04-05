@@ -457,6 +457,7 @@ function predictAvailability() {
   var stationid = 1; // Placeholder for now, //TODO need to use user input 
   var hours = 10; //placeholder for now //todo need to get user input 
 
+  console.log("123")
   // Fetch weather data
   fetch('/weather')
   .then(response => {
