@@ -181,6 +181,8 @@ def predictAvailability(stationid):
     predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
     return jsonify({'predicted_bikes': predicted_bikes})
 
+
+
 # weather only route so i can use for predictions 
 @app.route('/weather', methods=['GET'])
 def get_weather():
