@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -18,6 +18,7 @@ DATABASE_CONFIG = {
 def connect_db():
     return mysql.connector.connect(**DATABASE_CONFIG)
 
+# ! This Route works DO NOT TOUCH 
 # API route to retrieve stations data
 @app.route('/')
 def get_data():
@@ -81,6 +82,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# ! this route works DO NOT TOUCH
 # API route to retrieve availability data
 @app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
@@ -104,97 +106,15 @@ def get_occupancy(stationid):
         db.close()
 
         return jsonify({'occupancy': occupancy}) 
+    
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+  
 
-
-#API route for ML model 
-@app.route('/MLModel/<stationid>') # id of station needs to be included here
-def get_occupancy(stationid):
-    try:
-        # Connect to the MySQL database
-        db = connect_db()
-
-        # Create a cursor object to execute SQL queries
-        cur = db.cursor()
-
-        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
-
-        # Execute the query to select all occupancy
-        cur.execute('SELECT available_bikes FROM availability where number = {};'.format(id)) 
-
-        # Fetch all the results
-        occupancy = cur.fetchall()
-
-        cur.execute('SELECT * FROM weather_data;')
-
-        # Fetch all the results
-        weather = cur.fetchall()
-
-
-        # Close the cursor and database connection
-        cur.close()
-        db.close()
-
-        availabilityhistory_list = []
-        for occ in occupancy:
-            availability_dict = {
-                'available_bikes': occ[0],
-            }
-            availabilityhistory_list.append(availability_dict)
-
-        weatherhistory_list = []
-        for cond in weather:
-            weather_dict = {
-                'name': cond[0],
-                'temp_c': cond[1],
-                'weather_conditions': cond[2],
-                'wind_mph': cond[3],
-                'wind_dir': cond[4],
-                'precip_mm': cond[5],
-                'ID': cond[6],
-                'last_updated': cond[7],
-            }
-            weatherhistory_list.append(weather_dict)
-        return jsonify({'availabilty': availabilityhistory_list}, {'weather': weatherhistory_list})
-
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-# ### This route probably not relevant
-@app.route('/MLModel1/<stationid>', methods = ['GET']) # id of station needs to be included here
-
-#TODO need to get live weather data 
-
-def predictAvailability(stationid):
-    # Extract parameters from the URL
-    temp_c = float(request.args.get('temp_c', 0))
-    wind_mph = float(request.args.get('wind_mph', 0))
-    precip_mm = float(request.args.get('precip_mm', 0))
-    hours = float(request.args.get('hours', 0))
-
-    # Load the model
-    filename = f'model_{stationid}.pkl' # Replace {station} with the actual station ID
-    with open(filename, 'rb') as file:
-        model = pickle.load(file)
-
-    #predict based off parameters 
-    df_prediction = pd.DataFrame({
-        'temp_c': [temp_c],
-        'wind_mph': [wind_mph],
-        'precip_mm': [precip_mm], 
-        'hours': [hours] 
-    })
-
-    # Predict the number of available bikes
-    predicted_bikes = model.predict(df_prediction)
-    print(f"Predicted number of available bikes: {predicted_bikes[0]}")
-
-    return jsonify({'predicted_bikes': predicted_bikes[0]})
-
-# def get_weather(stationid):
+# #API route for ML model 
+# @app.route('/MLModel/<stationid>') # id of station needs to be included here
+# def get_occupancy(stationid):
 #     try:
 #         # Connect to the MySQL database
 #         db = connect_db()
@@ -205,14 +125,27 @@ def predictAvailability(stationid):
 #         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
 #         # Execute the query to select all occupancy
-#         cur.execute('SELECT * FROM weather_data where number = {} LIMIT 1;'.format(id)) # format (id, hour, day)
+#         cur.execute('SELECT available_bikes FROM availability where number = {};'.format(id)) 
+
+#         # Fetch all the results
+#         occupancy = cur.fetchall()
+
+#         cur.execute('SELECT * FROM weather_data;')
 
 #         # Fetch all the results
 #         weather = cur.fetchall()
 
+
 #         # Close the cursor and database connection
 #         cur.close()
 #         db.close()
+
+#         availabilityhistory_list = []
+#         for occ in occupancy:
+#             availability_dict = {
+#                 'available_bikes': occ[0],
+#             }
+#             availabilityhistory_list.append(availability_dict)
 
 #         weatherhistory_list = []
 #         for cond in weather:
@@ -227,13 +160,52 @@ def predictAvailability(stationid):
 #                 'last_updated': cond[7],
 #             }
 #             weatherhistory_list.append(weather_dict)
+#         return jsonify({'availabilty': availabilityhistory_list}, {'weather': weatherhistory_list})
 
-#         return jsonify({'weather': weather})
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
 
-    # except Exception as e:
-    #     return jsonify({'error': str(e)}), 500
 
-# #end of ML model route 
+
+
+
+@app.route('/predict', methods = ['POST']) # id of station needs to be included here
+def predictAvailability(stationid):
+    data = request.get_json()
+    stationid = 1 
+    # stationid = data.get('stationid') #TODO need to use input somehow here 
+    temp_c = float(data.get('temp_c', 0))
+    wind_mph = float(data.get('wind_mph', 0))
+    precip_mm = float(data.get('precip_mm', 0))
+    hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+
+    predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
+    return jsonify({'predicted_bikes': predicted_bikes})
+
+
+
+# weather only route so i can use for predictions 
+@app.route('/weather', methods=['POST'])
+def get_weather():
+    try:
+        db = connect_db()
+        cur = db.cursor()
+        cur.execute('SELECT * FROM weather_data ORDER BY id DESC LIMIT 1;')
+        weather = cur.fetchall()
+        cur.close()
+        db.close()
+
+        if weather:
+            return jsonify({
+                'temp_c': weather[0][1],
+                'wind_mph': weather[0][3],
+                'precip_mm': weather[0][5]
+            })
+        else:
+            return jsonify({'error': 'No weather data found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
