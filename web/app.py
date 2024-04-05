@@ -81,7 +81,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# API route to retrieve availability data
+ #API route to retrieve availability data
 @app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
     try:
