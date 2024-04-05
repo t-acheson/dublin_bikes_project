@@ -199,13 +199,33 @@ async function getAvailabilityData(stationID){
 
 }
 
-//TODO need to get weather data from flask 
-async function GetWeatherData()
-{
-  const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
-  wData = await weatherPromise.json();
-  return wData;
-}
+
+async function GetWeatherData() {
+  try {
+      const response = await fetch("http://localhost:5000/weather", {method: "GET", mode: "cors"});
+ 
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+ 
+      // Parse the response as JSON
+      const wData = await response.json();
+ 
+      // Return the parsed JSON data
+      console.log(wData);
+      return wData;
+  } catch (error) {
+      console.error("Failed to fetch weather data:", error);
+      return {};
+  }
+ }
+//Testing purposes only
+// async function GetWeatherData()
+// {
+//   const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
+//   wData = await weatherPromise.json();
+//   return wData;
+// }
 
 async function GetLatAndLang(lat, lng)
 {
