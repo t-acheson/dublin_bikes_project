@@ -499,6 +499,8 @@ function showPopup(closestStations) {
 //predict bike availability function 
 function predictAvailability() {
   console.log("Predict button clicked");
+
+  //currently getting stationid & hours from user input, might have to change depending on Ritwiks journey planner 
   var stationid = parseInt(document.getElementById('stationidInput').value);
   var hours = parseInt(document.getElementById('hoursInput').value);
 
