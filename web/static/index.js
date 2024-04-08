@@ -556,4 +556,8 @@ function predictAvailability() {
   });
 }
 
+//event listener to call prediction function
 document.getElementById("predictButton").addEventListener('click', predictAvailability);
+//end of prediction function & listener 
+
+//start of occupancy script 
