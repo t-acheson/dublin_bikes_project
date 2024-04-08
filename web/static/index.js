@@ -189,12 +189,12 @@ async function GetStationsData() {
   }}
 
 //For Testing
-// async function GetStationsData()
-// {
-//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-//   bikesData = await bikePromise.json(); 
-//   return bikesData;
-// }
+async function GetStationsData()
+{
+  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+  bikesData = await bikePromise.json(); 
+  return bikesData;
+}
 
 //TODO need to get availability data from flask 
 async function GetOccupancyData(stationId) {
@@ -499,15 +499,19 @@ function showPopup(closestStations) {
 //predict bike availability function 
 function predictAvailability() {
   console.log("Predict button clicked");
-  var stationid = 1; // Placeholder for now, //TODO need to use user input 
-  var hours = 10; //placeholder for now //todo need to get user input 
+  var stationid = parseInt(document.getElementById('stationidInput').value);
+  var hours = parseInt(document.getElementById('hoursInput').value);
 
-  console.log("123")
+  // var stationid = 1; // Placeholder for now, //TODO need to use user input 
+  // var hours = 10; //placeholder for now //todo need to get user input 
+
+  console.log(" prediction test log 2")
+
   // Fetch weather data
   fetch('/weather')
   .then(response => {
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response for weather data was not ok');
       }
       return response.json();
   })
@@ -515,7 +519,6 @@ function predictAvailability() {
       var temp_c = parseFloat(weatherData.temp_c);
       var wind_mph = parseFloat(weatherData.wind_mph);
       var precip_mm = parseFloat(weatherData.precip_mm);
-     // var hours = parseFloat(document.getElementById('hours').value); //TODO need to change the hours
 
       var requestData = {
           stationid: stationid,
@@ -535,7 +538,7 @@ function predictAvailability() {
       })
       .then(response => {
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error('Network response for prediction fetch was not ok');
           }
           return response.json();
       })
