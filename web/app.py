@@ -3,6 +3,7 @@ import mysql.connector
 import pickle
 import pandas as pd 
 import predict
+import occupancy 
 
 app = Flask(__name__)
 
@@ -142,13 +143,13 @@ def get_recentoccupancy(stationid):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-#*not working 
-@app.route('/predict', methods = ['POST']) # id of station needs to be included here
+ 
+@app.route('/predict/<int:stationid>', methods=['POST']) # id of station needs to be included here
 def predictAvailability(stationid):
     try:
         data = request.get_json()
-        stationid = 1 
-        # stationid = data.get('stationid') #TODO need to use input somehow here 
+        
+        # stationid = data.get('stationid') 
         temp_c = float(data.get('temp_c', 0))
         wind_mph = float(data.get('wind_mph', 0))
         precip_mm = float(data.get('precip_mm', 0))
@@ -182,6 +183,7 @@ def get_weather():
             return jsonify({'error': 'No weather data found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
 
 
 

@@ -568,4 +568,7 @@ document.getElementById("predictButton").addEventListener('click', predictAvaila
 
 //start of occupancy script 
 
+
+
+
 //end of occupancy script 
