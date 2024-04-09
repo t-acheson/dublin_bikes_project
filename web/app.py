@@ -1,5 +1,7 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import mysql.connector
+import pickle
+import pandas as pd 
 
 app = Flask(__name__)
 
@@ -16,6 +18,7 @@ DATABASE_CONFIG = {
 def connect_db():
     return mysql.connector.connect(**DATABASE_CONFIG)
 
+# ! This Route works DO NOT TOUCH 
 # API route to retrieve stations data
 @app.route('/')
 def get_data():
@@ -48,7 +51,6 @@ def get_data():
                 'name': station[4],
                 'position_lat': station[5],
                 'position_lng': station[6],
-                # Add more fields if needed
             }
             stations_list.append(station_dict)
 
@@ -80,8 +82,9 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# ! this route works DO NOT TOUCH
 # API route to retrieve availability data
-@app.route('/occupancy/stationid') # id of station needs to be included here
+@app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
     try:
         # Connect to the MySQL database
@@ -93,7 +96,7 @@ def get_occupancy(stationid):
         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
         # Execute the query to select all occupancy
-        cur.execute('SELECT * FROM availability where number = {} LIMIT 1;'.format(id))
+        cur.execute('SELECT available_bikes, available_bike_stands, last_update FROM availability where number = {} LIMIT 1;'.format(id)) 
 
         # Fetch all the results
         occupancy = cur.fetchall()
@@ -102,15 +105,80 @@ def get_occupancy(stationid):
         cur.close()
         db.close()
 
-        return jsonify({'occupancy': occupancy}) 
+        return jsonify({'occupancy': occupancy})  
+    # TODO return more info 
+    # TODO add available_bike_stands, last update to query above
+    
 
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+# API route to retrieve last 7 days availability data
+@app.route('/recentoccupancy/<stationid>') # id of station needs to be included here
+def get_recentoccupancy(stationid):
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+
+        # Execute the query to select all occupancy
+        cur.execute('SELECT available_bikes, available_bikes_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
+
+        # Fetch all the results
+        occupancy = cur.fetchall()
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        return jsonify({'occupancy': occupancy})
+    
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 
-#API route for ML model 
-    
-#end of ML model route 
+@app.route('/predict', methods = ['POST']) # id of station needs to be included here
+def predictAvailability(stationid):
+    data = request.get_json()
+    stationid = 1 
+    # stationid = data.get('stationid') #TODO need to use input somehow here 
+    temp_c = float(data.get('temp_c', 0))
+    wind_mph = float(data.get('wind_mph', 0))
+    precip_mm = float(data.get('precip_mm', 0))
+    hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+
+    predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
+    return jsonify({'predicted_bikes': predicted_bikes})
+
+
+# ! this route works DO NOT TOUCH 
+# weather only route so i can use for predictions 
+@app.route('/weather', methods=['POST'])
+def get_weather():
+    try:
+        db = connect_db()
+        cur = db.cursor()
+        cur.execute('SELECT * FROM weather_data ORDER BY id DESC LIMIT 1;')
+        weather = cur.fetchall()
+        cur.close()
+        db.close()
+
+        if weather:
+            return jsonify({
+                'temp_c': weather[0][1],
+                'wind_mph': weather[0][3],
+                'precip_mm': weather[0][5]
+            })
+        else:
+            return jsonify({'error': 'No weather data found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
