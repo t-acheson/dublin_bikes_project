@@ -149,7 +149,7 @@ def predictAvailability(stationid):
     try:
         data = request.get_json()
         
-        # stationid = data.get('stationid') 
+        stationid = int(data.get('stationid'))
         temp_c = float(data.get('temp_c', 0))
         wind_mph = float(data.get('wind_mph', 0))
         precip_mm = float(data.get('precip_mm', 0))
