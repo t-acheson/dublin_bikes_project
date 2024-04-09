@@ -145,16 +145,19 @@ def get_recentoccupancy(stationid):
 #*not working 
 @app.route('/predict', methods = ['POST']) # id of station needs to be included here
 def predictAvailability(stationid):
-    data = request.get_json()
-    stationid = 1 
-    # stationid = data.get('stationid') #TODO need to use input somehow here 
-    temp_c = float(data.get('temp_c', 0))
-    wind_mph = float(data.get('wind_mph', 0))
-    precip_mm = float(data.get('precip_mm', 0))
-    hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+    try:
+        data = request.get_json()
+        stationid = 1 
+        # stationid = data.get('stationid') #TODO need to use input somehow here 
+        temp_c = float(data.get('temp_c', 0))
+        wind_mph = float(data.get('wind_mph', 0))
+        precip_mm = float(data.get('precip_mm', 0))
+        hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
 
-    predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
-    return jsonify({'predicted_bikes': predicted_bikes})
+        predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
+        return jsonify({'predicted_bikes': predicted_bikes})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 # ! this route works DO NOT TOUCH 

@@ -537,7 +537,7 @@ function predictAvailability() {
       };
 
       // calling prediction
-      fetch('/predict', {
+      fetch('/predict/${stationid}', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
