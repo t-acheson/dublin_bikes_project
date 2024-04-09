@@ -154,8 +154,8 @@ async function initMap() {
     });
 
 
- 
-    AddInfoWindow(marker, map, stationsData[i].number);
+ //calling window based on number 
+   AddInfoWindow(marker, map, stationsData[i].number);
   }
   FillStations(stationsData);
 
