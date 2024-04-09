@@ -136,6 +136,9 @@ async function initMap() {
     document.getElementById('travelForm').style.display = 'block';
   });
 
+
+ //start of bike station marker functions 
+
   //marker for bike station locations
   for (var i = 0; i < stationsData.length; i++) {
     const marker = new google.maps.Marker({
@@ -149,7 +152,10 @@ async function initMap() {
         scaledSize: new google.maps.Size(35,35)
       }
     });
-    AddInfoWindow(marker, map, stationsData[i]);
+
+
+ 
+    AddInfoWindow(marker, map, stationsData[i].number);
   }
   FillStations(stationsData);
 
@@ -167,17 +173,20 @@ async function initMap() {
   });
 }
 
-function AddInfoWindow(marker, map, markerData) {
-  const bikeStationInfo = ` <div class="stationsInfo">
-    <h3 class="infoHeading">${markerData.name}</h3>
-    <p class="info">Status: ${markerData.status}</p>
-    <p class="info">Available Bikes: ${markerData.available_bikes}</p>
-    <p class="info">Parking: ${markerData.available_bike_stands}</p>
-    <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
+async function AddInfoWindow(marker, map, markerData) {
+
+  const liveData = await GetOccupancyData(markerData);
+
+  const liveBikeStationInfo = ` <div class="stationsInfo">
+    <h3 class="infoHeading">${liveData.name}</h3>
+    <p class="info">Status: ${liveData.status}</p>
+    <p class="info">Available Bikes: ${liveData.available_bikes}</p>
+    <p class="info">Parking: ${liveData.available_bike_stands}</p>
+    <p class="info">Banking: ${liveData.banking ? "Yes" : "No"}</p>
     </div>`;
 
   const infoWindow = new google.maps.InfoWindow({
-    content: bikeStationInfo,
+    content: liveBikeStationInfo,
   });
 
   //displaying information of bike station when the user hovers over the marker on map
@@ -193,6 +202,9 @@ function AddInfoWindow(marker, map, markerData) {
     infoWindow.close();
   });
 }
+//end of bike station marker functions 
+
+//start of async functions to fetch data 
 
 //getting static stations data from flask routen 
 // async function GetStationsData() {
@@ -215,12 +227,12 @@ function AddInfoWindow(marker, map, markerData) {
 //   }
 // }
 
-// async function GetStationsData()
-// {
-//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-//   bikesData = await bikePromise.json(); 
-//   return bikesData;
-// }
+async function GetStationsData()
+{
+  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+  bikesData = await bikePromise.json(); 
+  return bikesData;
+}
 
 async function GetOccupancyData(stationId) {
   try {
@@ -293,19 +305,13 @@ async function GetWeatherData() {
       return {};
   }
  }
+ //end of async functions to fetch data 
 
 //function to find the 5 closest stations by lat, lng and return them in a list 
 function findClosestStations(lat, lng, stationsData) {
-  //finding lat & lng of user 
-  // let location = place.geometry.location;
-  // let lat = location.lat();
-  // let lng = location.lng();
-  // console.log("lat: " + lat ); //*testing purposes only 
-  // console.log("lng: " + lng); 
+
   const stationList = []; 
-
-
-  //error handing for bikesData //TODO need to handle better once actually working 
+  //error handing for bikesData 
   if (!stationsData) {
     console.log('!!! stationsData is undefined or null !!!');
     return; // Exit the function if stationsData is not valid
@@ -353,7 +359,8 @@ function showPopup(closestStations) {
   // Show the popup
   document.getElementById('popup-window').style.display = 'block';
  }
- 
+ //end of closest stations functions 
+
  //This function gets the route from point A to point B using cycling as mode of transport
  function GetRoute(sourceLat, sourceLng, destLat, destLng)
  {
