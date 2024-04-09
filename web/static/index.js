@@ -215,12 +215,12 @@ function AddInfoWindow(marker, map, markerData) {
 //   }
 // }
 
-async function GetStationsData()
-{
-  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-  bikesData = await bikePromise.json(); 
-  return bikesData;
-}
+// async function GetStationsData()
+// {
+//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+//   bikesData = await bikePromise.json(); 
+//   return bikesData;
+// }
 
 async function GetOccupancyData(stationId) {
   try {
@@ -247,7 +247,32 @@ async function GetOccupancyData(stationId) {
       return {};
   }
 }
-// 
+
+async function GetRecentOccupancyData(stationId) {
+  try {
+    // Fetch last 7 days occupancy data from the specified endpoint
+    const response = await fetch(`http://localhost:5000/recentoccupancy/${stationId}`, { method: "GET", mode: "cors" });
+
+    // Check if the response is successful
+    if (!response.ok) {
+      // If not, throw an error with the response status
+      throw new Error(`HTTP error! status: ${response.status}`);
+  }
+
+    // Parse the response as JSON
+    const recentoccupancyData = await response.json();
+
+    // Log the parsed JSON data
+    console.log(recentoccupancyData);
+
+    // Return the parsed JSON data
+    return recentoccupancyData;
+} catch (error) {
+    // If there's an error, log the error message and return an empty object
+    console.error("Failed to fetch recent occupancy data:", error);
+    return {};
+}
+}
 
 async function GetWeatherData() {
   try {
