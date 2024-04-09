@@ -58,15 +58,19 @@
         </div>
         <!-- end of closest station pop up  -->
 
-        <!-- journey planning form  -->
-        <div id="journeyForm">
-            <form>
-                <h3 style="text-align: center;">Journey Planner</h3>
-                <input type="text" id="source" name="source" placeholder="Choose Starting Point">
-                <input type="text" id="destination" name="destination" placeholder="Choose Destination">
-                <input type="time" id="time" name="time">
-                <input type="date" id="date" name="date">&nbsp;
-            </form>
+         <!--Form where user is prompted to select two stations from list of options given-->
+         <div id="travelForm">
+            <label for="dropdown1">Start</label>
+            <select name="dropdown1" id="sourceDropdown">
+                <option selected value="">Source</option>
+            </select>
+            <label for="dropdown2">End</label>
+            <select name="dropdown2" id="destDropdown">
+                <option selected value="">Destination</option>
+            </select>
+            <Button id="showRoute">Show Route</Button>
+            <Button id="close">Close</Button>
+        </div>
             <label for="stationidInput">Station ID:</label>
                 <input type="number" id="stationidInput" name="stationidInput" min="1" required><br><br>
 
