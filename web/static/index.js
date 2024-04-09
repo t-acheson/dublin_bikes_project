@@ -220,7 +220,7 @@ async function GetOccupancyData(stationId) {
       return {};
   }
 }
-
+// 
 
 
 async function GetWeatherData() {

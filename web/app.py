@@ -8,7 +8,7 @@ app = Flask(__name__)
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -96,7 +96,7 @@ def get_occupancy(stationid):
         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
         # Execute the query to select all occupancy
-        cur.execute('SELECT available_bikes FROM availability where number = {} LIMIT 1;'.format(id)) 
+        cur.execute('SELECT available_bikes, available_bike_stands, last_update FROM availability where number = {} LIMIT 1;'.format(id)) 
 
         # Fetch all the results
         occupancy = cur.fetchall()
@@ -107,11 +107,39 @@ def get_occupancy(stationid):
 
         return jsonify({'occupancy': occupancy})  
     # TODO return more info 
+    # TODO add available_bike_stands, last update to query above
     
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-  
+    
+
+# API route to retrieve last 7 days availability data
+@app.route('/recentoccupancy/<stationid>') # id of station needs to be included here
+def get_recentoccupancy(stationid):
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+
+        # Execute the query to select all occupancy
+        cur.execute('SELECT available_bikes, available_bikes_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
+
+        # Fetch all the results
+        occupancy = cur.fetchall()
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        return jsonify({'occupancy': occupancy})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/predict', methods = ['POST']) # id of station needs to be included here
