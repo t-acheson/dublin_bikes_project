@@ -26,6 +26,8 @@ def get_stations():
                 result = connection.execute(text(query))
                 stations_data = [dict(row) for row in result.fetchall()]
 
+                #fetch rows where number = 15 AND most recent entry 
+                
             # Return the station data as JSON
             return jsonify(stations_data)
 

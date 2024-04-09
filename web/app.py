@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -106,6 +106,11 @@ def get_occupancy(stationid):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+#API route for ML model 
+    
+#end of ML model route 
 
 if __name__ == '__main__':
     app.run(debug=True)

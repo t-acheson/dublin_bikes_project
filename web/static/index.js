@@ -131,6 +131,7 @@ async function initMap() {
 
     //TODO: please add the function to get 5 closest stations here for the searched location
     map.fitBounds(place.geometry.viewport);
+     findClosestStations(place, bikesData);
   });
 
    
@@ -338,6 +339,8 @@ async function GetLatAndLang(lat, lng)
 
 function AddInfoWindow(marker, map, markerData)
 {
+  //TODO for i in stattions data let number = number in availability table & use that table instead 
+
   const bikeStationInfo = 
   ` <div class="stationsInfo">
     <h3 class="infoHeading">${markerData.name}</h3>
@@ -365,15 +368,14 @@ function AddInfoWindow(marker, map, markerData)
   })
 }
 
-async function GetStationsData()
+async function GetStationsData() //TODO change from api to db 
 {
   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
   bikesData = await bikePromise.json(); 
-  // console.log(bikesData);
   return bikesData;
 }
 
-async function GetWeatherData()
+async function GetWeatherData() //TODO change to weather table not directly from weather API
 {
   const weatherPromise = await fetch("http://api.weatherapi.com/v1/current.json?key=0f5a8ade5f024e70a34123035241602&q=dublin",{mode:"cors"});
   wData = await weatherPromise.json();
@@ -406,7 +408,7 @@ async function GetLatAndLang(lat, lng)
   let location = place.geometry.location;
   let lat = location.lat();
   let lng = location.lng();
-  // console.log("lat: " + lat ); //*testing purposes only 
+  console.log("lat: " + lat ); //*testing purposes only 
   // console.log("lng: " + lng); 
   const stationList = []; 
 
@@ -428,26 +430,24 @@ async function GetLatAndLang(lat, lng)
     let lngDiff = stationData.position.lng - lng;
     let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
     let stationID = stationData.number; 
+    let stationName = stationData.name;
 
     // Store the station ID and its distance from the given latitude and longitude
-    stationList.push({station: stationID, distance: distance});
+    stationList.push({station: stationID, name: stationName, distance: distance});
   } else {
     console.error('stationData or its position is undefined');
   }
 });
-  // console.log(stationList) //*testing purposes 
    
-    // Sort by distance and take the first 5 closest 
   // Sort by distance and take the first 5 closest 
 stationList.sort((a, b) => a.distance - b.distance);
 const closestStations = stationList.slice(0, 5);
 
-
   // Return the closest stations in pop up window 
   showPopup(closestStations);
- 
  }
 //end of findClosestStation function 
+
 
 //popup for closest stations
 function showPopup(closestStations) {
@@ -455,7 +455,7 @@ function showPopup(closestStations) {
   // Generate the content for the popup
   let content = '';
   closestStations.forEach(station => {
-     content += `<p>Station ID: ${station.station}, Distance: ${station.distance} meters</p>`;
+     content += `<p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>`;
   });
  
   // Set the content of the popup
@@ -474,15 +474,18 @@ function showPopup(closestStations) {
  });
  
 
-//   // Assuming findClosestStations is called and returns closestStations
-// let closestStations = findClosestStations(lat, lng);
-// displayClosestStations(closestStations);
+//journey planner functions start 
 
+//TODO get user input from start
 
+//TODO get user input from destination 
 
-//make window 
+//TODO get user input from time choice 
 
-//list 5 stations on window 
+//TODO get user input from date 
 
-//hover option to show details of each station 
+//TODO using inputs get ML prediction for start station 
 
+//TODO using inputs get ML prediction for destination station 
+//? might end to set time difference for this? 
+//end of journey planner functions
