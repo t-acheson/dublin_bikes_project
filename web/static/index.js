@@ -510,7 +510,13 @@ function predictAvailability() {
   console.log(" prediction test log 2")
 
   // Fetch weather data
-  fetch('/weather')
+  fetch('/weather', {
+    method: 'POST', // Send a POST request
+    headers: {
+      'Content-Type': 'application/json' // Specify content type as JSON
+    },
+    body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
+  })
   .then(response => {
       if (!response.ok) {
           throw new Error('Network response for weather data was not ok');
