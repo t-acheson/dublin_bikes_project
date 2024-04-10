@@ -493,15 +493,6 @@ function getInfoWindowContent(stationName, stationsData) {
 }
 
 
-//TODO get user input from time choice 
-
-//TODO get user input from date 
-
-//TODO using inputs get ML prediction for start station 
-
-//TODO using inputs get ML prediction for destination station 
-//? might end to set time difference for this? 
-//end of journey planner functions
 
 
 //predict bike availability function 
@@ -616,7 +607,6 @@ document.getElementById("predictButtonSource").addEventListener('click', functio
   predictAvailability(selectedHour);
  });
 }
-
 //end of prediction function & listener 
 
 //start of occupancy script 
