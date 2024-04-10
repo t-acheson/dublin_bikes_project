@@ -238,7 +238,8 @@ async function GetStationsData()
 async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
-      const response = await fetch(`http://localhost:5000/occupancy/${stationId}`, { method: "GET", mode: "cors" });
+      
+       const response = await fetch(`http://localhost:5000/occupancy/${stationId}`, { method: "GET", mode: "cors" });
 
       // Check if the response is successful
       if (!response.ok) {
@@ -492,40 +493,6 @@ function getInfoWindowContent(stationName, stationsData) {
 }
 
 
-// Function to show journey details including info window content and predict button
-function showJourneyDetails(sourceInfo, destInfo) {
-  const journeyDetails = document.getElementById("journey-details");
- const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
-
-  journeyDetails.innerHTML = `
-    <h2>Journey Details</h2>
-    <div style="display: flex; justify-content: space-between;">
-      <div>
-        <h3>Source Station</h3>
-        ${sourceInfo}
-      </div>
-      <div>
-        <h3>Destination Station</h3>
-        ${destInfo}
-      </div>
-    </div>
-    <div style="display: flex; justify-content: space-between;">
-      <div>
-        <h3>Predicted Available Bikes at Source Station</h3>
-        ${hoursDropdown('Source')}
-        <button onclick="predictAvailability('source')">Predict Bikes</button>
-        <span id="predictedBikesSource">Loading...</span>
-      </div>
-      <div>
-        <h3>Predicted Available Bikes at Destination Station</h3>
-        ${hoursDropdown('Destination')}
-        <button onclick="predictAvailability('destination')">Predict Bikes</button>
-        <span id="predictedBikesDestination">Loading...</span>
-      </div>
-    </div>
- `;
-}
-
 //TODO get user input from time choice 
 
 //TODO get user input from date 
@@ -538,14 +505,14 @@ function showJourneyDetails(sourceInfo, destInfo) {
 
 
 //predict bike availability function 
-function predictAvailability() {
+function predictAvailability(selectedHour) {
   console.log("Predict button clicked");
-
+  console.log(selectedHour + "selected hour")
   //currently getting stationid & hours from user input, might have to change depending on Ritwiks journey planner 
-  var stationid = parseInt(document.getElementById('stationidInput').value);
-  var hours = parseInt(document.getElementById('hoursInput').value);
-
-  // var stationid = 1; // Placeholder for now, //TODO need to use user input 
+  // var stationid = parseInt(document.getElementById('stationidInput').value);
+  // var hours = parseInt(document.getElementById('hoursInput').value);
+  let hours = selectedHour
+  var stationid = 1; // Placeholder for now, //TODO need to use user input 
   // var hours = 10; //placeholder for now //todo need to get user input 
 
   console.log(" prediction test log 2")
@@ -603,8 +570,53 @@ function predictAvailability() {
   });
 }
 
-//event listener to call prediction function
-document.getElementById("predictButton").addEventListener('click', predictAvailability);
+
+// Function to show journey details including info window content and predict button
+function showJourneyDetails(sourceInfo, destInfo) {
+  const journeyDetails = document.getElementById("journey-details");
+ const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
+
+ journeyDetails.innerHTML = `
+ <h2>Journey Details</h2>
+ <div style="display: flex; justify-content: space-between;">
+   <div>
+     <h3>Source Station</h3>
+     ${sourceInfo}
+   </div>
+   <div>
+     <h3>Destination Station</h3>
+     ${destInfo}
+   </div>
+ </div>
+ <div style="display: flex; justify-content: space-between;">
+   <div>
+     <h3>Predicted Available Bikes at Source Station</h3>
+     ${hoursDropdown('Source', '')}
+     <button id="predictButtonSource">Predict Bikes</button>
+     <span id="predictedBikesSource">Loading...</span>
+   </div>
+   <div>
+     <h3>Predicted Available Bikes at Destination Station</h3>
+     ${hoursDropdown('Destination', '')}
+     <button id="predictButtonDestination">Predict Bikes</button>
+     <span id="predictedBikesDestination">Loading...</span>
+   </div>
+ </div>
+`;
+
+// Event listener for the "Predict Bikes" button at the source station
+document.getElementById("predictButtonSource").addEventListener('click', function() {
+  var selectedHour = document.getElementById("hoursInputSource").value;
+  predictAvailability(selectedHour);
+ });
+ 
+ // Event listener for the "Predict Bikes" button at the destination station
+ document.getElementById("predictButtonDestination").addEventListener('click', function() {
+  var selectedHour = document.getElementById("hoursInputDestination").value;
+  predictAvailability(selectedHour);
+ });
+}
+
 //end of prediction function & listener 
 
 //start of occupancy script 
