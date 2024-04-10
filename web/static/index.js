@@ -136,6 +136,9 @@ async function initMap() {
     document.getElementById('travelForm').style.display = 'block';
   });
 
+
+ //start of bike station marker functions 
+
   //marker for bike station locations
   for (var i = 0; i < stationsData.length; i++) {
     const marker = new google.maps.Marker({
@@ -149,7 +152,10 @@ async function initMap() {
         scaledSize: new google.maps.Size(35,35)
       }
     });
-    AddInfoWindow(marker, map, stationsData[i]);
+
+
+ //calling window based on number 
+   AddInfoWindow(marker, map, stationsData[i].number);
   }
   FillStations(stationsData);
 
@@ -167,17 +173,20 @@ async function initMap() {
   });
 }
 
-function AddInfoWindow(marker, map, markerData) {
-  const bikeStationInfo = ` <div class="stationsInfo">
-    <h3 class="infoHeading">${markerData.name}</h3>
-    <p class="info">Status: ${markerData.status}</p>
-    <p class="info">Available Bikes: ${markerData.available_bikes}</p>
-    <p class="info">Parking: ${markerData.available_bike_stands}</p>
-    <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
+async function AddInfoWindow(marker, map, markerData) {
+
+  const liveData = await GetOccupancyData(markerData);
+
+  const liveBikeStationInfo = ` <div class="stationsInfo">
+    <h3 class="infoHeading">${liveData.name}</h3>
+    <p class="info">Status: ${liveData.status}</p>
+    <p class="info">Available Bikes: ${liveData.available_bikes}</p>
+    <p class="info">Parking: ${liveData.available_bike_stands}</p>
+    <p class="info">Banking: ${liveData.banking ? "Yes" : "No"}</p>
     </div>`;
 
   const infoWindow = new google.maps.InfoWindow({
-    content: bikeStationInfo,
+    content: liveBikeStationInfo,
   });
 
   //displaying information of bike station when the user hovers over the marker on map
@@ -193,6 +202,9 @@ function AddInfoWindow(marker, map, markerData) {
     infoWindow.close();
   });
 }
+//end of bike station marker functions 
+
+//start of async functions to fetch data 
 
 //getting static stations data from flask routen 
 // async function GetStationsData() {
@@ -215,12 +227,12 @@ function AddInfoWindow(marker, map, markerData) {
 //   }
 // }
 
-// async function GetStationsData()
-// {
-//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-//   bikesData = await bikePromise.json(); 
-//   return bikesData;
-// }
+async function GetStationsData()
+{
+  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+  bikesData = await bikePromise.json(); 
+  return bikesData;
+}
 
 async function GetOccupancyData(stationId) {
   try {
@@ -293,19 +305,13 @@ async function GetWeatherData() {
       return {};
   }
  }
+ //end of async functions to fetch data 
 
 //function to find the 5 closest stations by lat, lng and return them in a list 
 function findClosestStations(lat, lng, stationsData) {
-  //finding lat & lng of user 
-  // let location = place.geometry.location;
-  // let lat = location.lat();
-  // let lng = location.lng();
-  // console.log("lat: " + lat ); //*testing purposes only 
-  // console.log("lng: " + lng); 
+
   const stationList = []; 
-
-
-  //error handing for bikesData //TODO need to handle better once actually working 
+  //error handing for bikesData 
   if (!stationsData) {
     console.log('!!! stationsData is undefined or null !!!');
     return; // Exit the function if stationsData is not valid
@@ -353,7 +359,8 @@ function showPopup(closestStations) {
   // Show the popup
   document.getElementById('popup-window').style.display = 'block';
  }
- 
+ //end of closest stations functions 
+
  //This function gets the route from point A to point B using cycling as mode of transport
  function GetRoute(sourceLat, sourceLng, destLat, destLng)
  {
@@ -421,9 +428,14 @@ function FillStations(stationsData)
 
   const showRouteButton = document.getElementById("showRoute");
 
+
   showRouteButton.addEventListener("click", ()=>{
     PlanJourney(source, destination, stationsData);
-    document.getElementById("travelForm").style.display = 'none';
+    // document.getElementById("travelForm").style.display = 'none';
+    const travelForm = document.getElementById("travelForm");
+    travelForm.style.display = 'block';
+    const journeyDetails = document.getElementById("journey-details");
+    travelForm.appendChild(journeyDetails);
   });
 }
 
@@ -450,9 +462,55 @@ function PlanJourney(source, destination, stationsData)
   if(sourceLat && sourceLng && destLat && destLng)
   {
     GetRoute(sourceLat, sourceLng, destLat, destLng);
+
+    // Get information from info window for both source and destination
+    const sourceInfo = getInfoWindowContent(source, stationsData);
+    const destInfo = getInfoWindowContent(destination, stationsData);
+
+    // Show journey details including info window content
+    showJourneyDetails(sourceInfo, destInfo);
   }
 }
 
+
+// Function to get info window content for a station
+function getInfoWindowContent(stationName, stationsData) {
+  for (let i = 0; i < stationsData.length; i++) {
+    if (stationName == stationsData[i].name) {
+      const liveData = GetOccupancyData(stationsData[i].number);
+      const infoContent = `
+        <h3>${stationsData[i].name}</h3>
+        <p>Status: ${liveData.status}</p>
+        <p>Available Bikes: ${liveData.available_bikes}</p>
+        <p>Parking: ${liveData.available_bike_stands}</p>
+        <p>Banking: ${liveData.banking ? "Yes" : "No"}</p>
+      `;
+      return infoContent;
+    }
+  }
+}
+
+
+// Function to show journey details including info window content and predict button
+function showJourneyDetails(sourceInfo, destInfo) {
+  const journeyDetails = document.getElementById("journey-details");
+  journeyDetails.innerHTML = `
+    <h2>Journey Details</h2>
+    <div>
+      <h3>Source Station</h3>
+      ${sourceInfo}
+    </div>
+    <div>
+      <h3>Destination Station</h3>
+      ${destInfo}
+    </div>
+    <div>
+      <h3>Predicted Available Bikes</h3>
+      <button id="predictButton" onclick="predictAvailability()">Predict Bikes</button>
+      <span id="predictedBikes">Loading...</span>
+    </div>
+  `;
+}
 
 //TODO get user input from time choice 
 
@@ -468,15 +526,27 @@ function PlanJourney(source, destination, stationsData)
 //predict bike availability function 
 function predictAvailability() {
   console.log("Predict button clicked");
-  var stationid = 1; // Placeholder for now, //TODO need to use user input 
-  var hours = 10; //placeholder for now //todo need to get user input 
 
-  console.log("123")
+  //currently getting stationid & hours from user input, might have to change depending on Ritwiks journey planner 
+  var stationid = parseInt(document.getElementById('stationidInput').value);
+  var hours = parseInt(document.getElementById('hoursInput').value);
+
+  // var stationid = 1; // Placeholder for now, //TODO need to use user input 
+  // var hours = 10; //placeholder for now //todo need to get user input 
+
+  console.log(" prediction test log 2")
+
   // Fetch weather data
-  fetch('/weather')
+  fetch('/weather', {
+    method: 'POST', // Send a POST request
+    headers: {
+      'Content-Type': 'application/json' // Specify content type as JSON
+    },
+    body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
+  })
   .then(response => {
       if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response for weather data was not ok');
       }
       return response.json();
   })
@@ -484,7 +554,6 @@ function predictAvailability() {
       var temp_c = parseFloat(weatherData.temp_c);
       var wind_mph = parseFloat(weatherData.wind_mph);
       var precip_mm = parseFloat(weatherData.precip_mm);
-     // var hours = parseFloat(document.getElementById('hours').value); //TODO need to change the hours
 
       var requestData = {
           stationid: stationid,
@@ -495,7 +564,7 @@ function predictAvailability() {
       };
 
       // calling prediction
-      fetch('/predict', {
+      fetch('/predict/${stationid}', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -504,7 +573,7 @@ function predictAvailability() {
       })
       .then(response => {
           if (!response.ok) {
-              throw new Error('Network response was not ok');
+              throw new Error('Network response for prediction fetch was not ok');
           }
           return response.json();
       })
@@ -520,4 +589,13 @@ function predictAvailability() {
   });
 }
 
+//event listener to call prediction function
 document.getElementById("predictButton").addEventListener('click', predictAvailability);
+//end of prediction function & listener 
+
+//start of occupancy script 
+
+
+
+
+//end of occupancy script 
