@@ -4,8 +4,11 @@ import pickle
 import pandas as pd 
 import predict
 import occupancy 
+from flask_cors import CORS 
+# ! have to pip install flask_cors on each machine
 
 app = Flask(__name__)
+CORS(app)
 
 # Database configuration
 DATABASE_CONFIG = {
@@ -108,9 +111,7 @@ def get_occupancy(stationid):
         db.close()
 
         return jsonify({'occupancy': occupancy})  
-    # TODO return more info 
-    # TODO add available_bike_stands, last update to query above
-    
+   
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
