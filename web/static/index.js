@@ -234,6 +234,7 @@ async function GetStationsData()
   return bikesData;
 }
 
+//TODO this function not currently working
 async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint

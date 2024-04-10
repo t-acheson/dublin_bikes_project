@@ -87,7 +87,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# ! this route works DO NOT TOUCH
+# TODO this route not currently working with JS 
 # API route to retrieve availability data
 @app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
