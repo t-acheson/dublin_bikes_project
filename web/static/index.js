@@ -486,7 +486,7 @@ function getInfoWindowContent(stationName, stationsData) {
 }
 
 
-// Function to show journey details including info window content
+// Function to show journey details including info window content and predict button
 function showJourneyDetails(sourceInfo, destInfo) {
   const journeyDetails = document.getElementById("journey-details");
   journeyDetails.innerHTML = `
@@ -498,6 +498,11 @@ function showJourneyDetails(sourceInfo, destInfo) {
     <div>
       <h3>Destination Station</h3>
       ${destInfo}
+    </div>
+    <div>
+      <h3>Predicted Available Bikes</h3>
+      <button id="predictButton" onclick="predictAvailability()">Predict Bikes</button>
+      <span id="predictedBikes">Loading...</span>
     </div>
   `;
 }
