@@ -495,6 +495,8 @@ function getInfoWindowContent(stationName, stationsData) {
 // Function to show journey details including info window content and predict button
 function showJourneyDetails(sourceInfo, destInfo) {
   const journeyDetails = document.getElementById("journey-details");
+ const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
+
   journeyDetails.innerHTML = `
     <h2>Journey Details</h2>
     <div style="display: flex; justify-content: space-between;">
@@ -510,11 +512,13 @@ function showJourneyDetails(sourceInfo, destInfo) {
     <div style="display: flex; justify-content: space-between;">
       <div>
         <h3>Predicted Available Bikes at Source Station</h3>
+        ${hoursDropdown('Source')}
         <button onclick="predictAvailability('source')">Predict Bikes</button>
         <span id="predictedBikesSource">Loading...</span>
       </div>
       <div>
         <h3>Predicted Available Bikes at Destination Station</h3>
+        ${hoursDropdown('Destination')}
         <button onclick="predictAvailability('destination')">Predict Bikes</button>
         <span id="predictedBikesDestination">Loading...</span>
       </div>
