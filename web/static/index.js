@@ -428,9 +428,14 @@ function FillStations(stationsData)
 
   const showRouteButton = document.getElementById("showRoute");
 
+
   showRouteButton.addEventListener("click", ()=>{
     PlanJourney(source, destination, stationsData);
-    document.getElementById("travelForm").style.display = 'none';
+    // document.getElementById("travelForm").style.display = 'none';
+    const travelForm = document.getElementById("travelForm");
+    travelForm.style.display = 'block';
+    const journeyDetails = document.getElementById("journey-details");
+    travelForm.appendChild(journeyDetails);
   });
 }
 
