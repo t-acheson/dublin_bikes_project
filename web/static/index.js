@@ -457,9 +457,50 @@ function PlanJourney(source, destination, stationsData)
   if(sourceLat && sourceLng && destLat && destLng)
   {
     GetRoute(sourceLat, sourceLng, destLat, destLng);
+
+    // Get information from info window for both source and destination
+    const sourceInfo = getInfoWindowContent(source, stationsData);
+    const destInfo = getInfoWindowContent(destination, stationsData);
+
+    // Show journey details including info window content
+    showJourneyDetails(sourceInfo, destInfo);
   }
 }
 
+
+// Function to get info window content for a station
+function getInfoWindowContent(stationName, stationsData) {
+  for (let i = 0; i < stationsData.length; i++) {
+    if (stationName == stationsData[i].name) {
+      const liveData = GetOccupancyData(stationsData[i].number);
+      const infoContent = `
+        <h3>${stationsData[i].name}</h3>
+        <p>Status: ${liveData.status}</p>
+        <p>Available Bikes: ${liveData.available_bikes}</p>
+        <p>Parking: ${liveData.available_bike_stands}</p>
+        <p>Banking: ${liveData.banking ? "Yes" : "No"}</p>
+      `;
+      return infoContent;
+    }
+  }
+}
+
+
+// Function to show journey details including info window content
+function showJourneyDetails(sourceInfo, destInfo) {
+  const journeyDetails = document.getElementById("journey-details");
+  journeyDetails.innerHTML = `
+    <h2>Journey Details</h2>
+    <div>
+      <h3>Source Station</h3>
+      ${sourceInfo}
+    </div>
+    <div>
+      <h3>Destination Station</h3>
+      ${destInfo}
+    </div>
+  `;
+}
 
 //TODO get user input from time choice 
 
