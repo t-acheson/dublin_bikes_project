@@ -497,20 +497,29 @@ function showJourneyDetails(sourceInfo, destInfo) {
   const journeyDetails = document.getElementById("journey-details");
   journeyDetails.innerHTML = `
     <h2>Journey Details</h2>
-    <div>
-      <h3>Source Station</h3>
-      ${sourceInfo}
+    <div style="display: flex; justify-content: space-between;">
+      <div>
+        <h3>Source Station</h3>
+        ${sourceInfo}
+      </div>
+      <div>
+        <h3>Destination Station</h3>
+        ${destInfo}
+      </div>
     </div>
-    <div>
-      <h3>Destination Station</h3>
-      ${destInfo}
+    <div style="display: flex; justify-content: space-between;">
+      <div>
+        <h3>Predicted Available Bikes at Source Station</h3>
+        <button onclick="predictAvailability('source')">Predict Bikes</button>
+        <span id="predictedBikesSource">Loading...</span>
+      </div>
+      <div>
+        <h3>Predicted Available Bikes at Destination Station</h3>
+        <button onclick="predictAvailability('destination')">Predict Bikes</button>
+        <span id="predictedBikesDestination">Loading...</span>
+      </div>
     </div>
-    <div>
-      <h3>Predicted Available Bikes</h3>
-      <button id="predictButton" onclick="predictAvailability()">Predict Bikes</button>
-      <span id="predictedBikes">Loading...</span>
-    </div>
-  `;
+ `;
 }
 
 //TODO get user input from time choice 
