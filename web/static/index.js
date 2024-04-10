@@ -496,16 +496,28 @@ function getInfoWindowContent(stationName, stationsData) {
 
 
 //predict bike availability function 
-function predictAvailability(selectedHour) {
+function predictAvailability(selectedHour, mode, occupancyData) {
   console.log("Predict button clicked");
   console.log(selectedHour + "selected hour")
-  //currently getting stationid & hours from user input, might have to change depending on Ritwiks journey planner 
-  // var stationid = parseInt(document.getElementById('stationidInput').value);
-  // var hours = parseInt(document.getElementById('hoursInput').value);
-  let hours = selectedHour
-  var stationid = 1; // Placeholder for now, //TODO need to use user input 
-  // var hours = 10; //placeholder for now //todo need to get user input 
+  
+  let hours = selectedHour //this works
+  // var stationid = 1; // Placeholder for now, //TODO need to use user input from source & destination 
 
+  //TODO need to feed in mode to the function when it is called 
+  if (mode == "source"){
+    if(source == stationsData[i].name && source!= "Source")
+    {
+      stationid = occupancyData[i].number
+    }
+  }else if (mode == "destination"){
+ if(destination == stationsData[i].name && destination != "Destination"){
+  stationid = occupancyData[i].number
+ }
+  }
+  else{
+    console.log("error incorrect mode passed to predictAvailability ")
+  }
+  
   console.log(" prediction test log 2")
 
   // Fetch weather data
