@@ -602,13 +602,13 @@ function showJourneyDetails(sourceInfo, destInfo) {
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Predicted Available Bikes at Source Station</h3>
+     <h3>Predict Available Bikes at ${sourceInfo}</h3>
      ${hoursDropdown('Source', '')}
      <button id="predictButtonSource">Predict Bikes</button>
      <span id="predictedBikesSource">Loading...</span>
    </div>
    <div>
-     <h3>Predicted Available Bikes at Destination Station</h3>
+     <h3>Predict Available Bikes at ${destInfo}</h3>
      ${hoursDropdown('Destination', '')}
      <button id="predictButtonDestination">Predict Bikes</button>
      <span id="predictedBikesDestination">Loading...</span>
