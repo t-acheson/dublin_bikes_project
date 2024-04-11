@@ -505,27 +505,14 @@ function getInfoWindowContent(stationName, stationsData) {
 
 
 //predict bike availability function 
-function predictAvailability(selectedHour, mode, occupancyData) {
+function predictAvailability(selectedHour, stationid) {
   console.log("Predict button clicked");
   console.log(selectedHour + "selected hour")
+  console.log(stationid + "station id ")
   
   let hours = selectedHour //this works
-  // var stationid = 1; // Placeholder for now, //TODO need to use user input from source & destination 
+  
 
-  //TODO need to feed in mode to the function when it is called 
-  if (mode == "source"){
-    if(source == stationsData[i].name && source!= "Source")
-    {
-      stationid = occupancyData[i].number
-    }
-  }else if (mode == "destination"){
- if(destination == stationsData[i].name && destination != "Destination"){
-  stationid = occupancyData[i].number
- }
-  }
-  else{
-    console.log("error incorrect mode passed to predictAvailability ")
-  }
   
   console.log(" prediction test log 2")
 
@@ -619,7 +606,9 @@ function showJourneyDetails(sourceInfo, destInfo) {
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', function() {
   var selectedHour = document.getElementById("hoursInputSource").value;
-  predictAvailability(selectedHour);
+  var selectedStationName = firstDropdown.value; // Assuming firstDropdown is the dropdown for source stations
+  var stationid = getStationIdByName(stationData, selectedStationName); // Function to get station ID by name
+  predictAvailability(selectedHour, stationid);
  });
  
  // Event listener for the "Predict Bikes" button at the destination station
@@ -630,9 +619,11 @@ document.getElementById("predictButtonSource").addEventListener('click', functio
 }
 //end of prediction function & listener 
 
-//start of occupancy script 
-
-
-
-
-//end of occupancy script 
+//getting station id by name 
+function getStationIdByName(stationsData, stationName) {
+  // Use the find method to search for the station with the matching name
+  const station = stationsData.find(station => station.name === stationName);
+   
+  // Return the stationid if the station is found, otherwise return null or handle as needed
+  return station ? station.number : null;
+ }
