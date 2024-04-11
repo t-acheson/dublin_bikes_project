@@ -489,10 +489,10 @@ function getInfoWindowContent(stationName, stationsData) {
       const liveData = GetOccupancyData(stationsData[i].number);
       const infoContent = `
         <h3>${stationsData[i].name}</h3>
-        <p>Status: ${liveData.status}</p>
-        <p>Available Bikes: ${liveData.available_bikes}</p>
-        <p>Parking: ${liveData.available_bike_stands}</p>
-        <p>Banking: ${liveData.banking ? "Yes" : "No"}</p>
+        <p>Status: ${stationsData[i].status}</p>
+        <p>Available Bikes: ${liveData[0]}</p>
+        <p>Parking: ${liveData[0]}</p>
+        <p>Banking: ${stationsData[i].banking ? "Yes" : "No"}</p>
       `;
       return infoContent;
     }
