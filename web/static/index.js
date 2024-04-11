@@ -249,10 +249,10 @@ async function GetOccupancyData(stationId) {
       const occupancyData = await response.json();
 
       // Log the parsed JSON data
-      console.log(occupancyData); //this is working!
+      console.log(occupancyData.occupancy[0]); //this is working!
 
       // Return the parsed JSON data
-      return occupancyData;
+      return occupancyData.occupancy[0];
   } catch (error) {
       // If there's an error, log the error message and return an empty object
       console.error("Failed to fetch occupancy data:", error);
@@ -483,15 +483,17 @@ function PlanJourney(source, destination, stationsData)
 
 
 // Function to get info window content for a station
-function getInfoWindowContent(stationName, stationsData) {
+async function getInfoWindowContent(stationName, stationsData) {
   for (let i = 0; i < stationsData.length; i++) {
     if (stationName == stationsData[i].name) {
-      const liveData = GetOccupancyData(stationsData[i].number);
+      const liveData = await GetOccupancyData(stationsData[i].number);
+      
+      
       const infoContent = `
         <h3>${stationsData[i].name}</h3>
         <p>Status: ${stationsData[i].status}</p>
         <p>Available Bikes: ${liveData[0]}</p>
-        <p>Parking: ${liveData[0]}</p>
+        <p>Parking: ${liveData[1]}</p>
         <p>Banking: ${stationsData[i].banking ? "Yes" : "No"}</p>
       `;
       return infoContent;
