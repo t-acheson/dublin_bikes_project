@@ -5,6 +5,7 @@ import pandas as pd
 import predict
 import occupancy 
 from flask_cors import CORS 
+import config
 # ! have to pip install flask_cors on each machine
 
 app = Flask(__name__)
@@ -82,7 +83,7 @@ def get_data():
         wd=weather[0][4]
         prec=weather[0][5]
         # Close the cursor and database connection
-        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list )
+        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list, maps_apikey = config.MAPS_API_KEY )
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

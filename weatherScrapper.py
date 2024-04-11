@@ -1,11 +1,12 @@
 import requests
 import json
 import mysql.connector 
+import config
 
 
 class WeatherConfig:
-    API_KEY="0f5a8ade5f024e70a34123035241602"
-    Q="dublin"
+    API_KEY=config.WEATHER_APIKEY
+    Q=config.WEATHER_CITY
     URI="http://api.weatherapi.com/v1/current.json"
 
 
