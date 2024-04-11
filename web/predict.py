@@ -1,6 +1,15 @@
 import pickle
 import pandas as pd 
 
+import os
+
+# Get the list of all directories in the current folder
+directories = [d for d in os.listdir('/') if os.path.isdir(d)]
+
+# Print the list of directories
+for directory in directories:
+    print(directory)
+
 def predict(stationid, temp_c, wind_mph, precip_mm, hours):
     # station = 2
     # Load the model
