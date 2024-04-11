@@ -490,12 +490,11 @@ async function getInfoWindowContent(stationName, stationsData) {
       
       
       const infoContent = `
-        <h3>${stationsData[i].name}</h3>
-        <p>Status: ${stationsData[i].status}</p>
-        <p>Available Bikes: ${liveData[0]}</p>
-        <p>Parking: ${liveData[1]}</p>
-        <p>Banking: ${stationsData[i].banking ? "Yes" : "No"}</p>
-      `;
+      <h3 class="infoHeading">${markerData.name}</h3>
+      <p class="info">Available Bikes: ${liveData[0]}</p>
+      <p class="info">Parking: ${liveData[1]}</p>
+      <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
+      </div>`;
       return infoContent;
     }
   }
