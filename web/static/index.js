@@ -178,11 +178,10 @@ async function AddInfoWindow(marker, map, markerData) {
   const liveData = await GetOccupancyData(markerData);
 
   const liveBikeStationInfo = ` <div class="stationsInfo">
-    <h3 class="infoHeading">${liveData.name}</h3>
-    <p class="info">Status: ${liveData.status}</p>
-    <p class="info">Available Bikes: ${liveData.available_bikes}</p>
-    <p class="info">Parking: ${liveData.available_bike_stands}</p>
-    <p class="info">Banking: ${liveData.banking ? "Yes" : "No"}</p>
+    <h3 class="infoHeading">${markerData.name}</h3>
+    <p class="info">Available Bikes: ${liveData[0]}</p>
+    <p class="info">Parking: ${liveData[1]}</p>
+    <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
     </div>`;
 
   const infoWindow = new google.maps.InfoWindow({
@@ -234,7 +233,6 @@ async function GetStationsData()
   return bikesData;
 }
 
-//TODO this function not currently working
 async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
@@ -251,7 +249,7 @@ async function GetOccupancyData(stationId) {
       const occupancyData = await response.json();
 
       // Log the parsed JSON data
-      console.log(occupancyData);
+      console.log(occupancyData); //this is working!
 
       // Return the parsed JSON data
       return occupancyData;
