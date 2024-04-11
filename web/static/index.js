@@ -352,7 +352,16 @@ function showPopup(closestStations) {
   // Generate the content for the popup
   let content = '';
   closestStations.forEach(station => {
-     content += `<p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>`;
+    content += `
+    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>
+    <div class="dropdown">
+      <button>Average Occupancy</button>
+      <div class="dropdown-content">
+        <p>Barchart to go here</p>
+      </div>
+    </div>
+   
+  `;
   });
  
   // Set the content of the popup
