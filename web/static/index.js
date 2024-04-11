@@ -178,11 +178,10 @@ async function AddInfoWindow(marker, map, markerData) {
   const liveData = await GetOccupancyData(markerData);
 
   const liveBikeStationInfo = ` <div class="stationsInfo">
-    <h3 class="infoHeading">${liveData.name}</h3>
-    <p class="info">Status: ${liveData.status}</p>
-    <p class="info">Available Bikes: ${liveData.available_bikes}</p>
-    <p class="info">Parking: ${liveData.available_bike_stands}</p>
-    <p class="info">Banking: ${liveData.banking ? "Yes" : "No"}</p>
+    <h3 class="infoHeading">${markerData.name}</h3>
+    <p class="info">Available Bikes: ${liveData[0]}</p>
+    <p class="info">Parking: ${liveData[1]}</p>
+    <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
     </div>`;
 
   const infoWindow = new google.maps.InfoWindow({
@@ -234,7 +233,6 @@ async function GetStationsData()
   return bikesData;
 }
 
-//TODO this function not currently working
 async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
@@ -251,10 +249,10 @@ async function GetOccupancyData(stationId) {
       const occupancyData = await response.json();
 
       // Log the parsed JSON data
-      console.log(occupancyData);
-
+      // console.log(occupancyData.occupancy[0]); //this is working!
+      
       // Return the parsed JSON data
-      return occupancyData;
+      return occupancyData.occupancy[0];
   } catch (error) {
       // If there's an error, log the error message and return an empty object
       console.error("Failed to fetch occupancy data:", error);
@@ -450,7 +448,7 @@ function FillStations(stationsData)
   });
 }
 
-function PlanJourney(source, destination, stationsData)
+async function PlanJourney(source, destination, stationsData)
 {
   var sourceLat, sourceLng, destLat, destLng;
 
@@ -475,8 +473,8 @@ function PlanJourney(source, destination, stationsData)
     GetRoute(sourceLat, sourceLng, destLat, destLng);
 
     // Get information from info window for both source and destination
-    const sourceInfo = getInfoWindowContent(source, stationsData);
-    const destInfo = getInfoWindowContent(destination, stationsData);
+    const sourceInfo = await getInfoWindowContent(source, stationsData);
+    const destInfo = await getInfoWindowContent(destination, stationsData);
 
     // Show journey details including info window content
     showJourneyDetails(sourceInfo, destInfo);
@@ -485,18 +483,15 @@ function PlanJourney(source, destination, stationsData)
 
 
 // Function to get info window content for a station
-function getInfoWindowContent(stationName, stationsData) {
+async function getInfoWindowContent(stationName, stationsData) {
   for (let i = 0; i < stationsData.length; i++) {
     if (stationName == stationsData[i].name) {
-      const liveData = GetOccupancyData(stationsData[i].number);
-      const infoContent = `
-        <h3>${stationsData[i].name}</h3>
-        <p>Status: ${liveData.status}</p>
-        <p>Available Bikes: ${liveData.available_bikes}</p>
-        <p>Parking: ${liveData.available_bike_stands}</p>
-        <p>Banking: ${liveData.banking ? "Yes" : "No"}</p>
-      `;
-      return infoContent;
+      const response = await GetOccupancyData(stationsData[i].number)
+      
+      let id = stationsData[i].number;
+      let result = [id, response];  
+      
+      return result;
     }
   }
 }
@@ -570,9 +565,12 @@ function predictAvailability(selectedHour, stationid) {
 
 
 // Function to show journey details including info window content and predict button
-function showJourneyDetails(sourceInfo, destInfo) {
+async function showJourneyDetails(sourceInfo, destInfo) {
   const journeyDetails = document.getElementById("journey-details");
  const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
+
+console.log(sourceInfo);
+console.log(destInfo);
 
  journeyDetails.innerHTML = `
  <h2>Journey Details</h2>
@@ -601,6 +599,13 @@ function showJourneyDetails(sourceInfo, destInfo) {
    </div>
  </div>
 `;
+
+// const infoContent = `
+//       <h3 class="infoHeading">${markerData.name}</h3>
+//       <p class="info">Available Bikes: ${liveData[0]}</p>
+//       <p class="info">Parking: ${liveData[1]}</p>
+//       <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
+//       </div>`;
 
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', function() {
