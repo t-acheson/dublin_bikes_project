@@ -2,13 +2,18 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
+import predict
+import occupancy 
+from flask_cors import CORS 
+# ! have to pip install flask_cors on each machine
 
 app = Flask(__name__)
+CORS(app)
 
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -82,7 +87,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# ! this route works DO NOT TOUCH
+# TODO this route not currently working with JS 
 # API route to retrieve availability data
 @app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
@@ -106,9 +111,7 @@ def get_occupancy(stationid):
         db.close()
 
         return jsonify({'occupancy': occupancy})  
-    # TODO return more info 
-    # TODO add available_bike_stands, last update to query above
-    
+   
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -141,19 +144,22 @@ def get_recentoccupancy(stationid):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-@app.route('/predict', methods = ['POST']) # id of station needs to be included here
+ 
+@app.route('/predict/<int:stationid>', methods=['POST']) # id of station needs to be included here
 def predictAvailability(stationid):
-    data = request.get_json()
-    stationid = 1 
-    # stationid = data.get('stationid') #TODO need to use input somehow here 
-    temp_c = float(data.get('temp_c', 0))
-    wind_mph = float(data.get('wind_mph', 0))
-    precip_mm = float(data.get('precip_mm', 0))
-    hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+    try:
+        data = request.get_json()
+        
+        stationid = int(data.get('stationid'))
+        temp_c = float(data.get('temp_c', 0))
+        wind_mph = float(data.get('wind_mph', 0))
+        precip_mm = float(data.get('precip_mm', 0))
+        hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
 
-    predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
-    return jsonify({'predicted_bikes': predicted_bikes})
+        predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
+        return jsonify({'predicted_bikes': predicted_bikes})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 # ! this route works DO NOT TOUCH 
@@ -178,6 +184,10 @@ def get_weather():
             return jsonify({'error': 'No weather data found'}), 404
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
+
 
 
 if __name__ == '__main__':
