@@ -1,20 +1,23 @@
 import pickle
-import pandas as pd 
-
+import numpy as np
+import pandas as pd
+import sys 
+import sklearn
 import os
+from flask import jsonify
 
 # Get the list of all directories in the current folder
-directories = [d for d in os.listdir('/') if os.path.isdir(d)]
-
+directories = [d for d in os.listdir('./')]
+print("jere", file = sys.stdout)
 # Print the list of directories
 for directory in directories:
-    print(directory)
+    print(directory, file = sys.stdout)
 
 def predict(stationid, temp_c, wind_mph, precip_mm, hours):
     # station = 2
     # Load the model
 
-    filename = f'mlModel\model_{stationid}.pkl' # Replaces {station} with the actual station ID
+    filename = f'./mlModel/model_{stationid}.pkl' # Replaces {station} with the actual station ID
     with open(filename, 'rb') as file:
         model = pickle.load(file)
 
@@ -30,6 +33,8 @@ def predict(stationid, temp_c, wind_mph, precip_mm, hours):
 
     # Predict the number of available bikes
     predicted_bikes = model.predict(df_prediction)
+# Convert the NumPy array to a Python list
+    # predicted_bikes_list = predicted_bikes.tolist()
+    
 
-    # print(f"Predicted number of available bikes: {predicted_bikes[0]}")
-    return predicted_bikes
+    return jsonify(data={'avail': predicted_bikes[0]})
