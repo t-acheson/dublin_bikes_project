@@ -13,7 +13,7 @@ CORS(app)
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
