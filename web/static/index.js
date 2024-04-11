@@ -489,13 +489,8 @@ async function getInfoWindowContent(stationName, stationsData) {
       const liveData = await GetOccupancyData(stationsData[i].number);
       
       
-      const infoContent = `
-      <h3 class="infoHeading">${markerData.name}</h3>
-      <p class="info">Available Bikes: ${liveData[0]}</p>
-      <p class="info">Parking: ${liveData[1]}</p>
-      <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
-      </div>`;
-      return infoContent;
+      
+      return liveData;
     }
   }
 }
@@ -573,33 +568,43 @@ function showJourneyDetails(sourceInfo, destInfo) {
   const journeyDetails = document.getElementById("journey-details");
  const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
 
- journeyDetails.innerHTML = `
- <h2>Journey Details</h2>
- <div style="display: flex; justify-content: space-between;">
-   <div>
-     <h3>Source Station</h3>
-     ${sourceInfo}
-   </div>
-   <div>
-     <h3>Destination Station</h3>
-     ${destInfo}
-   </div>
- </div>
- <div style="display: flex; justify-content: space-between;">
-   <div>
-     <h3>Predict Available Bikes at ${sourceInfo}</h3>
-     ${hoursDropdown('Source', '')}
-     <button id="predictButtonSource">Predict Bikes</button>
-     <span id="predictedBikesSource">Loading...</span>
-   </div>
-   <div>
-     <h3>Predict Available Bikes at ${destInfo}</h3>
-     ${hoursDropdown('Destination', '')}
-     <button id="predictButtonDestination">Predict Bikes</button>
-     <span id="predictedBikesDestination">Loading...</span>
-   </div>
- </div>
-`;
+print(sourceInfo);
+
+
+//  journeyDetails.innerHTML = `
+//  <h2>Journey Details</h2>
+//  <div style="display: flex; justify-content: space-between;">
+//    <div>
+//      <h3>Source Station</h3>
+//      ${sourceInfo}
+//    </div>
+//    <div>
+//      <h3>Destination Station</h3>
+//      ${destInfo}
+//    </div>
+//  </div>
+//  <div style="display: flex; justify-content: space-between;">
+//    <div>
+//      <h3>Predict Available Bikes at ${sourceInfo}</h3>
+//      ${hoursDropdown('Source', '')}
+//      <button id="predictButtonSource">Predict Bikes</button>
+//      <span id="predictedBikesSource">Loading...</span>
+//    </div>
+//    <div>
+//      <h3>Predict Available Bikes at ${destInfo}</h3>
+//      ${hoursDropdown('Destination', '')}
+//      <button id="predictButtonDestination">Predict Bikes</button>
+//      <span id="predictedBikesDestination">Loading...</span>
+//    </div>
+//  </div>
+// `;
+
+const infoContent = `
+      <h3 class="infoHeading">${markerData.name}</h3>
+      <p class="info">Available Bikes: ${liveData[0]}</p>
+      <p class="info">Parking: ${liveData[1]}</p>
+      <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
+      </div>`;
 
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', function() {
