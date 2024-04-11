@@ -1,3 +1,6 @@
+let firstDropdown;
+let secondDropdown;
+
 let map;
 let lat, lng;
 let previousStation = null;
