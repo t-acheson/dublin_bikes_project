@@ -48,13 +48,13 @@
   }
 
 
-#travel
+/* #travel
 {
     display: flex;
     flex-wrap: nowrap;
     column-gap: 10px;
     flex-direction: row;
-}
+} */
 
 #googlemaps
 {
@@ -64,39 +64,21 @@
 #map{
     position: relative;
     z-index: 2;
-    top: -4vh;
-    height:80vh;
+    /* top: -5vh; */
+    height:81vh;
 }
 
-#journeyForm
+#panel
 {
-    margin-top: 2vh;
+  display: none;
+  width:fit-content;
+  background-color: gainsboro;
+  overflow-y: scroll;
+  bottom: 0;
+  right:0;
+  margin-top:40vh;
 }
 
-#journeyForm>form
-{
-    
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(236, 228, 228);
-    border:3px solid black;
-    border-radius: 10px;
-    width: 25vw;
-    height:300px;
-    flex:1;
-    gap:2vh;
-}
-
-#journeyForm>form>input
-{
-    display: block;
-    margin: 0 auto;
-    border:1px solid black;
-    border-radius: 5px;
-    width: 50%;
-    height:5vh;
-    text-align: center;
-}
 
 @media (max-width:700px)
 {
@@ -106,10 +88,72 @@
         flex-direction: column;
         row-gap: 5px;
     }
-
-    #journeyForm
-    {
-        display: flex;
-        width:100%;
-    }
 }
+
+/* pop up for closest stations */
+#popup-window {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+   }
+   
+   #close-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+   }
+   
+#travelForm
+{
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+#close{
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+   }
+
+
+   .dropdown {
+    position: relative;
+    display: inline-block;
+   }
+   
+   .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 12px 16px;
+    z-index: 1;
+   }
+   
+   .dropdown:hover .dropdown-content {
+    display: block;
+   }
+   

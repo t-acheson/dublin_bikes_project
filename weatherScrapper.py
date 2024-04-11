@@ -1,6 +1,5 @@
 import requests
 import json
-import time 
 import mysql.connector 
 
 
@@ -61,7 +60,7 @@ def weatherToTables():
                 connection.commit()
             # close the connection
             connection.close()
-           
+            print("weeather scrapper running hourly")
 
         except Exception as e:            
             print(e)

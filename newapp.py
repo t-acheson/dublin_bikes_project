@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 import mysql.connector
 
 app = Flask(__name__)
@@ -6,7 +6,7 @@ app = Flask(__name__)
 # Database configuration
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -60,6 +60,7 @@ def get_stations():
     
 
 # API route to retrieve weather data
+#@app.route('/')
 @app.route('/weather')
 def get_weather():
     try:
@@ -79,7 +80,10 @@ def get_weather():
         cur.close()
         db.close()
 
-        return jsonify({'weather': weather}) 
+        # Render the weather.html template and pass the weather data to it
+        #return render_template('weather.html', weather1="test")
+        return render_template('weather.html', weather1="test")
+        #return jsonify({'weather': weather}) 
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

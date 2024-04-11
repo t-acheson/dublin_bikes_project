@@ -1,105 +1,194 @@
-from db_config import Base
-from jcDecaux_info import Station, Availability
-from weather_info import Weather
-from flask import Flask, g, jsonify, render_template
-from sqlalchemy import create_engine, func, Column, String, Integer, Double, Boolean
-from sqlalchemy.orm import sessionmaker, joinedload
-import functools
-import json
-import sys
+from flask import Flask, jsonify, render_template, request
+import mysql.connector
+import pickle
+import pandas as pd 
+import predict
+import occupancy 
+from flask_cors import CORS 
+# ! have to pip install flask_cors on each machine
 
-app = Flask(__name__, static_url_path='')
+app = Flask(__name__)
+CORS(app)
 
-# Get the db_info
-with open('./static/dbinfo.json') as f:
-    db_info = json.load(f)
+# Database configuration
+DATABASE_CONFIG = {
+    'user': 'root',
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'host': '127.0.0.1',
+    'port': 3306,
+    'database': 'dublinbikesgroup20',
+}
 
-USER = 
-PASSWORD = 
-URI = 
-PORT = 
-DB = 
+# Function to connect to the database
+def connect_db():
+    return mysql.connector.connect(**DATABASE_CONFIG)
 
-# Create a new session
-engine = create_engine(
-    'mysql+pymysql://{}:{}@localhost:{}/{}'.format(USER, PASSWORD, PORT, DB), echo=True)
-print(engine.url)
-Base.metadata.create_all(bind=engine)
-Session = sessionmaker(bind=engine)
-session = Session()
-print("connected")
-
-# Gives all of the data needed for the home page
-
-@app.route("/home/")
-def get_all_stations():
-    # Station ID, Name, longitude, latitude
-    # Weather data
-    # Station availability
-    data = {"stations": {},
-            "weather": {}}
-    rows = session.query(Availability).filter(
-        Availability.time_updated == func.max(Availability.time_updated).select())
-    for row in rows:
-        print(type(row.station_id), file=sys.stdout)
-        data["stations"][row.station_id] = "1"
-        data2.append(row.available_bikes)
-        print(row.station_id)
-        print(row.available_bikes)
-        print(row.available_bike_stands)
-        print(row.time_updated)
-    print(data, file=sys.stdout)
-    print(data2, file=sys.stdout)
-    row = session.query(Station).all()
-
-    return jsonify(rows)
-
-
-#Joins stations tables to give static data and latest dynamic data
-@app.route("/stations/")
-def get_stations():
-    #subquery to find latest data in availability
-    latest_dynamic_data = session.query(func.max(Availability.time_updated)).scalar_subquery()
-
-    station_data = session.query(Station, Availability).\
-        join(Availability, Station.station_id == Availability.station_id).\
-        filter(Availability.time_updated == latest_dynamic_data).all()
-
-    data = []
-
-    for station, availability in station_data:
-        station_data = {
-            'station_id': station.station_id,
-            'name': station.name,
-            'latitude': station.latitude,
-            'longitude': station.longitude,
-            'payment_terminal': station.payment_terminal,
-            'total_bike_stands': availability.bike_stands,
-            'available_bikes': availability.available_bikes,
-            'available_bike_stands': availability.available_bike_stands,
-            'time_updated': availability.time_updated
-        }
-        data.append(station_data)
-    return jsonify(data)
-
-# @app.route("/available/<int:station_id>")
-# def get_stations(station_id):
-#     row = session.query(Availability).filter_by(station_id=station_id)
-#     return jsonify(row)
-
-
+# ! This Route works DO NOT TOUCH 
+# API route to retrieve stations data
 @app.route('/')
-def root():
-    data = []
-    rows = session.query(Station).all()
-    for row in rows:
-        data.append(row.station_id)
-    #Changed to render_template as we will be importing data and I was getting errors.
-    return render_template('index.html', data=data, mapsAPIKey=db_info['mapsAPIKey']) 
+def get_data():
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
 
-if __name__ == "__main__":
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        # Execute the query to select all stations
+        cur.execute('SELECT * FROM station')
+
+        # Fetch all the results
+        stations = cur.fetchall()
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        # Convert the data to a list of dictionaries
+        # Each dictionary represents a station
+        stations_list = []
+        for station in stations:
+            station_dict = {
+                'number': station[0],
+                'address': station[1],
+                'banking': station[2],
+                'bike_stands': station[3],
+                'name': station[4],
+                'position_lat': station[5],
+                'position_lng': station[6],
+            }
+            stations_list.append(station_dict)
+
+        # Return the stations data as JSON
+        #return jsonify({'stations': stations_list})
+
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        # Execute the query to select all weather
+        cur.execute('SELECT * FROM weather_data ORDER BY id DESC LIMIT 1;')
+
+        # Fetch all the results
+        weather = cur.fetchall()
+        cur.close()
+        db.close()
+
+        temp=weather[0][1] 
+        cond=weather[0][2] 
+        ws=weather[0][3]
+        wd=weather[0][4]
+        prec=weather[0][5]
+        # Close the cursor and database connection
+        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list )
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# TODO this route not currently working with JS 
+# API route to retrieve availability data
+@app.route('/occupancy/<stationid>') # id of station needs to be included here
+def get_occupancy(stationid):
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+
+        # Execute the query to select all occupancy
+        cur.execute('SELECT available_bikes, available_bike_stands, last_update FROM availability where number = {} LIMIT 1;'.format(id)) 
+
+        # Fetch all the results
+        occupancy = cur.fetchall()
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        return jsonify({'occupancy': occupancy})  
+   
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
+# API route to retrieve last 7 days availability data
+@app.route('/recentoccupancy/<stationid>') # id of station needs to be included here
+def get_recentoccupancy(stationid):
+    try:
+        # Connect to the MySQL database
+        db = connect_db()
+
+        # Create a cursor object to execute SQL queries
+        cur = db.cursor()
+
+        id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
+
+        # Execute the query to select all occupancy
+        cur.execute('SELECT available_bikes, available_bikes_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
+
+        # Fetch all the results
+        occupancy = cur.fetchall()
+
+        # Close the cursor and database connection
+        cur.close()
+        db.close()
+
+        return jsonify({'occupancy': occupancy})
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+ 
+@app.route('/predict/<int:stationid>', methods=['POST']) # id of station needs to be included here
+def predictAvailability(stationid):
+    try:
+        data = request.get_json()
+        
+        stationid = int(data.get('stationid'))
+        temp_c = float(data.get('temp_c', 0))
+        wind_mph = float(data.get('wind_mph', 0))
+        precip_mm = float(data.get('precip_mm', 0))
+        hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+
+        predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
+        return jsonify({'predicted_bikes': predicted_bikes})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
+# ! this route works DO NOT TOUCH 
+# weather only route so i can use for predictions 
+@app.route('/weather', methods=['POST'])
+def get_weather():
+    try:
+        db = connect_db()
+        cur = db.cursor()
+        cur.execute('SELECT * FROM weather_data ORDER BY id DESC LIMIT 1;')
+        weather = cur.fetchall()
+        cur.close()
+        db.close()
+
+        if weather:
+            return jsonify({
+                'temp_c': weather[0][1],
+                'wind_mph': weather[0][3],
+                'precip_mm': weather[0][5]
+            })
+        else:
+            return jsonify({'error': 'No weather data found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+
+
+
+if __name__ == '__main__':
     app.run(debug=True)
-    print("Done", file=sys.stdout)
-
-
-

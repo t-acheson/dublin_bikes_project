@@ -11,6 +11,7 @@
     <title>Dublin Bikes</title>
 </head>
 <body>
+    <!-- TODO does this script need to be in HTML or can we move to JS -->
     <script>
         function updateTime() {
         var currentTime = new Date();
@@ -22,38 +23,62 @@
         var seconds = currentTime.getSeconds();
         var timeString = hours + ":" + minutes + ":" + seconds;
         document.getElementById("currentTime").innerHTML = timeString;
-        // document.getElementById("time").value = hours + ":" + minutes;
-        // document.getElementById("date").value = currentTime.toISOString().split("T")[0];
         }
         setInterval(updateTime, 1000);
     </script>
 
     <div ><h1 id="heading">Dublin Bikes</h1></div>
     <div class="weatherInfo">
-        <span id="conditions">Weather conditions</span>
-        <span id="temperature">temperature</span>
+        <span id="temperature">Temperature: {{temp}}°C</span>
+        <span id="conditions">Weather Conditions: {{condition}}</span>
+        <span id="wind speed">Wind Speed: {{speed}}mph</span>
+        <span id="wind direction">Wind Direction: {{direction}}</span>
+        <span id="precipitation">Precipitation: {{rain}}mm</span>
         <span id="currentTime"></span>
     </div>
 
     <div id="travel">
+        
         <div id="googlemaps">
             <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
-            <div id="map"></div>
+            <button id="journeyPlanner">Plan Journey</button>
         </div>
-        <!-- <div id="journeyForm">
-            <form>
-                <h3 style="text-align: center;">Journey Planner</h3>
-                <input type="text" id="source" name="source" placeholder="Choose Starting Point">
-                <input type="text" id="destination" name="destination" placeholder="Choose Destination">
-                <input type="time" id="time" name="time">
-                <input type="date" id="date" name="date">&nbsp;
-            </form>
-        </div> -->
-    </div>
-    <script src="../static/index.js"></script>
 
-<!-- google maps api key - AIzaSyAPT_1yhfgBnnca3hOlT8p6LNwOhnt6oeU -->
-<!-- MAP id-ab56fe26e295fe56 -->
+        <!--This div contains the map-->
+        <div id="map"></div>
+
+        <!--This panel will display the directions-->
+        <div id="panel"></div>
+
+        <!-- pop up window for closest stations  -->
+        <div id="popup-window" style="display: none;">
+            <h1>Closest Stations</h1>
+            <div id="station-info"></div>
+            <button id="close-button">Close</button>
+        </div>
+        <!-- end of closest station pop up  -->
+
+         <!--Form where user is prompted to select two stations from list of options given-->
+         <div id="travelForm">
+            <label for="dropdown1">Start</label>
+            <select name="dropdown1" id="sourceDropdown">
+                <option selected value="">Source</option>
+            </select>
+            <label for="dropdown2">End</label>
+            <select name="dropdown2" id="destDropdown">
+                <option selected value="">Destination</option>
+            </select>
+            <Button id="showRoute">Show Route</Button>
+            <Button id="close">Close</Button>
+            <div id="journey-details"></div>
+        </div>
+
+              
+        </div>
+        
+    </div>
+    
+    <script src="../static/index.js"></script>
 
 </body>
 </html>

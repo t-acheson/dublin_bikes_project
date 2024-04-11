@@ -26,6 +26,8 @@ def get_stations():
                 result = connection.execute(text(query))
                 stations_data = [dict(row) for row in result.fetchall()]
 
+                #fetch rows where number = 15 AND most recent entry 
+                
             # Return the station data as JSON
             return jsonify(stations_data)
 
@@ -40,6 +42,7 @@ def get_occupancy(station_id):
         # Establish a database connection
         database = connect_to_db()
 
+        #TODO this is collecting from wrong table? need from availablity table 
         # Define the SQL query for occupancy
         query = "SELECT * FROM station WHERE number = :station_id ORDER BY last_update LIMIT 1;"
 
@@ -64,6 +67,7 @@ def get_weather():
         #Establish a database connection
         database = connect_to_db()
 
+        #TODO do we need to get all from weather or just most recent entry? 
         # Define the SQL query
         query = "SELECT * FROM weather;"
 
