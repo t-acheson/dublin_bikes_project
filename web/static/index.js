@@ -488,9 +488,10 @@ async function getInfoWindowContent(stationName, stationsData) {
     if (stationName == stationsData[i].name) {
       const response = await GetOccupancyData(stationsData[i].number)
       
+      let id = stationsData[i].number;
+      let result = [id, response];  
       
-      
-      return response[0]
+      return result;
     }
   }
 }
