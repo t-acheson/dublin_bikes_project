@@ -160,7 +160,8 @@ def predictAvailability(stationid):
         hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
 
         predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
-        return jsonify({'predicted_bikes': predicted_bikes})
+        
+        return predicted_bikes
     except Exception as e:
         return jsonify({'error': str(e)})
 
