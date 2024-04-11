@@ -4,7 +4,8 @@ import pandas as pd
 def predict(stationid, temp_c, wind_mph, precip_mm, hours):
     # station = 2
     # Load the model
-    filename = f'model_{stationid}.pkl' # Replace {station} with the actual station ID
+
+    filename = f'mlModel\model_{stationid}.pkl' # Replaces {station} with the actual station ID
     with open(filename, 'rb') as file:
         model = pickle.load(file)
 
