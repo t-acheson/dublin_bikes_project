@@ -507,12 +507,11 @@ function getInfoWindowContent(stationName, stationsData) {
 //predict bike availability function 
 function predictAvailability(selectedHour, stationid) {
   console.log("Predict button clicked");
-  console.log(selectedHour + "selected hour")
-  console.log(stationid + "station id ")
+  console.log(selectedHour + "selected hour");
+  console.log(stationid + "station id ");
   
-  let hours = selectedHour //this works
+  let hours = selectedHour; //this works
   
-
   
   console.log(" prediction test log 2")
 
@@ -614,13 +613,16 @@ document.getElementById("predictButtonSource").addEventListener('click', functio
  // Event listener for the "Predict Bikes" button at the destination station
  document.getElementById("predictButtonDestination").addEventListener('click', function() {
   var selectedHour = document.getElementById("hoursInputDestination").value;
-  predictAvailability(selectedHour);
+  var selectedStationName = secondDropdown.value;
+  var stationid = getStationIdByName(stationData, selectedStationName)
+  predictAvailability(selectedHour, stationid);
  });
 }
 //end of prediction function & listener 
 
 //getting station id by name 
 function getStationIdByName(stationsData, stationName) {
+  console.log("in the get station id by name function ")
   // Use the find method to search for the station with the matching name
   const station = stationsData.find(station => station.name === stationName);
    
