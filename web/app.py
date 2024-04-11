@@ -127,7 +127,7 @@ def get_recentoccupancy(stationid):
         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
         # Execute the query to select all occupancy
-        cur.execute('SELECT available_bikes, available_bikes_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
+        cur.execute('SELECT available_bikes, available_bike_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
 
         # Fetch all the results
         occupancy = cur.fetchall()
