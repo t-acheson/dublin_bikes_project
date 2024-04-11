@@ -6,12 +6,6 @@ import sklearn
 import os
 from flask import jsonify
 
-# Get the list of all directories in the current folder
-directories = [d for d in os.listdir('./')]
-print("jere", file = sys.stdout)
-# Print the list of directories
-for directory in directories:
-    print(directory, file = sys.stdout)
 
 def predict(stationid, temp_c, wind_mph, precip_mm, hours):
     # station = 2
