@@ -554,7 +554,7 @@ function predictAvailability(selectedHour, stationid) {
           return response.json();
       })
       .then(data => {
-          console.log('Predicted Bikes:', data);
+          console.log('Predicted Bikes: ', data);
       })
       .catch(error => {
           console.error('Error:', error);
@@ -563,7 +563,7 @@ function predictAvailability(selectedHour, stationid) {
   .catch(error => {
       console.error('Error fetching weather data:', error);
   });
-  // return predictedBikes;
+  return data;
 }
 
 
@@ -615,7 +615,7 @@ document.getElementById("predictButtonSource").addEventListener('click', functio
   var selectedHour = document.getElementById("hoursInputSource").value;
   var stationid = sourceInfo[0]
   predictedBikes = predictAvailability(selectedHour, stationid);
-  document.getElementById("predictedBikesSource").innerText = predictedBikes;
+  document.getElementById("predictedBikesSource").innerText = (predictedBikes[0][0]);
  });
  
  // Event listener for the "Predict Bikes" button at the destination station
