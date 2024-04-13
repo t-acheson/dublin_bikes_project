@@ -610,27 +610,25 @@ console.log(destInfo);
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', function() {
   var selectedHour = document.getElementById("hoursInputSource").value;
-  var selectedStationName = firstDropdown.value; // Assuming firstDropdown is the dropdown for source stations
-  var stationid = getStationIdByName(stationData, selectedStationName); // Function to get station ID by name
+  var stationid = sourceInfo[0]
   predictAvailability(selectedHour, stationid);
  });
  
  // Event listener for the "Predict Bikes" button at the destination station
  document.getElementById("predictButtonDestination").addEventListener('click', function() {
   var selectedHour = document.getElementById("hoursInputDestination").value;
-  var selectedStationName = secondDropdown.value;
-  var stationid = getStationIdByName(stationData, selectedStationName)
+  var stationid = destInfo[0]
   predictAvailability(selectedHour, stationid);
  });
 }
 //end of prediction function & listener 
 
 //getting station id by name 
-function getStationIdByName(stationsData, stationName) {
-  console.log("in the get station id by name function ")
-  // Use the find method to search for the station with the matching name
-  const station = stationsData.find(station => station.name === stationName);
+// function getStationIdByName(stationsData, stationName) {
+//   console.log("in the get station id by name function ")
+//   // Use the find method to search for the station with the matching name
+//   const station = stationsData.find(station => station.name === stationName);
    
-  // Return the stationid if the station is found, otherwise return null or handle as needed
-  return station ? station.number : null;
- }
+//   // Return the stationid if the station is found, otherwise return null or handle as needed
+//   return station ? station.number : null;
+//  }
