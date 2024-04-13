@@ -524,6 +524,7 @@ function predictAvailability(selectedHour, stationid) {
       }
       return response.json();
   })
+  
   .then(weatherData => {
       var temp_c = parseFloat(weatherData.temp_c);
       var wind_mph = parseFloat(weatherData.wind_mph);
@@ -536,9 +537,10 @@ function predictAvailability(selectedHour, stationid) {
           precip_mm: precip_mm,
           hours: hours
       };
+      console.log("testing log 3: " + weatherData.temp_c);
 
       // calling prediction
-      fetch('/predict/${stationid}', {
+     fetch(`/predict/${stationid}`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
