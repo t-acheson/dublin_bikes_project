@@ -88,7 +88,10 @@ async function initMap() {
     },
   });
 
-  const stationsData = await GetStationsData();
+  //fetching stations Data sent by app.py
+  var scriptTag = document.getElementById("mainScript");
+  const stationsData = JSON.parse(scriptTag.dataset.stations);
+  console.log(stationsData);
 
   const input = document.getElementById("pac-input");
   const autocomplete = new google.maps.places.Autocomplete(input);
@@ -143,8 +146,8 @@ async function initMap() {
   for (var i = 0; i < stationsData.length; i++) {
     const marker = new google.maps.Marker({
       position: new google.maps.LatLng(
-        stationsData[i].position.lat,
-        stationsData[i].position.lng
+        stationsData[i].position_lat,
+        stationsData[i].position_lng
       ),
       map,
       icon:{
@@ -153,9 +156,7 @@ async function initMap() {
       }
     });
 
-
- //calling window based on number 
-   AddInfoWindow(marker, map, stationsData[i].number);
+   AddInfoWindow(marker, map, stationsData[i]);
   }
   FillStations(stationsData);
 
@@ -175,7 +176,7 @@ async function initMap() {
 
 async function AddInfoWindow(marker, map, markerData) {
 
-  const liveData = await GetOccupancyData(markerData);
+  const liveData = await GetOccupancyData(markerData.number);
 
   const liveBikeStationInfo = ` <div class="stationsInfo">
     <h3 class="infoHeading">${markerData.name}</h3>
@@ -204,35 +205,6 @@ async function AddInfoWindow(marker, map, markerData) {
 //end of bike station marker functions 
 
 //start of async functions to fetch data 
-
-//getting static stations data from flask routen 
-// async function GetStationsData() {
-//   try {
-//      const response = await fetch("http://localhost:5000/", {mode: "cors"});
-   
-//      if (!response.ok) {
-//        throw new Error(`HTTP error! status: ${response.status}`);
-//      }
-
-//      // Parse the response as JSON
-//      const bikesData = await response.json();
-
-//      // Return the parsed JSON data
-//      console.log(bikesData)
-//      return bikesData;
-//   } catch (error) {
-//      console.error("Failed to fetch stations data:", error);
-//      return {};
-//   }
-// }
-
-async function GetStationsData()
-{
-  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-  bikesData = await bikePromise.json(); 
-  return bikesData;
-}
-
 async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
@@ -324,8 +296,8 @@ function findClosestStations(lat, lng, stationsData) {
  stationsData.forEach(stationData => {
   // Check if stationData and its position are defined
   if (stationData && stationData.position) {
-    let latDiff = stationData.position.lat - lat;
-    let lngDiff = stationData.position.lng - lng;
+    let latDiff = stationData.position_lat - lat;
+    let lngDiff = stationData.position_lng - lng;
     let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
     let stationID = stationData.number; 
     let stationName = stationData.name;
@@ -456,14 +428,14 @@ async function PlanJourney(source, destination, stationsData)
   {
     if(source == stationsData[i].name && source!= "Source")
     {
-      sourceLat = stationsData[i].position.lat;
-      sourceLng = stationsData[i].position.lng;
+      sourceLat = stationsData[i].position_lat;
+      sourceLng = stationsData[i].position_lng;
     }
 
     if(destination == stationsData[i].name && destination != "Destination") 
     {
-      destLat = stationsData[i].position.lat;
-      destLng = stationsData[i].position.lng;
+      destLat = stationsData[i].position_lat;
+      destLng = stationsData[i].position_lng;
     }
   }
 

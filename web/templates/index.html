@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Protest+Riot&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/index.css">
     <script defer src="https://maps.googleapis.com/maps/api/js?key={{maps_apikey}}&&callback=initMap&libraries=places,geometry,visualization&loading=async"></script>
-    <!-- <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPT_1yhfgBnnca3hOlT8p6LNwOhnt6oeU&&callback=initMap&libraries=places,geometry,visualization&loading=async"></script> -->
     <title>Dublin Bikes</title>
 </head>
 <body>
@@ -28,55 +27,59 @@
         setInterval(updateTime, 1000);
     </script>
 
-    <div ><h1 id="heading">Dublin Bikes</h1></div>
-    <div class="weatherInfo">
-        <span id="temperature">Temperature: {{temp}}°C</span>
-        <span id="conditions">Weather Conditions: {{condition}}</span>
-        <span id="wind speed">Wind Speed: {{speed}}mph</span>
-        <span id="wind direction">Wind Direction: {{direction}}</span>
-        <span id="precipitation">Precipitation: {{rain}}mm</span>
-        <span id="currentTime"></span>
-    </div>
+    <div id="bodyWrapper">
+        <div id="headingWrapper">
+            <div ><h1 id="heading">Dublin Bikes</h1></div>
+            <div class="weatherInfo">
+                <span id="temperature">Temperature: {{temp}}°C</span>
+                <span id="conditions">Weather Conditions: {{condition}}</span>
+                <span id="wind speed">Wind Speed: {{speed}}mph</span>
+                <span id="wind direction">Wind Direction: {{direction}}</span>
+                <span id="precipitation">Precipitation: {{rain}}mm</span>
+                <span id="currentTime"></span>
+            </div>
+        </div>
 
-    <div id="travel">
+        <div id="travel">
         
-        <div id="googlemaps">
-            <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
-            <button id="journeyPlanner">Plan Journey</button>
+            <div id="googlemaps">
+                <input id="pac-input" class="controls" type="text" placeholder="Search Location"/>
+                <button id="journeyPlanner">Plan Journey</button>
+            </div>
+    
+            <!--This div contains the map-->
+            <div id="map"></div>
+    
+            <!--This panel will display the directions-->
+            <div id="panel"></div>
+    
+            <!-- pop up window for closest stations  -->
+            <div id="popup-window" style="display: none;">
+                <h1>Closest Stations</h1>
+                <div id="station-info"></div>
+                <button id="close-button">Close</button>
+            </div>
+            <!-- end of closest station pop up  -->
+    
+             <!--Form where user is prompted to select two stations from list of options given-->
+             <div id="travelForm">
+                <label for="dropdown1">Start</label>
+                <select name="dropdown1" id="sourceDropdown">
+                    <option selected value="">Source</option>
+                </select>
+                <label for="dropdown2">End</label>
+                <select name="dropdown2" id="destDropdown">
+                    <option selected value="">Destination</option>
+                </select>
+                <Button id="showRoute">Show Route</Button>
+                <Button id="close">Close</Button>
+                <div id="journey-details"></div>
+            </div>
+            
         </div>
-
-        <!--This div contains the map-->
-        <div id="map"></div>
-
-        <!--This panel will display the directions-->
-        <div id="panel"></div>
-
-        <!-- pop up window for closest stations  -->
-        <div id="popup-window" style="display: none;">
-            <h1>Closest Stations</h1>
-            <div id="station-info"></div>
-            <button id="close-button">Close</button>
-        </div>
-        <!-- end of closest station pop up  -->
-
-         <!--Form where user is prompted to select two stations from list of options given-->
-         <div id="travelForm">
-            <label for="dropdown1">Start</label>
-            <select name="dropdown1" id="sourceDropdown">
-                <option selected value="">Source</option>
-            </select>
-            <label for="dropdown2">End</label>
-            <select name="dropdown2" id="destDropdown">
-                <option selected value="">Destination</option>
-            </select>
-            <Button id="showRoute">Show Route</Button>
-            <Button id="close">Close</Button>
-            <div id="journey-details"></div>
-        </div>
-        
     </div>
     
-    <script src="../static/index.js"></script>
+    <script id="mainScript" src="../static/index.js" data-stations='{{stations | tojson | safe}}'></script>
 
 </body>
 </html>

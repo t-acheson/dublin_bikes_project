@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
-import predict
+# import predict
 import occupancy 
 from flask_cors import CORS 
 import config
@@ -11,15 +11,14 @@ import config
 app = Flask(__name__)
 CORS(app)
 
-# Database configuration
+
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
 }
-
 # Function to connect to the database
 def connect_db():
     return mysql.connector.connect(**DATABASE_CONFIG)
@@ -59,9 +58,6 @@ def get_data():
                 'position_lng': station[6],
             }
             stations_list.append(station_dict)
-
-        # Return the stations data as JSON
-        #return jsonify({'stations': stations_list})
 
         # Connect to the MySQL database
         db = connect_db()
