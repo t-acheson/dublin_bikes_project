@@ -31,7 +31,7 @@ def stationsToTables():
                 host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
                 database = "dublinbikesgroup20",
                 user = "root",
-                password = "lemon",
+                password = "dublinbikesgroup20",
             )
             
             # Create a cursor object to execute SQL commands
