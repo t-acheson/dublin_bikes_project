@@ -1,6 +1,4 @@
- 
-#heading
-{
+#heading {
     font-family: "Protest Riot", sans-serif;
     font-weight: 900;
     font-style: normal;
@@ -8,8 +6,7 @@
     text-align: center;
 }
 
-.weatherInfo
-{
+.weatherInfo {
     display: flex;
     flex-wrap: nowrap;
     background-color: orange;
@@ -17,8 +14,7 @@
     align-items: center;
 }
 
-.weatherInfo span
-{
+.weatherInfo span {
     flex:1;
     text-align: center;
     font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
@@ -40,50 +36,35 @@
     border-radius: 1.5vh;
     top:2vh;
     background-color: lightgrey;
-    font-family:monospace;
-  }
-  
-  #pac-input:focus {
+    font-family: monospace;
+}
+
+#pac-input:focus {
     border-color: #4d90fe;
-  }
+}
 
-
-/* #travel
-{
-    display: flex;
-    flex-wrap: nowrap;
-    column-gap: 10px;
-    flex-direction: row;
-} */
-
-#googlemaps
-{
+#googlemaps {
     flex: 2;
 }
 
-#map{
+#map {
     position: relative;
     z-index: 2;
-    /* top: -5vh; */
     height:81vh;
 }
 
-#panel
-{
-  display: none;
-  width:fit-content;
-  background-color: gainsboro;
-  overflow-y: scroll;
-  bottom: 0;
-  right:0;
-  margin-top:40vh;
+#panel {
+    display: none;
+    width: fit-content;
+    background-color: gainsboro;
+    overflow-y: scroll;
+    bottom: 0;
+    right: 0;
+    margin-top: 40vh;
 }
 
-
-@media (max-width:700px)
-{
-    #travel
-    {
+@media (max-width:700px) {
+    #travel {
         display: flex;
         flex-direction: column;
         row-gap: 5px;
@@ -101,9 +82,9 @@
     border-radius: 5px;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-   }
-   
-   #close-button {
+}
+
+#close-button {
     background-color: #f44336;
     color: white;
     padding: 10px 20px;
@@ -111,10 +92,9 @@
     border-radius: 5px;
     cursor: pointer;
     float: right;
-   }
-   
-#travelForm
-{
+}
+
+#travelForm {
     display: none;
     position: fixed;
     top: 50%;
@@ -127,7 +107,7 @@
     z-index: 1000;
 }
 
-#close{
+#close {
     background-color: #f44336;
     color: white;
     padding: 10px 20px;
@@ -135,15 +115,14 @@
     border-radius: 5px;
     cursor: pointer;
     float: right;
-   }
+}
 
-
-   .dropdown {
+.dropdown {
     position: relative;
     display: inline-block;
-   }
-   
-   .dropdown-content {
+}
+
+.dropdown-content {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
@@ -151,9 +130,10 @@
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     padding: 12px 16px;
     z-index: 1;
-   }
-   
-   .dropdown:hover .dropdown-content {
+}
+
+.dropdown:hover .dropdown-content {
     display: block;
-   }
+}
+
    

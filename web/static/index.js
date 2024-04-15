@@ -674,42 +674,76 @@ for (let i = 0; i < stationsData.length; i++) {
     break; // No need to continue searching once found
   }
 }
-
-
- journeyDetails.innerHTML = `
- <h2>Journey Details</h2>
- <div style="display: flex; justify-content: space-between;">
-   <div>
-     <h3>Start Point: ${sourceName}</h3>
-     <p>ID: ${sourceID}</p> <!-- Displaying the id -->
-     <!-- Displaying the sourceData -->
-     <p>Available Bikes: ${sourceData[0]}</p>
-     <p>Available Bike Stands: ${sourceData[1]}</p>
-     </div>
-   </div>
-   <div>
-     <h3>End Point: ${destName}</h3>
-     <p>ID: ${destID}</p> <!-- Displaying the id -->
-     <!-- Displaying the sourceData -->
-     <p>Available Bikes: ${destData[0]}</p>
-     <p>Available Bike Stands: ${destData[1]}</p>
-     </div>
- </div>
- <div style="display: flex; justify-content: space-between;">
-   <div>
-     <h3>Predict Available Bikes at ${sourceName}</h3>
-     ${hoursDropdown('Source', '')}
-     <button id="predictButtonSource">Predict Bikes</button>
-     <span id="predictedBikesSource">Loading...</span>
-   </div>
-   <div>
-     <h3>Predict Available Bikes at ${destName}</h3>
-     ${hoursDropdown('Destination', '')}
-     <button id="predictButtonDestination">Predict Bikes</button>
-     <span id="predictedBikesDestination">Loading...</span>
-   </div>
- </div>
+journeyDetails.innerHTML = `
+<h2>Journey Details</h2>
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        <h3>Start Point: ${sourceName}</h3>
+        <p>ID: ${sourceID}</p> <!-- Displaying the id -->
+        <!-- Displaying the sourceData -->
+        <p>Available Bikes: ${sourceData[0]}</p>
+        <p>Available Bike Stands: ${sourceData[1]}</p>
+    </div>
+    <div>
+        <h3>End Point: ${destName}</h3>
+        <p>ID: ${destID}</p> <!-- Displaying the id -->
+        <!-- Displaying the sourceData -->
+        <p>Available Bikes: ${destData[0]}</p>
+        <p>Available Bike Stands: ${destData[1]}</p>
+    </div>
+</div>
+<div style="display: flex; justify-content: space-between;">
+    <div>
+        <h3>Predict Available Bikes at ${sourceName}</h3>
+        ${hoursDropdown('Source', '')}
+        <button id="predictButtonSource">Predict Bikes</button>
+        <span id="predictedBikesSource">Loading...</span>
+    </div>
+    <div>
+        <h3>Predict Available Bikes at ${destName}</h3>
+        ${hoursDropdown('Destination', '')}
+        <button id="predictButtonDestination">Predict Bikes</button>
+        <span id="predictedBikesDestination">Loading...</span>
+    </div>
+</div>
 `;
+
+
+
+//  journeyDetails.innerHTML = `
+//  <h2>Journey Details</h2>
+//  <div style="display: flex; justify-content: space-between;">
+//    <div>
+//      <h3>Start Point: ${sourceName}</h3>
+//      <p>ID: ${sourceID}</p> <!-- Displaying the id -->
+//      <!-- Displaying the sourceData -->
+//      <p>Available Bikes: ${sourceData[0]}</p>
+//      <p>Available Bike Stands: ${sourceData[1]}</p>
+//      </div>
+//    </div>
+//    <div>
+//      <h3>End Point: ${destName}</h3>
+//      <p>ID: ${destID}</p> <!-- Displaying the id -->
+//      <!-- Displaying the sourceData -->
+//      <p>Available Bikes: ${destData[0]}</p>
+//      <p>Available Bike Stands: ${destData[1]}</p>
+//      </div>
+//  </div>
+//  <div style="display: flex; justify-content: space-between;">
+//    <div>
+//      <h3>Predict Available Bikes at ${sourceName}</h3>
+//      ${hoursDropdown('Source', '')}
+//      <button id="predictButtonSource">Predict Bikes</button>
+//      <span id="predictedBikesSource">Loading...</span>
+//    </div>
+//    <div>
+//      <h3>Predict Available Bikes at ${destName}</h3>
+//      ${hoursDropdown('Destination', '')}
+//      <button id="predictButtonDestination">Predict Bikes</button>
+//      <span id="predictedBikesDestination">Loading...</span>
+//    </div>
+//  </div>
+// `;
 
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', async function() {
