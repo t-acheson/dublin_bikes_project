@@ -650,25 +650,39 @@ async function showJourneyDetails(sourceInfo, destInfo) {
 console.log(sourceInfo);
 console.log(destInfo);
 
-const sourceId = sourceInfo[0]; // Extracting the id from sourceInfo
+const sourceID = sourceInfo[0]; // Extracting the id from sourceInfo
 const sourceData = sourceInfo[1];
 
-const destID = destInfo[0]; // Extracting the id from sourceInfo
+const destID = destInfo[0]; 
 const destData = destInfo[1];
+
+function findStationNameById(sourceId, stationsData) {
+  for (let i = 0; i < stationsData.length; i++) {
+    if (sourceId === stationsData[i].number) {
+      return stationsData[i].name;
+    }
+  }
+  // If no station with matching ID is found
+  return null;
+}
+
+const sourceName = findStationNameById(sourceID, stationsData);
+const destName = findStationNameById(destID, stationsData);
+
 
  journeyDetails.innerHTML = `
  <h2>Journey Details</h2>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Start Point</h3>
-     <p>ID: ${sourceId}</p> <!-- Displaying the id -->
+     <h3>Start Point: ${sourceName}</h3>
+     <p>ID: ${sourceID}</p> <!-- Displaying the id -->
      <!-- Displaying the sourceData -->
      <p>Available Bikes: ${sourceData[0]}</p>
      <p>Available Bike Stands: ${sourceData[1]}</p>
      </div>
    </div>
    <div>
-     <h3>End Point</h3>
+     <h3>End Point: ${destName}</h3>
      <p>ID: ${destID}</p> <!-- Displaying the id -->
      <!-- Displaying the sourceData -->
      <p>Available Bikes: ${destData[0]}</p>
@@ -677,13 +691,13 @@ const destData = destInfo[1];
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Predict Available Bikes at ${sourceInfo}</h3>
+     <h3>Predict Available Bikes at ${sourceId}</h3>
      ${hoursDropdown('Source', '')}
      <button id="predictButtonSource">Predict Bikes</button>
      <span id="predictedBikesSource">Loading...</span>
    </div>
    <div>
-     <h3>Predict Available Bikes at ${destInfo}</h3>
+     <h3>Predict Available Bikes at ${destID}</h3>
      ${hoursDropdown('Destination', '')}
      <button id="predictButtonDestination">Predict Bikes</button>
      <span id="predictedBikesDestination">Loading...</span>
