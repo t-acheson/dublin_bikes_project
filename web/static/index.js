@@ -643,7 +643,7 @@ async function predictAvailability(selectedHour, stationid) {
 
 
 // Function to show journey details including info window content and predict button
-async function showJourneyDetails(sourceInfo, destInfo) {
+async function showJourneyDetails(sourceInfo, destInfo, stationsData) {
   const journeyDetails = document.getElementById("journey-details");
  const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
 
@@ -656,18 +656,24 @@ const sourceData = sourceInfo[1];
 const destID = destInfo[0]; 
 const destData = destInfo[1];
 
-function findStationNameById(sourceId, stationsData) {
-  for (let i = 0; i < stationsData.length; i++) {
-    if (sourceId === stationsData[i].number) {
-      return stationsData[i].name;
-    }
+let sourceName = "Unknown";
+let destName = "Unknown";
+
+// Find source station name by ID
+for (let i = 0; i < stationsData.length; i++) {
+  if (sourceID === stationsData[i].number) {
+    sourceName = stationsData[i].name;
+    break; // No need to continue searching once found
   }
-  // If no station with matching ID is found
-  return null;
 }
 
-const sourceName = findStationNameById(sourceID, stationsData);
-const destName = findStationNameById(destID, stationsData);
+// Find destination station name by ID
+for (let i = 0; i < stationsData.length; i++) {
+  if (destID === stationsData[i].number) {
+    destName = stationsData[i].name;
+    break; // No need to continue searching once found
+  }
+}
 
 
  journeyDetails.innerHTML = `
@@ -691,13 +697,13 @@ const destName = findStationNameById(destID, stationsData);
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Predict Available Bikes at ${sourceId}</h3>
+     <h3>Predict Available Bikes at ${sourceName}</h3>
      ${hoursDropdown('Source', '')}
      <button id="predictButtonSource">Predict Bikes</button>
      <span id="predictedBikesSource">Loading...</span>
    </div>
    <div>
-     <h3>Predict Available Bikes at ${destID}</h3>
+     <h3>Predict Available Bikes at ${destName}</h3>
      ${hoursDropdown('Destination', '')}
      <button id="predictButtonDestination">Predict Bikes</button>
      <span id="predictedBikesDestination">Loading...</span>
