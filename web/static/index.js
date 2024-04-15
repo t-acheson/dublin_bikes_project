@@ -583,7 +583,7 @@ async function getInfoWindowContent(stationName, stationsData) {
 
 
 //predict bike availability function 
-function predictAvailability(selectedHour, stationid) {
+async function predictAvailability(selectedHour, stationid) {
   console.log("Predict button clicked");
   console.log(selectedHour + "selected hour");
   console.log(stationid + "station id ");
@@ -623,7 +623,7 @@ function predictAvailability(selectedHour, stationid) {
       console.log("testing log 3: " + weatherData.temp_c);
 
       // calling prediction
-     fetch(`/predict/${stationid}`, {
+     const prediction = fetch(`/predict/${stationid}`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -646,7 +646,7 @@ function predictAvailability(selectedHour, stationid) {
   .catch(error => {
       console.error('Error fetching weather data:', error);
   });
-  return data;
+  return await prediction;
 }
 
 
