@@ -584,13 +584,9 @@ async function getInfoWindowContent(stationName, stationsData) {
 
 //predict bike availability function 
 async function predictAvailability(selectedHour, stationid) {
-  console.log("Predict button clicked");
-  console.log(selectedHour + "selected hour");
-  console.log(stationid + "station id ");
   
   let hours = selectedHour; // this works
-  
-  console.log(" prediction test log 2")
+ 
 
   try {
     // Fetch weather data
@@ -620,8 +616,6 @@ async function predictAvailability(selectedHour, stationid) {
       hours: hours
     };
     
-    console.log("testing log 3: " + weatherData.temp_c);
-
     // calling prediction
     const responsePrediction = await fetch(`/predict/${stationid}`, {
       method: 'POST',
