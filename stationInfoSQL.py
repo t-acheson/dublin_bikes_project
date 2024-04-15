@@ -30,7 +30,7 @@ def stationsToTables():
             connection = mysql.connector.connect(
                 host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
                 database = "dublinbikesgroup20",
-                user = "root",
+                user = "admin",
                 password = "dublinbikesgroup20",
             )
             

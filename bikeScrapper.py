@@ -1,7 +1,7 @@
 #import stuff
 import requests
 import json
-import config
+import web.config as config
 import mysql.connector 
 
 

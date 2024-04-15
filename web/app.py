@@ -2,8 +2,8 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
-# import predict
-import occupancy 
+import predict
+import subprocess
 from flask_cors import CORS 
 import config
 # ! have to pip install flask_cors on each machine
@@ -14,7 +14,7 @@ CORS(app)
 
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': 'lemon', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
@@ -78,8 +78,9 @@ def get_data():
         ws=weather[0][3]
         wd=weather[0][4]
         prec=weather[0][5]
+        wicon = weather[0][7]
         # Close the cursor and database connection
-        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list, maps_apikey = config.MAPS_API_KEY )
+        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list, maps_apikey = config.MAPS_API_KEY, weather_icon = wicon)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -127,7 +128,7 @@ def get_recentoccupancy(stationid):
         id = stationid #for testing purposes. In final version expecting value to be passed in with the route call
 
         # Execute the query to select all occupancy
-        cur.execute('SELECT available_bikes, available_bikes_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
+        cur.execute('SELECT available_bikes, available_bike_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
 
         # Fetch all the results
         occupancy = cur.fetchall()
@@ -136,7 +137,10 @@ def get_recentoccupancy(stationid):
         cur.close()
         db.close()
 
-        return jsonify({'occupancy': occupancy})
+        # Pass occupancy data to occupancy.py script
+        result = subprocess.check_output(['python', 'occupancy.py'], input='\n'.join('\t'.join(map(str, row)) for row in occupancy), universal_newlines=True)
+
+        return jsonify({'result': result})
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -158,6 +162,7 @@ def predictAvailability(stationid):
         return predicted_bikes
     except Exception as e:
         return jsonify({'error': str(e)})
+
 
 
 # ! this route works DO NOT TOUCH 
