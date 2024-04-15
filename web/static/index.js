@@ -560,7 +560,7 @@ async function PlanJourney(source, destination, stationsData)
     const destInfo = await getInfoWindowContent(destination, stationsData);
 
     // Show journey details including info window content
-    showJourneyDetails(sourceInfo, destInfo);
+    showJourneyDetails(sourceInfo, destInfo, stationsData);
   }
 }
 
