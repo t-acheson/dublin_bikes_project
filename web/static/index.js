@@ -715,15 +715,24 @@ async function showJourneyDetails(sourceInfo, destInfo) {
 console.log(sourceInfo);
 console.log(destInfo);
 
+const sourceId = sourceInfo[0]; // Extracting the id from sourceInfo
+const sourceData = sourceInfo[1];
+
+const destID = destInfo[0]; // Extracting the id from sourceInfo
+const destData = destInfo[1];
+
  journeyDetails.innerHTML = `
  <h2>Journey Details</h2>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Source Station</h3>
-     ${sourceInfo}
+     <h3>Start Point</h3>
+     <p>ID: ${sourceId}</p> <!-- Displaying the id -->
+        <!-- Displaying the rest of the sourceData -->
+        <p>Response Data: ${JSON.stringify(sourceData)}</p> <!-- Example: Convert to string for display -->
+      </div>
    </div>
    <div>
-     <h3>Destination Station</h3>
+     <h3>End Point</h3>
      ${destInfo}
    </div>
  </div>
