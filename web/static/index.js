@@ -336,7 +336,7 @@ function findClosestStations(lat, lng, stationsData) {
     Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    const distance = R * c; // Distance in kilometers
+    const distance = (R * c).toFixed(3); // Distance in kilometers rounded to three decimal places
 
     let stationID = stationData.number; 
     let stationName = stationData.name;
@@ -684,13 +684,6 @@ console.log(destInfo);
  </div>
 `;
 
-// const infoContent = `
-//       <h3 class="infoHeading">${markerData.name}</h3>
-//       <p class="info">Available Bikes: ${liveData[0]}</p>
-//       <p class="info">Parking: ${liveData[1]}</p>
-//       <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
-//       </div>`;
-
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', async function() {
   var selectedHour = document.getElementById("hoursInputSource").value;
@@ -722,13 +715,3 @@ document.getElementById("predictButtonSource").addEventListener('click', async f
 });
 }
 //end of prediction function & listener 
-
-//getting station id by name 
-// function getStationIdByName(stationsData, stationName) {
-//   console.log("in the get station id by name function ")
-//   // Use the find method to search for the station with the matching name
-//   const station = stationsData.find(station => station.name === stationName);
-   
-//   // Return the stationid if the station is found, otherwise return null or handle as needed
-//   return station ? station.number : null;
-//  }
