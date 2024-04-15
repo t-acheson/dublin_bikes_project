@@ -352,9 +352,33 @@ function findClosestStations(lat, lng, stationsData) {
 stationList.sort((a, b) => a.distance - b.distance);
 const closestStations = stationList.slice(0, 5);
 
+ //calling occupancy averages while loading closest stations 
+ for (let station of closestStations){
+  let stationID = station.station;
+  console.log("in recent occupany loop")
+  fetch(`/recentoccupancy/${stationID}`) // Replace <stationid> with the actual station ID
+      .then(response => {
+          // Check if the response is successful
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          // Parse the JSON response
+          return response.json();
+      })
+      .then(data => {
+          // Handle the JSON data returned from Flask
+          console.log(data);
+      })
+      .catch(error => {
+          // Handle any errors that occur during the fetch operation
+          console.error('There was a problem with the fetch operation:', error);
+      });
+    }
+
   // Return the closest stations in pop up window 
   showPopup(closestStations);
  }
+
 
 //popup for closest stations
 function showPopup(closestStations) {
