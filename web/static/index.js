@@ -390,7 +390,7 @@ function showPopup(closestStations) {
     <div class="dropdown">
       <button>Average Occupancy</button>
       <div class="dropdown-content">
-        <p>Barchart to go here</p>
+      <canvas id="occupancyChart-${station.station}" width="400" height="200"></canvas>
       </div>
     </div>
    
@@ -402,7 +402,55 @@ function showPopup(closestStations) {
  
   // Show the popup
   document.getElementById('popup-window').style.display = 'block';
- }
+ 
+  closestStations.forEach(station => {
+    renderDummyOccupancyChart(station.station);
+  });
+}
+
+
+ //! dummy data function for occupancy chart, to be changed if we have time 
+ function renderDummyOccupancyChart(stationId) {
+  const chartCanvas = document.getElementById(`occupancyChart-${stationId}`);
+  const ctx = chartCanvas.getContext('2d');
+
+  // Dummy data for average occupancy of available bikes by hour over a 7 day week
+  const dummyOccupancyData = Array.from({ length: 7 }, () =>
+    Math.floor(Math.random() * 31)
+  );
+
+  const data = {
+    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    datasets: [{
+      label: 'Average Occupancy',
+      data: dummyOccupancyData,
+      fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  console.log('Chart config:', config);
+  try {
+    new Chart(ctx, config); // Attempt to initialize the Chart object
+    console.log('Chart initialized successfully');
+  } catch (error) {
+    console.error('Error initializing chart:', error);
+  }
+}
+
  //end of closest stations functions 
 
  //This function gets the route from point A to point B using cycling as mode of transport
