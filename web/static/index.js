@@ -140,7 +140,6 @@ async function initMap() {
         url: "https://img.icons8.com/color/48/marker--v1.png",
         scaledSize: new google.maps.Size(35, 35),
       },
-      sty
     });
     //showing closest stations when user searches for it
     findClosestStations(lat, lng, stationsData);
