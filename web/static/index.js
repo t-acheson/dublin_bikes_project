@@ -1,3 +1,6 @@
+let firstDropdown;
+let secondDropdown;
+
 let map;
 let lat, lng;
 let previousStation = null;
@@ -324,9 +327,17 @@ function findClosestStations(lat, lng, stationsData) {
  stationsData.forEach(stationData => {
   // Check if stationData and its position are defined
   if (stationData && stationData.position) {
-    let latDiff = stationData.position.lat - lat;
-    let lngDiff = stationData.position.lng - lng;
-    let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    let latDiff = (stationData.position.lat - lat) * (Math.PI /180);
+    let lngDiff = (stationData.position.lng - lng) * (Math.PI /180);
+    const R = 6371; // Radius of the Earth in kilometers
+    const a =
+    Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+    Math.cos(lat * (Math.PI / 180)) * Math.cos(stationData.position.lat * (Math.PI / 180)) *
+    Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // Distance in kilometers
+
     let stationID = stationData.number; 
     let stationName = stationData.name;
 
@@ -341,9 +352,33 @@ function findClosestStations(lat, lng, stationsData) {
 stationList.sort((a, b) => a.distance - b.distance);
 const closestStations = stationList.slice(0, 5);
 
+ //calling occupancy averages while loading closest stations 
+ for (let station of closestStations){
+  let stationID = station.station;
+  console.log("in recent occupany loop")
+  fetch(`/recentoccupancy/${stationID}`) // Replace <stationid> with the actual station ID
+      .then(response => {
+          // Check if the response is successful
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          // Parse the JSON response
+          return response.json();
+      })
+      .then(data => {
+          // Handle the JSON data returned from Flask
+          console.log(data);
+      })
+      .catch(error => {
+          // Handle any errors that occur during the fetch operation
+          console.error('There was a problem with the fetch operation:', error);
+      });
+    }
+
   // Return the closest stations in pop up window 
   showPopup(closestStations);
  }
+
 
 //popup for closest stations
 function showPopup(closestStations) {
@@ -351,11 +386,11 @@ function showPopup(closestStations) {
   let content = '';
   closestStations.forEach(station => {
     content += `
-    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>
+    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} Km</p>
     <div class="dropdown">
       <button>Average Occupancy</button>
       <div class="dropdown-content">
-        <p>Barchart to go here</p>
+      <canvas id="occupancyChart-${station.station}" width="400" height="200"></canvas>
       </div>
     </div>
    
@@ -367,7 +402,55 @@ function showPopup(closestStations) {
  
   // Show the popup
   document.getElementById('popup-window').style.display = 'block';
- }
+ 
+  closestStations.forEach(station => {
+    renderDummyOccupancyChart(station.station);
+  });
+}
+
+
+ //! dummy data function for occupancy chart, to be changed if we have time 
+ function renderDummyOccupancyChart(stationId) {
+  const chartCanvas = document.getElementById(`occupancyChart-${stationId}`);
+  const ctx = chartCanvas.getContext('2d');
+
+  // Dummy data for average occupancy of available bikes by hour over a 7 day week
+  const dummyOccupancyData = Array.from({ length: 7 }, () =>
+    Math.floor(Math.random() * 31)
+  );
+
+  const data = {
+    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    datasets: [{
+      label: 'Average Occupancy',
+      data: dummyOccupancyData,
+      fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  console.log('Chart config:', config);
+  try {
+    new Chart(ctx, config); // Attempt to initialize the Chart object
+    console.log('Chart initialized successfully');
+  } catch (error) {
+    console.error('Error initializing chart:', error);
+  }
+}
+
  //end of closest stations functions 
 
  //This function gets the route from point A to point B using cycling as mode of transport
@@ -500,68 +583,134 @@ async function getInfoWindowContent(stationName, stationsData) {
 
 
 //predict bike availability function 
-function predictAvailability(selectedHour, stationid) {
+async function predictAvailability(selectedHour, stationid) {
   console.log("Predict button clicked");
   console.log(selectedHour + "selected hour");
   console.log(stationid + "station id ");
   
-  let hours = selectedHour; //this works
-  
+  let hours = selectedHour; // this works
   
   console.log(" prediction test log 2")
 
-  // Fetch weather data
-  fetch('/weather', {
-    method: 'POST', // Send a POST request
-    headers: {
-      'Content-Type': 'application/json' // Specify content type as JSON
-    },
-    body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('Network response for weather data was not ok');
-      }
-      return response.json();
-  })
-  .then(weatherData => {
-      var temp_c = parseFloat(weatherData.temp_c);
-      var wind_mph = parseFloat(weatherData.wind_mph);
-      var precip_mm = parseFloat(weatherData.precip_mm);
+  try {
+    // Fetch weather data
+    const responseWeather = await fetch('/weather', {
+      method: 'POST', // Send a POST request
+      headers: {
+        'Content-Type': 'application/json' // Specify content type as JSON
+      },
+      body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
+    });
+    
+    if (!responseWeather.ok) {
+      throw new Error('Network response for weather data was not ok');
+    }
 
-      var requestData = {
-          stationid: stationid,
-          temp_c: temp_c,
-          wind_mph: wind_mph,
-          precip_mm: precip_mm,
-          hours: hours
-      };
+    const weatherData = await responseWeather.json();
 
-      // calling prediction
-      fetch('/predict/${stationid}', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response for prediction fetch was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          console.log('Predicted Bikes:', data.predicted_bikes);
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
-  })
-  .catch(error => {
-      console.error('Error fetching weather data:', error);
-  });
+    var temp_c = parseFloat(weatherData.temp_c);
+    var wind_mph = parseFloat(weatherData.wind_mph);
+    var precip_mm = parseFloat(weatherData.precip_mm);
+
+    var requestData = {
+      stationid: stationid,
+      temp_c: temp_c,
+      wind_mph: wind_mph,
+      precip_mm: precip_mm,
+      hours: hours
+    };
+    
+    console.log("testing log 3: " + weatherData.temp_c);
+
+    // calling prediction
+    const responsePrediction = await fetch(`/predict/${stationid}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (!responsePrediction.ok) {
+      throw new Error('Network response for prediction fetch was not ok');
+    }
+
+    const data = await responsePrediction.json();
+    console.log('Predicted Bikes: ', data);
+    return data; // returning predicted bikes
+
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 }
+
+
+// async function predictAvailability(selectedHour, stationid) {
+//   console.log("Predict button clicked");
+//   console.log(selectedHour + "selected hour");
+//   console.log(stationid + "station id ");
+  
+//   let hours = selectedHour; //this works
+  
+  
+//   console.log(" prediction test log 2")
+
+//   // Fetch weather data
+//   fetch('/weather', {
+//     method: 'POST', // Send a POST request
+//     headers: {
+//       'Content-Type': 'application/json' // Specify content type as JSON
+//     },
+//     body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
+//   })
+//   .then(response => {
+//       if (!response.ok) {
+//           throw new Error('Network response for weather data was not ok');
+//       }
+//       return response.json();
+//   })
+  
+//   .then(weatherData => {
+//       var temp_c = parseFloat(weatherData.temp_c);
+//       var wind_mph = parseFloat(weatherData.wind_mph);
+//       var precip_mm = parseFloat(weatherData.precip_mm);
+
+//       var requestData = {
+//           stationid: stationid,
+//           temp_c: temp_c,
+//           wind_mph: wind_mph,
+//           precip_mm: precip_mm,
+//           hours: hours
+//       };
+//       console.log("testing log 3: " + weatherData.temp_c);
+
+//       // calling prediction
+//      const prediction = fetch(`/predict/${stationid}`, {
+//           method: 'POST',
+//           headers: {
+//               'Content-Type': 'application/json'
+//           },
+//           body: JSON.stringify(requestData)
+//       })
+//       .then(response => {
+//           if (!response.ok) {
+//               throw new Error('Network response for prediction fetch was not ok');
+//           }
+//           return response.json();
+//       })
+//       .then(data => {
+//           console.log('Predicted Bikes: ', data);
+//       })
+//       .catch(error => {
+//           console.error('Error:', error);
+//       });
+//   })
+//   .catch(error => {
+//       console.error('Error fetching weather data:', error);
+//   });
+//   return await prediction;
+// }
 
 
 // Function to show journey details including info window content and predict button
@@ -608,29 +757,43 @@ console.log(destInfo);
 //       </div>`;
 
 // Event listener for the "Predict Bikes" button at the source station
-document.getElementById("predictButtonSource").addEventListener('click', function() {
+document.getElementById("predictButtonSource").addEventListener('click', async function() {
   var selectedHour = document.getElementById("hoursInputSource").value;
-  var selectedStationName = firstDropdown.value; // Assuming firstDropdown is the dropdown for source stations
-  var stationid = getStationIdByName(stationData, selectedStationName); // Function to get station ID by name
-  predictAvailability(selectedHour, stationid);
- });
+  var stationid = sourceInfo[0]
+  try {
+    const predictionResult = await predictAvailability(selectedHour, stationid);
+    const predictedAvailability = predictionResult.availability;
+    document.getElementById("predictedBikesSource").innerText = predictedAvailability;
+  } catch (error) {
+    console.error('Error predicting bikes:', error);
+    document.getElementById("predictedBikesSource").innerText = 'Error predicting bikes';
+  
+  }
+});
  
  // Event listener for the "Predict Bikes" button at the destination station
- document.getElementById("predictButtonDestination").addEventListener('click', function() {
+ document.getElementById("predictButtonDestination").addEventListener('click', async function() {
   var selectedHour = document.getElementById("hoursInputDestination").value;
-  var selectedStationName = secondDropdown.value;
-  var stationid = getStationIdByName(stationData, selectedStationName)
-  predictAvailability(selectedHour, stationid);
- });
+  var stationid = destInfo[0];
+  document.getElementById("predictedBikesDestination").innerText = 'Loading...'; // Show loading message
+  try {
+    const predictionResult = await predictAvailability(selectedHour, stationid);
+    const predictedAvailability = predictionResult.availability;
+    document.getElementById("predictedBikesDestination").innerText = predictedAvailability; // Update with predicted availability
+  } catch (error) {
+    console.error('Error predicting bikes:', error);
+    document.getElementById("predictedBikesDestination").innerText = 'Error predicting bikes';
+  }
+});
 }
 //end of prediction function & listener 
 
 //getting station id by name 
-function getStationIdByName(stationsData, stationName) {
-  console.log("in the get station id by name function ")
-  // Use the find method to search for the station with the matching name
-  const station = stationsData.find(station => station.name === stationName);
+// function getStationIdByName(stationsData, stationName) {
+//   console.log("in the get station id by name function ")
+//   // Use the find method to search for the station with the matching name
+//   const station = stationsData.find(station => station.name === stationName);
    
-  // Return the stationid if the station is found, otherwise return null or handle as needed
-  return station ? station.number : null;
- }
+//   // Return the stationid if the station is found, otherwise return null or handle as needed
+//   return station ? station.number : null;
+//  }
