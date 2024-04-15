@@ -669,8 +669,11 @@ const destData = destInfo[1];
    </div>
    <div>
      <h3>End Point</h3>
-     ${destInfo}
-   </div>
+     <p>ID: ${destID}</p> <!-- Displaying the id -->
+     <!-- Displaying the sourceData -->
+     <p>Available Bikes: ${destData[0]}</p>
+     <p>Available Bike Stands: ${destData[1]}</p>
+     </div>
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
