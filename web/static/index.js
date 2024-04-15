@@ -662,9 +662,10 @@ const destData = destInfo[1];
    <div>
      <h3>Start Point</h3>
      <p>ID: ${sourceId}</p> <!-- Displaying the id -->
-        <!-- Displaying the rest of the sourceData -->
-        <p>Response Data: ${JSON.stringify(sourceData)}</p> <!-- Example: Convert to string for display -->
-      </div>
+     <!-- Displaying the sourceData -->
+     <p>Available Bikes: ${sourceData[0]}</p>
+     <p>Available Bike Stands: ${sourceData[1]}</p>
+     </div>
    </div>
    <div>
      <h3>End Point</h3>
