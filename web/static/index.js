@@ -327,9 +327,17 @@ function findClosestStations(lat, lng, stationsData) {
  stationsData.forEach(stationData => {
   // Check if stationData and its position are defined
   if (stationData && stationData.position) {
-    let latDiff = stationData.position.lat - lat;
-    let lngDiff = stationData.position.lng - lng;
-    let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    let latDiff = (stationData.position.lat - lat) * (Math.PI /180);
+    let lngDiff = (stationData.position.lng - lng) * (Math.PI /180);
+    const R = 6371; // Radius of the Earth in kilometers
+    const a =
+    Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+    Math.cos(lat * (Math.PI / 180)) * Math.cos(stationData.position.lat * (Math.PI / 180)) *
+    Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // Distance in kilometers
+
     let stationID = stationData.number; 
     let stationName = stationData.name;
 
@@ -354,7 +362,7 @@ function showPopup(closestStations) {
   let content = '';
   closestStations.forEach(station => {
     content += `
-    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>
+    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} Km</p>
     <div class="dropdown">
       <button>Average Occupancy</button>
       <div class="dropdown-content">
