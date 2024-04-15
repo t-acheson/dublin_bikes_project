@@ -761,24 +761,31 @@ document.getElementById("predictButtonSource").addEventListener('click', async f
   var selectedHour = document.getElementById("hoursInputSource").value;
   var stationid = sourceInfo[0]
   try {
-    const predictedBikes = await predictAvailability(selectedHour, stationid);
-    document.getElementById("predictedBikesSource").innerText = predictedBikes[0];
+    const predictionResult = await predictAvailability(selectedHour, stationid);
+    const predictedAvailability = predictionResult.availability;
+    document.getElementById("predictedBikesSource").innerText = predictedAvailability;
   } catch (error) {
     console.error('Error predicting bikes:', error);
+    document.getElementById("predictedBikesSource").innerText = 'Error predicting bikes';
+  
   }
 });
  
  // Event listener for the "Predict Bikes" button at the destination station
  document.getElementById("predictButtonDestination").addEventListener('click', async function() {
   var selectedHour = document.getElementById("hoursInputDestination").value;
-  var stationid = destInfo[0]
+  var stationid = destInfo[0];
+  document.getElementById("predictedBikesDestination").innerText = 'Loading...'; // Show loading message
   try {
-    const predictedBikes = await predictAvailability(selectedHour, stationid);
-    document.getElementById("predictedBikesDestination").innerText = predictedBikes[0][0];
+    const predictionResult = await predictAvailability(selectedHour, stationid);
+    const predictedAvailability = predictionResult.availability;
+    document.getElementById("predictedBikesDestination").innerText = predictedAvailability; // Update with predicted availability
   } catch (error) {
     console.error('Error predicting bikes:', error);
+    document.getElementById("predictedBikesDestination").innerText = 'Error predicting bikes';
   }
-});}
+});
+}
 //end of prediction function & listener 
 
 //getting station id by name 
