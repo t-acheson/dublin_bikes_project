@@ -1,3 +1,6 @@
+let firstDropdown;
+let secondDropdown;
+
 let map;
 let lat, lng;
 let previousStation = null;
@@ -324,9 +327,17 @@ function findClosestStations(lat, lng, stationsData) {
  stationsData.forEach(stationData => {
   // Check if stationData and its position are defined
   if (stationData && stationData.position) {
-    let latDiff = stationData.position.lat - lat;
-    let lngDiff = stationData.position.lng - lng;
-    let distance = Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+    let latDiff = (stationData.position.lat - lat) * (Math.PI /180);
+    let lngDiff = (stationData.position.lng - lng) * (Math.PI /180);
+    const R = 6371; // Radius of the Earth in kilometers
+    const a =
+    Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
+    Math.cos(lat * (Math.PI / 180)) * Math.cos(stationData.position.lat * (Math.PI / 180)) *
+    Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    const distance = R * c; // Distance in kilometers
+
     let stationID = stationData.number; 
     let stationName = stationData.name;
 
@@ -341,9 +352,33 @@ function findClosestStations(lat, lng, stationsData) {
 stationList.sort((a, b) => a.distance - b.distance);
 const closestStations = stationList.slice(0, 5);
 
+ //calling occupancy averages while loading closest stations 
+ for (let station of closestStations){
+  let stationID = station.station;
+  console.log("in recent occupany loop")
+  fetch(`/recentoccupancy/${stationID}`) // Replace <stationid> with the actual station ID
+      .then(response => {
+          // Check if the response is successful
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          // Parse the JSON response
+          return response.json();
+      })
+      .then(data => {
+          // Handle the JSON data returned from Flask
+          console.log(data);
+      })
+      .catch(error => {
+          // Handle any errors that occur during the fetch operation
+          console.error('There was a problem with the fetch operation:', error);
+      });
+    }
+
   // Return the closest stations in pop up window 
   showPopup(closestStations);
  }
+
 
 //popup for closest stations
 function showPopup(closestStations) {
@@ -351,11 +386,11 @@ function showPopup(closestStations) {
   let content = '';
   closestStations.forEach(station => {
     content += `
-    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} meters</p>
+    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} Km</p>
     <div class="dropdown">
       <button>Average Occupancy</button>
       <div class="dropdown-content">
-        <p>Barchart to go here</p>
+      <canvas id="occupancyChart-${station.station}" width="400" height="200"></canvas>
       </div>
     </div>
    
@@ -367,7 +402,55 @@ function showPopup(closestStations) {
  
   // Show the popup
   document.getElementById('popup-window').style.display = 'block';
- }
+ 
+  closestStations.forEach(station => {
+    renderDummyOccupancyChart(station.station);
+  });
+}
+
+
+ //! dummy data function for occupancy chart, to be changed if we have time 
+ function renderDummyOccupancyChart(stationId) {
+  const chartCanvas = document.getElementById(`occupancyChart-${stationId}`);
+  const ctx = chartCanvas.getContext('2d');
+
+  // Dummy data for average occupancy of available bikes by hour over a 7 day week
+  const dummyOccupancyData = Array.from({ length: 7 }, () =>
+    Math.floor(Math.random() * 31)
+  );
+
+  const data = {
+    labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    datasets: [{
+      label: 'Average Occupancy',
+      data: dummyOccupancyData,
+      fill: false,
+      borderColor: 'rgb(75, 192, 192)',
+      tension: 0.1
+    }]
+  };
+
+  const config = {
+    type: 'line',
+    data: data,
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+
+  console.log('Chart config:', config);
+  try {
+    new Chart(ctx, config); // Attempt to initialize the Chart object
+    console.log('Chart initialized successfully');
+  } catch (error) {
+    console.error('Error initializing chart:', error);
+  }
+}
+
  //end of closest stations functions 
 
  //This function gets the route from point A to point B using cycling as mode of transport

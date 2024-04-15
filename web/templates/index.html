@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Protest+Riot&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../static/index.css">
     <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAPT_1yhfgBnnca3hOlT8p6LNwOhnt6oeU&&callback=initMap&libraries=places,geometry,visualization&loading=async"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Dublin Bikes</title>
 </head>
 <body>
@@ -55,6 +56,13 @@
             <h1>Closest Stations</h1>
             <div id="station-info"></div>
             <button id="close-button">Close</button>
+             <!-- Line chart for average occupancy -->
+             <div class="dropdown">
+                
+                <div class="dropdown-content">
+                    <canvas id="occupancyChart"></canvas>
+                </div>
+            </div>
         </div>
         <!-- end of closest station pop up  -->
 
