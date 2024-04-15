@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
-import predict
+# import predict
 import subprocess
 from flask_cors import CORS 
 import config
