@@ -4,7 +4,7 @@ let secondDropdown;
 let map;
 let lat, lng;
 let previousStation = null;
-let directionsService , directionsRenderer;
+let directionsService , directionsRenderer, distanceService;
 let source, destination;
 async function initMap() {
   const options = {
@@ -25,62 +25,74 @@ async function initMap() {
       style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
       position: google.maps.ControlPosition.TOP_CENTER,
     },
-    styles: [
+    styles:[
       {
-        featureType: "all",
-        stylers: [
-          {
-            saturation: 0,
-          },
-          {
-            hue: "#e7ecf0",
-          },
-          {
-            fontFamily: "Protest Riot, sans-serif",
-          },
-        ],
+          "stylers": [
+              {
+                  "saturation": -100
+              }
+          ]
       },
       {
-        featureType: "road",
-        stylers: [
-          {
-            saturation: -70,
-          },
-        ],
+          "featureType": "water",
+          "elementType": "geometry.fill",
+          "stylers": [
+              {
+                  "color": "#0099dd"
+              }
+          ]
       },
       {
-        featureType: "transit",
-        stylers: [
-          {
-            visibility: "on",
-          },
-        ],
+          "elementType": "labels",
+          "stylers": [
+              {
+                  "visibility": "on"
+              }
+          ]
       },
       {
-        featureType: "poi",
-        stylers: [
-          {
-            visibility: "on",
-          },
-        ],
+          "featureType": "poi.park",
+          "elementType": "geometry.fill",
+          "stylers": [
+              {
+                  "color": "#aadd55"
+              }
+          ]
       },
       {
-        featureType: "water",
-        stylers: [
-          {
-            visibility: "simplified",
-          },
-          {
-            saturation: -60,
-          },
-        ],
+          "featureType": "road.highway",
+          "elementType": "labels",
+          "stylers": [
+              {
+                  "visibility": "on"
+              }
+          ]
       },
-    ],
+      {
+          "featureType": "road.arterial",
+          "elementType": "labels.text",
+          "stylers": [
+              {
+                  "visibility": "on"
+              }
+          ]
+      },
+      {
+          "featureType": "road.local",
+          "elementType": "labels.text",
+          "stylers": [
+              {
+                  "visibility": "on"
+              }
+          ]
+      },
+      {}
+  ]
   });
 
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer({map, panel: document.getElementById("panel")});
-
+  distanceService = new google.maps.DistanceMatrixService();
   //initial marker marks the location which google maps will automatically assume as starting point for the user
   var initialMarker = new google.maps.Marker({
     position: new google.maps.LatLng(lat, lng),
@@ -91,14 +103,16 @@ async function initMap() {
     },
   });
 
-  const stationsData = await GetStationsData();
+  //fetching stations Data sent by app.py
+  var scriptTag = document.getElementById("mainScript");
+  const stationsData = JSON.parse(scriptTag.dataset.stations);
 
   const input = document.getElementById("pac-input");
   const autocomplete = new google.maps.places.Autocomplete(input);
   autocomplete.bindTo("bounds", map);
 
-  const container = document.getElementById('googlemaps')
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(container);
+  // const container = document.getElementById('googlemaps')
+  // map.controls[google.maps.ControlPosition.TOP_LEFT].push(container);
 
   const panel = document.getElementById('panel');
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(panel);
@@ -126,6 +140,7 @@ async function initMap() {
         url: "https://img.icons8.com/color/48/marker--v1.png",
         scaledSize: new google.maps.Size(35, 35),
       },
+      sty
     });
     //showing closest stations when user searches for it
     findClosestStations(lat, lng, stationsData);
@@ -145,9 +160,10 @@ async function initMap() {
   //marker for bike station locations
   for (var i = 0; i < stationsData.length; i++) {
     const marker = new google.maps.Marker({
+      animation: google.maps.Animation.DROP,
       position: new google.maps.LatLng(
-        stationsData[i].position.lat,
-        stationsData[i].position.lng
+        stationsData[i].position_lat,
+        stationsData[i].position_lng
       ),
       map,
       icon:{
@@ -158,7 +174,7 @@ async function initMap() {
 
 
  //calling window based on number 
-   AddInfoWindow(marker, map, stationsData[i].number);
+   AddInfoWindow(marker, map, stationsData[i]);
   }
   FillStations(stationsData);
 
@@ -174,11 +190,16 @@ async function initMap() {
   closeJourneyButton.addEventListener("click",()=>{
     document.getElementById("travelForm").style.display = 'none';
   });
+
+  var closeDirectionsButton = document.getElementById("closeDirections");
+  closeDirectionsButton.addEventListener("click", ()=>{
+    document.getElementById("panel").style.display = 'none';
+  });
 }
 
 async function AddInfoWindow(marker, map, markerData) {
 
-  const liveData = await GetOccupancyData(markerData);
+  const liveData = await GetOccupancyData(markerData.number);
 
   const liveBikeStationInfo = ` <div class="stationsInfo">
     <h3 class="infoHeading">${markerData.name}</h3>
@@ -197,11 +218,13 @@ async function AddInfoWindow(marker, map, markerData) {
       anchor: marker,
       map,
     });
+    marker.setAnimation(google.maps.Animation.BOUNCE);
   });
 
   //closing information window when marker loses mouse focus
   marker.addListener("mouseout", () => {
     infoWindow.close();
+    marker.setAnimation(null);
   });
 }
 //end of bike station marker functions 
@@ -229,12 +252,12 @@ async function AddInfoWindow(marker, map, markerData) {
 //   }
 // }
 
-async function GetStationsData()
-{
-  const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-  bikesData = await bikePromise.json(); 
-  return bikesData;
-}
+// async function GetStationsData()
+// {
+//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
+//   bikesData = await bikePromise.json(); 
+//   return bikesData;
+// }
 
 async function GetOccupancyData(stationId) {
   try {
@@ -311,7 +334,7 @@ async function GetWeatherData() {
  //end of async functions to fetch data 
 
 //function to find the 5 closest stations by lat, lng and return them in a list 
-function findClosestStations(lat, lng, stationsData) {
+async function findClosestStations(lat, lng, stationsData) {
 
   const stationList = []; 
   //error handing for bikesData 
@@ -326,13 +349,13 @@ function findClosestStations(lat, lng, stationsData) {
  // Iterate over the stationsData object to get distance from place lat & lng 
  stationsData.forEach(stationData => {
   // Check if stationData and its position are defined
-  if (stationData && stationData.position) {
-    let latDiff = (stationData.position.lat - lat) * (Math.PI /180);
-    let lngDiff = (stationData.position.lng - lng) * (Math.PI /180);
+  if (stationData) {
+    let latDiff = (stationData.position_lat - lat) * (Math.PI /180);
+    let lngDiff = (stationData.position_lng - lng) * (Math.PI /180);
     const R = 6371; // Radius of the Earth in kilometers
     const a =
     Math.sin(latDiff / 2) * Math.sin(latDiff / 2) +
-    Math.cos(lat * (Math.PI / 180)) * Math.cos(stationData.position.lat * (Math.PI / 180)) *
+    Math.cos(lat * (Math.PI / 180)) * Math.cos(stationData.position_lat * (Math.PI / 180)) *
     Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
@@ -342,7 +365,7 @@ function findClosestStations(lat, lng, stationsData) {
     let stationName = stationData.name;
 
     // Store the station ID and its distance from the given latitude and longitude
-    stationList.push({station: stationID, name: stationName, distance: distance});
+    stationList.push({station: stationID, name: stationName, distance: distance, latitude:stationData.position_lat, longitude: stationData.position_lng});
   } else {
     console.error('stationData or its position is undefined');
   }
@@ -351,6 +374,11 @@ function findClosestStations(lat, lng, stationsData) {
   // Sort by distance and take the first 5 closest 
 stationList.sort((a, b) => a.distance - b.distance);
 const closestStations = stationList.slice(0, 5);
+
+for(var i=0 ; i< closestStations.length; i++)
+{
+  closestStations[i].distance = await GetDistance(closestStations[i].latitude, closestStations[i].longitude, lat, lng);
+}
 
  //calling occupancy averages while loading closest stations 
  for (let station of closestStations){
@@ -386,9 +414,9 @@ function showPopup(closestStations) {
   let content = '';
   closestStations.forEach(station => {
     content += `
-    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} Km</p>
+    <p>Station ID: ${station.station}, Station: ${station.name}, Distance: ${station.distance} m</p>
     <div class="dropdown">
-      <button>Average Occupancy</button>
+      <button class="avgOccupancy">Average Occupancy</button>
       <div class="dropdown-content">
       <canvas id="occupancyChart-${station.station}" width="400" height="200"></canvas>
       </div>
@@ -476,6 +504,17 @@ function showPopup(closestStations) {
    panel.style.display = "block";
  }
 
+ async function GetDistance(sourceLat, sourceLng, destLat, destLng)
+ {
+  var distanceResponse = await distanceService.getDistanceMatrix({
+    origins: [new google.maps.LatLng(sourceLat, sourceLng)],
+    destinations: [new google.maps.LatLng(destLat, destLng)], // customer address
+    travelMode: 'BICYCLING',
+    unitSystem: google.maps.UnitSystem.METRIC
+  });
+
+  return distanceResponse.rows[0].elements[0].distance.value;
+ }
 
 //journey planner functions start 
 
@@ -539,14 +578,14 @@ async function PlanJourney(source, destination, stationsData)
   {
     if(source == stationsData[i].name && source!= "Source")
     {
-      sourceLat = stationsData[i].position.lat;
-      sourceLng = stationsData[i].position.lng;
+      sourceLat = stationsData[i].position_lat;
+      sourceLng = stationsData[i].position_lng;
     }
 
     if(destination == stationsData[i].name && destination != "Destination") 
     {
-      destLat = stationsData[i].position.lat;
-      destLng = stationsData[i].position.lng;
+      destLat = stationsData[i].position_lat;
+      destLng = stationsData[i].position_lng;
     }
   }
 

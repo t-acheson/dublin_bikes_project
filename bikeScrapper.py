@@ -1,16 +1,16 @@
 #import stuff
 import requests
 import json
-
+import web.config as config
 import mysql.connector 
 
 
 
 
 
-NAME = "Dublin" #name of contract
+NAME = config.BIKE_NAME#name of contract
 STATIONS = "https://api.jcdecaux.com/vls/v1/stations?"
-APIKEY = "9923c4b16f8c5fd842f2f448564bed43a349fa47"
+APIKEY = config.BIKE_APIKEY
 
 
 def store(data):
