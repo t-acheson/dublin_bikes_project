@@ -336,7 +336,7 @@ function findClosestStations(lat, lng, stationsData) {
     Math.sin(lngDiff / 2) * Math.sin(lngDiff / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    const distance = R * c; // Distance in kilometers
+    const distance = (R * c).toFixed(3); // Distance in kilometers rounded to three decimal places
 
     let stationID = stationData.number; 
     let stationName = stationData.name;
@@ -560,7 +560,7 @@ async function PlanJourney(source, destination, stationsData)
     const destInfo = await getInfoWindowContent(destination, stationsData);
 
     // Show journey details including info window content
-    showJourneyDetails(sourceInfo, destInfo);
+    showJourneyDetails(sourceInfo, destInfo, stationsData);
   }
 }
 
@@ -584,13 +584,9 @@ async function getInfoWindowContent(stationName, stationsData) {
 
 //predict bike availability function 
 async function predictAvailability(selectedHour, stationid) {
-  console.log("Predict button clicked");
-  console.log(selectedHour + "selected hour");
-  console.log(stationid + "station id ");
   
   let hours = selectedHour; // this works
-  
-  console.log(" prediction test log 2")
+ 
 
   try {
     // Fetch weather data
@@ -620,8 +616,6 @@ async function predictAvailability(selectedHour, stationid) {
       hours: hours
     };
     
-    console.log("testing log 3: " + weatherData.temp_c);
-
     // calling prediction
     const responsePrediction = await fetch(`/predict/${stationid}`, {
       method: 'POST',
@@ -646,115 +640,76 @@ async function predictAvailability(selectedHour, stationid) {
 }
 
 
-// async function predictAvailability(selectedHour, stationid) {
-//   console.log("Predict button clicked");
-//   console.log(selectedHour + "selected hour");
-//   console.log(stationid + "station id ");
-  
-//   let hours = selectedHour; //this works
-  
-  
-//   console.log(" prediction test log 2")
-
-//   // Fetch weather data
-//   fetch('/weather', {
-//     method: 'POST', // Send a POST request
-//     headers: {
-//       'Content-Type': 'application/json' // Specify content type as JSON
-//     },
-//     body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
-//   })
-//   .then(response => {
-//       if (!response.ok) {
-//           throw new Error('Network response for weather data was not ok');
-//       }
-//       return response.json();
-//   })
-  
-//   .then(weatherData => {
-//       var temp_c = parseFloat(weatherData.temp_c);
-//       var wind_mph = parseFloat(weatherData.wind_mph);
-//       var precip_mm = parseFloat(weatherData.precip_mm);
-
-//       var requestData = {
-//           stationid: stationid,
-//           temp_c: temp_c,
-//           wind_mph: wind_mph,
-//           precip_mm: precip_mm,
-//           hours: hours
-//       };
-//       console.log("testing log 3: " + weatherData.temp_c);
-
-//       // calling prediction
-//      const prediction = fetch(`/predict/${stationid}`, {
-//           method: 'POST',
-//           headers: {
-//               'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify(requestData)
-//       })
-//       .then(response => {
-//           if (!response.ok) {
-//               throw new Error('Network response for prediction fetch was not ok');
-//           }
-//           return response.json();
-//       })
-//       .then(data => {
-//           console.log('Predicted Bikes: ', data);
-//       })
-//       .catch(error => {
-//           console.error('Error:', error);
-//       });
-//   })
-//   .catch(error => {
-//       console.error('Error fetching weather data:', error);
-//   });
-//   return await prediction;
-// }
 
 
 // Function to show journey details including info window content and predict button
-async function showJourneyDetails(sourceInfo, destInfo) {
+async function showJourneyDetails(sourceInfo, destInfo, stationsData) {
   const journeyDetails = document.getElementById("journey-details");
  const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
 
 console.log(sourceInfo);
 console.log(destInfo);
 
+const sourceID = sourceInfo[0]; // Extracting the id from sourceInfo
+const sourceData = sourceInfo[1];
+
+const destID = destInfo[0]; 
+const destData = destInfo[1];
+
+let sourceName = "Unknown";
+let destName = "Unknown";
+
+// Find source station name by ID
+for (let i = 0; i < stationsData.length; i++) {
+  if (sourceID === stationsData[i].number) {
+    sourceName = stationsData[i].name;
+    break; // No need to continue searching once found
+  }
+}
+
+// Find destination station name by ID
+for (let i = 0; i < stationsData.length; i++) {
+  if (destID === stationsData[i].number) {
+    destName = stationsData[i].name;
+    break; // No need to continue searching once found
+  }
+}
+
+
  journeyDetails.innerHTML = `
  <h2>Journey Details</h2>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Source Station</h3>
-     ${sourceInfo}
+     <h3>Start Point: ${sourceName}</h3>
+     <p>ID: ${sourceID}</p> <!-- Displaying the id -->
+     <!-- Displaying the sourceData -->
+     <p>Available Bikes: ${sourceData[0]}</p>
+     <p>Available Bike Stands: ${sourceData[1]}</p>
+     </div>
    </div>
    <div>
-     <h3>Destination Station</h3>
-     ${destInfo}
-   </div>
+     <h3>End Point: ${destName}</h3>
+     <p>ID: ${destID}</p> <!-- Displaying the id -->
+     <!-- Displaying the sourceData -->
+     <p>Available Bikes: ${destData[0]}</p>
+     <p>Available Bike Stands: ${destData[1]}</p>
+     </div>
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
-     <h3>Predict Available Bikes at ${sourceInfo}</h3>
+     <h3>Predict Available Bikes at ${sourceName}</h3>
      ${hoursDropdown('Source', '')}
      <button id="predictButtonSource">Predict Bikes</button>
      <span id="predictedBikesSource">Loading...</span>
    </div>
    <div>
-     <h3>Predict Available Bikes at ${destInfo}</h3>
+     <h3>Predict Available Bikes at ${destName}</h3>
      ${hoursDropdown('Destination', '')}
      <button id="predictButtonDestination">Predict Bikes</button>
      <span id="predictedBikesDestination">Loading...</span>
    </div>
  </div>
 `;
-
-// const infoContent = `
-//       <h3 class="infoHeading">${markerData.name}</h3>
-//       <p class="info">Available Bikes: ${liveData[0]}</p>
-//       <p class="info">Parking: ${liveData[1]}</p>
-//       <p class="info">Banking: ${markerData.banking ? "Yes" : "No"}</p>
-//       </div>`;
 
 // Event listener for the "Predict Bikes" button at the source station
 document.getElementById("predictButtonSource").addEventListener('click', async function() {
@@ -787,13 +742,3 @@ document.getElementById("predictButtonSource").addEventListener('click', async f
 });
 }
 //end of prediction function & listener 
-
-//getting station id by name 
-// function getStationIdByName(stationsData, stationName) {
-//   console.log("in the get station id by name function ")
-//   // Use the find method to search for the station with the matching name
-//   const station = stationsData.find(station => station.name === stationName);
-   
-//   // Return the stationid if the station is found, otherwise return null or handle as needed
-//   return station ? station.number : null;
-//  }
