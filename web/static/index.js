@@ -588,66 +588,129 @@ async function predictAvailability(selectedHour, stationid) {
   console.log(selectedHour + "selected hour");
   console.log(stationid + "station id ");
   
-  let hours = selectedHour; //this works
-  
+  let hours = selectedHour; // this works
   
   console.log(" prediction test log 2")
 
-  // Fetch weather data
-  fetch('/weather', {
-    method: 'POST', // Send a POST request
-    headers: {
-      'Content-Type': 'application/json' // Specify content type as JSON
-    },
-    body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
-  })
-  .then(response => {
-      if (!response.ok) {
-          throw new Error('Network response for weather data was not ok');
-      }
-      return response.json();
-  })
-  
-  .then(weatherData => {
-      var temp_c = parseFloat(weatherData.temp_c);
-      var wind_mph = parseFloat(weatherData.wind_mph);
-      var precip_mm = parseFloat(weatherData.precip_mm);
+  try {
+    // Fetch weather data
+    const responseWeather = await fetch('/weather', {
+      method: 'POST', // Send a POST request
+      headers: {
+        'Content-Type': 'application/json' // Specify content type as JSON
+      },
+      body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
+    });
+    
+    if (!responseWeather.ok) {
+      throw new Error('Network response for weather data was not ok');
+    }
 
-      var requestData = {
-          stationid: stationid,
-          temp_c: temp_c,
-          wind_mph: wind_mph,
-          precip_mm: precip_mm,
-          hours: hours
-      };
-      console.log("testing log 3: " + weatherData.temp_c);
+    const weatherData = await responseWeather.json();
 
-      // calling prediction
-     const prediction = fetch(`/predict/${stationid}`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response for prediction fetch was not ok');
-          }
-          return response.json();
-      })
-      .then(data => {
-          console.log('Predicted Bikes: ', data);
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
-  })
-  .catch(error => {
-      console.error('Error fetching weather data:', error);
-  });
-  return await prediction;
+    var temp_c = parseFloat(weatherData.temp_c);
+    var wind_mph = parseFloat(weatherData.wind_mph);
+    var precip_mm = parseFloat(weatherData.precip_mm);
+
+    var requestData = {
+      stationid: stationid,
+      temp_c: temp_c,
+      wind_mph: wind_mph,
+      precip_mm: precip_mm,
+      hours: hours
+    };
+    
+    console.log("testing log 3: " + weatherData.temp_c);
+
+    // calling prediction
+    const responsePrediction = await fetch(`/predict/${stationid}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    });
+    
+    if (!responsePrediction.ok) {
+      throw new Error('Network response for prediction fetch was not ok');
+    }
+
+    const data = await responsePrediction.json();
+    console.log('Predicted Bikes: ', data);
+    return data; // returning predicted bikes
+
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 }
+
+
+// async function predictAvailability(selectedHour, stationid) {
+//   console.log("Predict button clicked");
+//   console.log(selectedHour + "selected hour");
+//   console.log(stationid + "station id ");
+  
+//   let hours = selectedHour; //this works
+  
+  
+//   console.log(" prediction test log 2")
+
+//   // Fetch weather data
+//   fetch('/weather', {
+//     method: 'POST', // Send a POST request
+//     headers: {
+//       'Content-Type': 'application/json' // Specify content type as JSON
+//     },
+//     body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
+//   })
+//   .then(response => {
+//       if (!response.ok) {
+//           throw new Error('Network response for weather data was not ok');
+//       }
+//       return response.json();
+//   })
+  
+//   .then(weatherData => {
+//       var temp_c = parseFloat(weatherData.temp_c);
+//       var wind_mph = parseFloat(weatherData.wind_mph);
+//       var precip_mm = parseFloat(weatherData.precip_mm);
+
+//       var requestData = {
+//           stationid: stationid,
+//           temp_c: temp_c,
+//           wind_mph: wind_mph,
+//           precip_mm: precip_mm,
+//           hours: hours
+//       };
+//       console.log("testing log 3: " + weatherData.temp_c);
+
+//       // calling prediction
+//      const prediction = fetch(`/predict/${stationid}`, {
+//           method: 'POST',
+//           headers: {
+//               'Content-Type': 'application/json'
+//           },
+//           body: JSON.stringify(requestData)
+//       })
+//       .then(response => {
+//           if (!response.ok) {
+//               throw new Error('Network response for prediction fetch was not ok');
+//           }
+//           return response.json();
+//       })
+//       .then(data => {
+//           console.log('Predicted Bikes: ', data);
+//       })
+//       .catch(error => {
+//           console.error('Error:', error);
+//       });
+//   })
+//   .catch(error => {
+//       console.error('Error fetching weather data:', error);
+//   });
+//   return await prediction;
+// }
 
 
 // Function to show journey details including info window content and predict button
@@ -694,21 +757,28 @@ console.log(destInfo);
 //       </div>`;
 
 // Event listener for the "Predict Bikes" button at the source station
-document.getElementById("predictButtonSource").addEventListener('click', function() {
+document.getElementById("predictButtonSource").addEventListener('click', async function() {
   var selectedHour = document.getElementById("hoursInputSource").value;
   var stationid = sourceInfo[0]
-  predictedBikes = predictAvailability(selectedHour, stationid);
-  document.getElementById("predictedBikesSource").innerText = (predictedBikes[0][0]);
- });
+  try {
+    const predictedBikes = await predictAvailability(selectedHour, stationid);
+    document.getElementById("predictedBikesSource").innerText = predictedBikes[0];
+  } catch (error) {
+    console.error('Error predicting bikes:', error);
+  }
+});
  
  // Event listener for the "Predict Bikes" button at the destination station
- document.getElementById("predictButtonDestination").addEventListener('click', function() {
+ document.getElementById("predictButtonDestination").addEventListener('click', async function() {
   var selectedHour = document.getElementById("hoursInputDestination").value;
   var stationid = destInfo[0]
-  predictedBikes = predictAvailability(selectedHour, stationid);
-  document.getElementById("predictedBikesDestination").innerText = predictedBikes;
- });
-}
+  try {
+    const predictedBikes = await predictAvailability(selectedHour, stationid);
+    document.getElementById("predictedBikesDestination").innerText = predictedBikes[0][0];
+  } catch (error) {
+    console.error('Error predicting bikes:', error);
+  }
+});}
 //end of prediction function & listener 
 
 //getting station id by name 
