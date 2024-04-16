@@ -196,6 +196,10 @@ async function initMap() {
   });
 }
 
+marker.addListener("click", () => {
+  AddInfoWindow(marker, map, stationData[i]);
+});
+
 async function AddInfoWindow(marker, map, markerData) {
 
   const liveData = await GetOccupancyData(markerData.number);
@@ -212,20 +216,20 @@ async function AddInfoWindow(marker, map, markerData) {
   });
 
   //displaying information of bike station when the user clicks the marker 
-  marker.addListener("click", () => {
+  // marker.addListener("click", () => {
     infoWindow.open({
       anchor: marker,
       map,
     });
     marker.setAnimation(google.maps.Animation.BOUNCE);
-  });
+  }
 
   //closing information window when marker loses mouse focus
   // marker.addListener("mouseout", () => {
   //   infoWindow.close();
   //   marker.setAnimation(null);
   // });
-}
+
 //end of bike station marker functions 
 
 //start of async functions to fetch data 
