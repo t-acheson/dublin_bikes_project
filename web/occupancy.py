@@ -7,9 +7,29 @@ def calculate_hourly_averages(data):
     hourly_averages = {}
 
     # Iterate through data
+    # for entry in data:
+    #     # Convert Unix timestamp to datetime object
+    #     dt_object = datetime.fromtimestamp(entry['last_update'])
+        
+    #     # Extract day and hour
+    #     day = dt_object.strftime('%Y-%m-%d')
+    #     hour = dt_object.hour
+        
+    #     # Initialize dictionary for the day if not exists
+    #     if day not in hourly_averages:
+    #         hourly_averages[day] = {}
+        
+    #     # Initialize list for the hour if not exists
+    #     if hour not in hourly_averages[day]:
+    #         hourly_averages[day][hour] = {'total_bikes': 0, 'total_stands': 0, 'count': 0}
+        
+    #     # Add available bikes and stands to totals
+    #     hourly_averages[day][hour]['total_bikes'] += entry['available_bikes']
+    #     hourly_averages[day][hour]['total_stands'] += entry['available_bike_stands']
+    #     hourly_averages[day][hour]['count'] += 1
     for entry in data:
-        # Convert Unix timestamp to datetime object
-        dt_object = datetime.fromtimestamp(entry['last_update'])
+    # Convert Unix timestamp to datetime object
+        dt_object = datetime.fromtimestamp(entry[2] / 1000)  # Dividing by 1000 to convert milliseconds to seconds
         
         # Extract day and hour
         day = dt_object.strftime('%Y-%m-%d')
@@ -24,8 +44,8 @@ def calculate_hourly_averages(data):
             hourly_averages[day][hour] = {'total_bikes': 0, 'total_stands': 0, 'count': 0}
         
         # Add available bikes and stands to totals
-        hourly_averages[day][hour]['total_bikes'] += entry['available_bikes']
-        hourly_averages[day][hour]['total_stands'] += entry['available_bike_stands']
+        hourly_averages[day][hour]['total_bikes'] += entry[0]
+        hourly_averages[day][hour]['total_stands'] += entry[1]
         hourly_averages[day][hour]['count'] += 1
 
     # Calculate average for each hour of each day
@@ -33,7 +53,9 @@ def calculate_hourly_averages(data):
         for hour, hour_data in hours_data.items():
             average_bikes = hour_data['total_bikes'] / hour_data['count']
             average_stands = hour_data['total_stands'] / hour_data['count']
-            print(f"On {day}, hour {hour}: Average bikes: {average_bikes}, Average stands: {average_stands}")
+            # print(f"On {day}, hour {hour}: Average bikes: {average_bikes}, Average stands: {average_stands}")
+
+    return {'day':{day}, 'Average_bikes': {average_bikes}, 'Average_stands':{average_stands}}
 
 
 if __name__ == "__main__":
