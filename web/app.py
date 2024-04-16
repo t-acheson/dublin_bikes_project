@@ -10,7 +10,14 @@ import config
 app = Flask(__name__)
 CORS(app)
 
-
+# # Database configuration for local db
+# DATABASE_CONFIG = {
+#     'user': 'root',
+#     'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+#     'host': '127.0.0.1',
+#     'port': 3306,
+#     'database': 'dublinbikesgroup20',
+# }
 
 # Function to connect to the database
 def connect_db():
