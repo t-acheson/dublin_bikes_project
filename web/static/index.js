@@ -211,8 +211,8 @@ async function AddInfoWindow(marker, map, markerData) {
     content: liveBikeStationInfo,
   });
 
-  //displaying information of bike station when the user hovers over the marker on map
-  marker.addListener("mouseover", () => {
+  //displaying information of bike station when the user clicks the marker 
+  marker.addListener("click", () => {
     infoWindow.open({
       anchor: marker,
       map,
@@ -221,10 +221,10 @@ async function AddInfoWindow(marker, map, markerData) {
   });
 
   //closing information window when marker loses mouse focus
-  marker.addListener("mouseout", () => {
-    infoWindow.close();
-    marker.setAnimation(null);
-  });
+  // marker.addListener("mouseout", () => {
+  //   infoWindow.close();
+  //   marker.setAnimation(null);
+  // });
 }
 //end of bike station marker functions 
 
