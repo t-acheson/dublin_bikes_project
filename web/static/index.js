@@ -714,35 +714,73 @@ for (let i = 0; i < stationsData.length; i++) {
 }
 
 
- journeyDetails.innerHTML = `
+
+// journeyDetails.innerHTML = `
+//  <h2>Journey Details</h2>
+//  <div style="display: flex; justify-content: space-between;">
+//    <div style="display: flex; flex-direction: column;">
+//      <h3>Start Point: ${sourceName}</h3>
+//      <p>ID: ${sourceID}</p> <!-- Displaying the id -->
+//      <!-- Displaying the sourceData -->
+//      <p>Available Bikes: ${sourceData[0]}</p>
+//      <p>Available Bike Stands: ${sourceData[1]}</p>
+//    </div>
+//    <div style="display: flex; flex-direction: column;">
+//      <h3>End Point: ${destName}</h3>
+//      <p>ID: ${destID}</p> <!-- Displaying the id -->
+//      <!-- Displaying the sourceData -->
+//      <p>Available Bikes: ${destData[0]}</p>
+//      <p>Available Bike Stands: ${destData[1]}</p>
+//    </div>
+//  </div>
+//  <div style="display: flex; justify-content: space-between;">
+//    <div>
+//      <h3>Predict Available Bikes at ${sourceName}</h3>
+//      ${hoursDropdown('Source', '')}
+//      <button id="predictButtonSource">Predict Bikes</button>
+//      <span id="predictedBikesSource">Loading...</span>
+//    </div>
+//    <div>
+//      <h3>Predict Available Bikes at ${destName}</h3>
+//      ${hoursDropdown('Destination', '')}
+//      <button id="predictButtonDestination">Predict Bikes</button>
+//      <span id="predictedBikesDestination">Loading...</span>
+//    </div>
+//  </div>
+// `
+
+journeyDetails.innerHTML = `
  <h2>Journey Details</h2>
  <div style="display: flex; justify-content: space-between;">
-   <div>
+   <div style="display: flex; flex-direction: column;">
      <h3>Start Point: ${sourceName}</h3>
      <p>ID: ${sourceID}</p> <!-- Displaying the id -->
      <!-- Displaying the sourceData -->
      <p>Available Bikes: ${sourceData[0]}</p>
      <p>Available Bike Stands: ${sourceData[1]}</p>
-     </div>
    </div>
-   <div>
+   <div style="display: flex; flex-direction: column;">
      <h3>End Point: ${destName}</h3>
      <p>ID: ${destID}</p> <!-- Displaying the id -->
      <!-- Displaying the sourceData -->
      <p>Available Bikes: ${destData[0]}</p>
      <p>Available Bike Stands: ${destData[1]}</p>
-     </div>
+   </div>
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
      <h3>Predict Available Bikes at ${sourceName}</h3>
+     <label>Select Hour: </label> <!-- Added label for hours dropdown -->
      ${hoursDropdown('Source', '')}
+     <br> <!-- Added line break to start the next line -->
      <button id="predictButtonSource">Predict Bikes</button>
      <span id="predictedBikesSource">Loading...</span>
    </div>
    <div>
      <h3>Predict Available Bikes at ${destName}</h3>
+     <label>Select Hour: </label> <!-- Added label for hours dropdown -->
      ${hoursDropdown('Destination', '')}
+     <br> <!-- Added line break to start the next line -->
      <button id="predictButtonDestination">Predict Bikes</button>
      <span id="predictedBikesDestination">Loading...</span>
    </div>
