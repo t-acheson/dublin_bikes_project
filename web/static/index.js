@@ -211,8 +211,8 @@ async function AddInfoWindow(marker, map, markerData) {
     content: liveBikeStationInfo,
   });
 
-  //displaying information of bike station when the user hovers over the marker on map
-  marker.addListener("mouseover", () => {
+  //displaying information of bike station when the user clicks on the marker on map
+  marker.addListener("click", () => {
     infoWindow.open({
       anchor: marker,
       map,
