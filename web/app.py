@@ -11,14 +11,15 @@ app = Flask(__name__)
 CORS(app)
 
 
-DATABASE_CONFIG = mysql.connector.connect(
-                host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
-                database = "dublinbikesgroup20",
-                user = "admin",
-                password = "dublinbikesgroup20",
-)
+
 # Function to connect to the database
 def connect_db():
+    DATABASE_CONFIG = mysql.connector.connect(
+                    host = "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
+                    database = "dublinbikesgroup20",
+                    user = "admin",
+                    password = "dublinbikesgroup20",
+    )
     return mysql.connector.connect(**DATABASE_CONFIG)
 
 
