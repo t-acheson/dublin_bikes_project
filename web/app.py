@@ -13,9 +13,9 @@ CORS(app)
 
 
 DATABASE_CONFIG = {
-    'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
-    'host': '127.0.0.1',
+    'user': 'admin',
+    'password': 'dublinbikesgroup20?', 
+    'host': 'dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com',
     'port': 3306,
     'database': 'dublinbikesgroup20',
 }
@@ -23,7 +23,7 @@ DATABASE_CONFIG = {
 def connect_db():
     return mysql.connector.connect(**DATABASE_CONFIG)
 
-# ! This Route works DO NOT TOUCH 
+
 # API route to retrieve stations data
 @app.route('/')
 def get_data():
@@ -85,7 +85,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# TODO this route not currently working with JS 
+
 # API route to retrieve availability data
 @app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
