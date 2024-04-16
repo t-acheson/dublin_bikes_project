@@ -3,14 +3,15 @@ import mysql.connector
 import pickle
 import pandas as pd 
 import predict
-import occupancy 
+import subprocess
 from flask_cors import CORS 
+import config
 # ! have to pip install flask_cors on each machine
 
 app = Flask(__name__)
 CORS(app)
 
-# Database configuration
+
 DATABASE_CONFIG = {
     'user': 'root',
     'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
@@ -18,7 +19,6 @@ DATABASE_CONFIG = {
     'port': 3306,
     'database': 'dublinbikesgroup20',
 }
-
 # Function to connect to the database
 def connect_db():
     return mysql.connector.connect(**DATABASE_CONFIG)
@@ -59,9 +59,6 @@ def get_data():
             }
             stations_list.append(station_dict)
 
-        # Return the stations data as JSON
-        #return jsonify({'stations': stations_list})
-
         # Connect to the MySQL database
         db = connect_db()
 
@@ -81,8 +78,9 @@ def get_data():
         ws=weather[0][3]
         wd=weather[0][4]
         prec=weather[0][5]
+        wicon = weather[0][7]
         # Close the cursor and database connection
-        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list )
+        return render_template('index.html', temp=temp, condition=cond, speed=ws, direction=wd, rain=prec, stations=stations_list, maps_apikey = config.MAPS_API_KEY, weather_icon = wicon)
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -139,7 +137,10 @@ def get_recentoccupancy(stationid):
         cur.close()
         db.close()
 
-        return jsonify({'occupancy': occupancy})
+        # Pass occupancy data to occupancy.py script
+        result = subprocess.check_output(['python', 'occupancy.py'], input='\n'.join('\t'.join(map(str, row)) for row in occupancy), universal_newlines=True)
+
+        return jsonify({'result': result})
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -161,6 +162,7 @@ def predictAvailability(stationid):
         return predicted_bikes
     except Exception as e:
         return jsonify({'error': str(e)})
+
 
 
 # ! this route works DO NOT TOUCH 

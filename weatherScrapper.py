@@ -1,11 +1,12 @@
 import requests
 import json
 import mysql.connector 
+import web.config as config
 
 
 class WeatherConfig:
-    API_KEY="0f5a8ade5f024e70a34123035241602"
-    Q="dublin"
+    API_KEY=config.WEATHER_APIKEY
+    Q=config.WEATHER_CITY
     URI="http://api.weatherapi.com/v1/current.json"
 
 
@@ -46,15 +47,16 @@ def weatherToTables():
                 wind_dir = w['current']['wind_dir']
                 precip_mm = w['current']['precip_mm']
                 last_updated = w['current']['last_updated']
+                weather_icon = w['current']['condition']['icon']
 
                 # Construct the SQL command
                 sql = """
-                INSERT INTO weather_data (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm, last_updated)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO weather_data (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm, last_updated, weather_icon)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """
                 
                 # Execute the SQL command
-                cursor.execute(sql, (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm, last_updated))
+                cursor.execute(sql, (name, temp_c, weather_condition, wind_mph, wind_dir, precip_mm, last_updated, weather_icon))
 
               # Commit the changes 
                 connection.commit()

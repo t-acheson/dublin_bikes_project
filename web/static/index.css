@@ -1,30 +1,95 @@
  
+#bodyWrapper
+{
+    display: grid;
+    grid-template-columns: 22% 78%;
+    margin: 0px;
+    padding: 0px;
+    justify-content: center;
+}
+
+#headingWrapper
+{
+    background-color: #0077B3;
+    display: flex;
+    flex-direction: column;
+    row-gap: 12vh;
+    align-items: center;
+    justify-content: center;
+}
+
 #heading
 {
-    font-family: "Protest Riot", sans-serif;
     font-weight: 900;
     font-style: normal;
     font-size: 5vh;
     text-align: center;
+    color: #fff;
 }
 
 .weatherInfo
 {
     display: flex;
-    flex-wrap: nowrap;
-    background-color: orange;
-    height:5vh;
+    flex-direction: column;
     align-items: center;
+    padding: 5px;
+    margin-left: 5px;
+    margin-right: 5px;
+    row-gap: 2vh;
+    animation: fade-in 1.5s ease-in;
 }
 
-.weatherInfo span
+@keyframes fade-in {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+#weatherDetails
 {
-    flex:1;
-    text-align: center;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    row-gap: 2vh;
 }
 
+#weatherDetails>div
+{
+    font-size:large;
+    font-weight: 600;
+    color: #fff;
+    font-family:monospace;
+}
+
+#journeyPlanner {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  #journeyPlanner:hover {
+    background-color: #3e8e41;
+  }
+  
+  #journeyPlanner:active {
+    background-color: #3e8e41;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+/*all the things displayed on the google maps*/
 #pac-input {
     position: relative;
     z-index: 3;
@@ -35,10 +100,10 @@
     margin-left: 12px;
     padding: 0 11px 0 13px;
     text-overflow: ellipsis;
-    width: 40vw;
+    width: 20vw;
     height: 5vh;
     border-radius: 1.5vh;
-    top:2vh;
+    top:4vh;
     background-color: lightgrey;
     font-family:monospace;
   }
@@ -48,13 +113,10 @@
   }
 
 
-/* #travel
+#travel
 {
-    display: flex;
-    flex-wrap: nowrap;
-    column-gap: 10px;
-    flex-direction: row;
-} */
+    height: 98vh;
+}
 
 #googlemaps
 {
@@ -64,10 +126,11 @@
 #map{
     position: relative;
     z-index: 2;
-    /* top: -5vh; */
-    height:81vh;
+    height:98vh;
+    top:-5.5vh;
 }
 
+/*This div displays the directions*/
 #panel
 {
   display: none;
@@ -76,18 +139,18 @@
   overflow-y: scroll;
   bottom: 0;
   right:0;
-  margin-top:40vh;
+  margin-top:36vh;
 }
 
-
-@media (max-width:700px)
+#closeDirections
 {
-    #travel
-    {
-        display: flex;
-        flex-direction: column;
-        row-gap: 5px;
-    }
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
 }
 
 /* pop up for closest stations */
@@ -127,6 +190,17 @@
     z-index: 1000;
 }
 
+#showRoute
+{
+    background-color: #16a318;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+}
+
 #close{
     background-color: #f44336;
     color: white;
@@ -137,6 +211,41 @@
     float: right;
    }
 
+   #sourceDropdown, #destDropdown {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 16px;
+    width: 100%;
+    appearance: none;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  #sourceDropdown, #destDropdown:focus {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  #sourceDropdown, #destDropdown option {
+    background-color: #fff;
+    color: #000;
+    padding: 8px;
+    font-size: 16px;
+  }
+  
+  #sourceDropdown, #destDropdown option:hover {
+    background-color: #f2f2f2;
+  }
+  
+  #sourceDropdown, #destDropdown option:focus {
+    background-color: #f2f2f2;
+  }
+  
+  #sourceDropdown, #destDropdown option:checked {
+    background-color: #4CAF50;
+    color: #fff;
+  }
 
    .dropdown {
     position: relative;
@@ -157,3 +266,50 @@
     display: block;
    }
    
+
+   .avgOccupancy {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  }
+  
+  .avgOccupancy:hover {
+    background-color: #3e8e41;
+  }
+  
+    .avgOccupancy:active {
+    background-color: #3e8e41;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  #predictButtonSource,#predictButtonDestination
+  {
+    background-color: #16a318;
+    color: white;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    float: right;
+  }
+
+  @keyframes jump {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+      transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
