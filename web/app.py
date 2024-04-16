@@ -2,7 +2,7 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
-# import predict
+import predict
 import subprocess
 from flask_cors import CORS 
 import config
@@ -14,7 +14,7 @@ CORS(app)
 
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'lemon', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
