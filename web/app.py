@@ -20,7 +20,7 @@ def connect_db():
                     user = "admin",
                     password = "dublinbikesgroup20",
     )
-    return mysql.connector.connect(*DATABASE_CONFIG)
+    return mysql.connector.connect(**DATABASE_CONFIG)
 
 
 # API route to retrieve stations data
