@@ -6,7 +6,6 @@ import predict
 import subprocess
 from flask_cors import CORS 
 import config
-# ! have to pip install flask_cors on each machine
 
 app = Flask(__name__)
 CORS(app)
@@ -155,7 +154,7 @@ def predictAvailability(stationid):
         temp_c = float(data.get('temp_c', 0))
         wind_mph = float(data.get('wind_mph', 0))
         precip_mm = float(data.get('precip_mm', 0))
-        hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+        hours = float(data.get('hours', 0)) 
 
         predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
         
@@ -165,7 +164,6 @@ def predictAvailability(stationid):
 
 
 
-# ! this route works DO NOT TOUCH 
 # weather only route so i can use for predictions 
 @app.route('/weather', methods=['POST'])
 def get_weather():
