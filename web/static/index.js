@@ -234,7 +234,7 @@ async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
       
-       const response = await fetch(`http://localhost:5000/occupancy/${stationId}`, { method: "GET", mode: "cors" });
+       const response = await fetch(`/occupancy/${stationId}`, { method: "GET", mode: "cors" });
 
       // Check if the response is successful
       if (!response.ok) {
@@ -252,7 +252,7 @@ async function GetOccupancyData(stationId) {
       return occupancyData.occupancy[0];
   } catch (error) {
       // If there's an error, log the error message and return an empty object
-      console.error("Failed to fetch occupancy data:", error);
+      // console.error("Failed to fetch occupancy data:", error);
       return {};
   }
 }
