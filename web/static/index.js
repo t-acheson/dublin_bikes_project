@@ -211,8 +211,8 @@ async function AddInfoWindow(marker, map, markerData) {
     content: liveBikeStationInfo,
   });
 
-  //displaying information of bike station when the user hovers over the marker on map
-  marker.addListener("mouseover", () => {
+  //displaying information of bike station when the user clicks on the marker on map
+  marker.addListener("click", () => {
     infoWindow.open({
       anchor: marker,
       map,
@@ -725,14 +725,14 @@ document.getElementById("predictButtonSource").addEventListener('click', async f
   var stationid = sourceInfo[0]
   try {
     const predictionResult = await predictAvailability(selectedHour, stationid);
-    const predictedAvailability = predictionResult.availability;
-    document.getElementById("predictedBikesSource").innerText = predictedAvailability;
+    const roundedAvailability = Math.floor(predictionResult.availability); // Corrected variable name
+    document.getElementById("predictedBikesSource").innerText = `Predicted Bikes: ${roundedAvailability} bikes at ${selectedHour}:00`;
   } catch (error) {
     console.error('Error predicting bikes:', error);
     document.getElementById("predictedBikesSource").innerText = 'Error predicting bikes';
-  
   }
 });
+
  
  // Event listener for the "Predict Bikes" button at the destination station
  document.getElementById("predictButtonDestination").addEventListener('click', async function() {
@@ -741,8 +741,8 @@ document.getElementById("predictButtonSource").addEventListener('click', async f
   document.getElementById("predictedBikesDestination").innerText = 'Loading...'; // Show loading message
   try {
     const predictionResult = await predictAvailability(selectedHour, stationid);
-    const predictedAvailability = predictionResult.availability;
-    document.getElementById("predictedBikesDestination").innerText = predictedAvailability; // Update with predicted availability
+    const predictedAvailability = Math.floor(predictionResult.availability);
+    document.getElementById("predictedBikesDestination").innerText = `Predicted Bikes: ${predictedAvailability} bikes at ${selectedHour}:00`; // Update with predicted availability
   } catch (error) {
     console.error('Error predicting bikes:', error);
     document.getElementById("predictedBikesDestination").innerText = 'Error predicting bikes';

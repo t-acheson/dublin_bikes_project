@@ -1,3 +1,4 @@
+import json
 from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
@@ -6,6 +7,8 @@ import predict
 import subprocess
 from flask_cors import CORS 
 import config
+import occupancy
+# ! have to pip install flask_cors on each machine
 
 app = Flask(__name__)
 CORS(app)
@@ -136,16 +139,15 @@ def get_recentoccupancy(stationid):
         cur.execute('SELECT available_bikes, available_bike_stands, last_update FROM availability where number = {} LIMIT 2016;'.format(id)) 
 
         # Fetch all the results
-        occupancy = cur.fetchall()
+        occupancy_data = cur.fetchall()
 
         # Close the cursor and database connection
         cur.close()
         db.close()
 
-        # Pass occupancy data to occupancy.py script
-        result = subprocess.check_output(['python', 'occupancy.py'], input='\n'.join('\t'.join(map(str, row)) for row in occupancy), universal_newlines=True)
-
-        return jsonify({'result': result})
+        result = occupancy.calculate_hourly_averages(occupancy_data)
+        result = {k: list(v)[0] for k, v in result.items()}
+        return json.dumps(result)
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
