@@ -230,34 +230,6 @@ async function AddInfoWindow(marker, map, markerData) {
 
 //start of async functions to fetch data 
 
-//getting static stations data from flask routen 
-// async function GetStationsData() {
-//   try {
-//      const response = await fetch("http://localhost:5000/", {mode: "cors"});
-   
-//      if (!response.ok) {
-//        throw new Error(`HTTP error! status: ${response.status}`);
-//      }
-
-//      // Parse the response as JSON
-//      const bikesData = await response.json();
-
-//      // Return the parsed JSON data
-//      console.log(bikesData)
-//      return bikesData;
-//   } catch (error) {
-//      console.error("Failed to fetch stations data:", error);
-//      return {};
-//   }
-// }
-
-// async function GetStationsData()
-// {
-//   const bikePromise = await fetch("https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=9923c4b16f8c5fd842f2f448564bed43a349fa47", {mode:"cors"})
-//   bikesData = await bikePromise.json(); 
-//   return bikesData;
-// }
-
 async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
@@ -504,7 +476,7 @@ function showPopup(closestStations) {
  {
   var distanceResponse = await distanceService.getDistanceMatrix({
     origins: [new google.maps.LatLng(sourceLat, sourceLng)],
-    destinations: [new google.maps.LatLng(destLat, destLng)], // customer address
+    destinations: [new google.maps.LatLng(destLat, destLng)], 
     travelMode: 'BICYCLING',
     unitSystem: google.maps.UnitSystem.METRIC
   });
@@ -615,8 +587,6 @@ async function getInfoWindowContent(stationName, stationsData) {
 }
 
 
-
-
 //predict bike availability function 
 async function predictAvailability(selectedHour, stationid) {
   
@@ -715,35 +685,40 @@ for (let i = 0; i < stationsData.length; i++) {
 }
 
 
- journeyDetails.innerHTML = `
+
+
+journeyDetails.innerHTML = `
  <h2>Journey Details</h2>
  <div style="display: flex; justify-content: space-between;">
-   <div>
+   <div style="display: flex; flex-direction: column;">
      <h3>Start Point: ${sourceName}</h3>
      <p>ID: ${sourceID}</p> <!-- Displaying the id -->
      <!-- Displaying the sourceData -->
      <p>Available Bikes: ${sourceData[0]}</p>
      <p>Available Bike Stands: ${sourceData[1]}</p>
-     </div>
    </div>
-   <div>
+   <div style="display: flex; flex-direction: column;">
      <h3>End Point: ${destName}</h3>
      <p>ID: ${destID}</p> <!-- Displaying the id -->
      <!-- Displaying the sourceData -->
      <p>Available Bikes: ${destData[0]}</p>
      <p>Available Bike Stands: ${destData[1]}</p>
-     </div>
+   </div>
  </div>
  <div style="display: flex; justify-content: space-between;">
    <div>
      <h3>Predict Available Bikes at ${sourceName}</h3>
+     <label>Select Hour: </label> <!-- Added label for hours dropdown -->
      ${hoursDropdown('Source', '')}
+     <br> <!-- Added line break to start the next line -->
      <button id="predictButtonSource">Predict Bikes</button>
      <span id="predictedBikesSource">Loading...</span>
    </div>
    <div>
      <h3>Predict Available Bikes at ${destName}</h3>
+     <label>Select Hour: </label> <!-- Added label for hours dropdown -->
      ${hoursDropdown('Destination', '')}
+     <br> <!-- Added line break to start the next line -->
      <button id="predictButtonDestination">Predict Bikes</button>
      <span id="predictedBikesDestination">Loading...</span>
    </div>
