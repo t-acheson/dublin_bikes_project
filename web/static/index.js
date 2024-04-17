@@ -299,8 +299,6 @@ async function GetRecentOccupancyData(stationId) {
     // Parse the response as JSON
     const recentoccupancyData = await response.json();
 
-    // Log the parsed JSON data
-    console.log(recentoccupancyData);
 
     // Return the parsed JSON data
     return recentoccupancyData;
@@ -323,7 +321,6 @@ async function GetWeatherData() {
       const wData = await response.json();
  
       // Return the parsed JSON data
-      console.log(wData);
       return wData;
   } catch (error) {
       console.error("Failed to fetch weather data:", error);
@@ -628,19 +625,24 @@ async function predictAvailability(selectedHour, stationid) {
 
   try {
     // Fetch weather data
-    const responseWeather = await fetch('/weather', {
-      method: 'POST', // Send a POST request
-      headers: {
-        'Content-Type': 'application/json' // Specify content type as JSON
-      },
-      body: JSON.stringify({}) // Send an empty body since you don't seem to be passing any data
-    });
-    
-    if (!responseWeather.ok) {
-      throw new Error('Network response for weather data was not ok');
-    }
+    // const responseWeather = await fetch('/weather', {
+    //   method: 'POST', // Send a POST request
+    //   headers: {
+    //     'Content-Type': 'application/json' 
+    //   },
+    //   body: JSON.stringify({}) 
+    // });
 
-    const weatherData = await responseWeather.json();
+    // const response = await fetch("http://localhost:5000/weather", {method: "GET", mode: "cors"});
+    // console.log(response.json());
+    
+    // if (!responseWeather.ok) {
+    //   throw new Error('Network response for weather data was not ok');
+    // }
+
+    // const weatherData = await responseWeather.json();
+    const weatherData = await GetWeatherData();
+
 
     var temp_c = parseFloat(weatherData.temp_c);
     var wind_mph = parseFloat(weatherData.wind_mph);
@@ -655,13 +657,15 @@ async function predictAvailability(selectedHour, stationid) {
     };
     
     // calling prediction
-    const responsePrediction = await fetch(`/predict/${stationid}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    });
+    // const responsePrediction = await fetch(`/predict/${stationid}`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(requestData)
+    // });
+
+    const responsePrediction = await fetch(`http://localhost:5000/predict/${stationid}`, {method: "GET", mode: "cors"});
     
     if (!responsePrediction.ok) {
       throw new Error('Network response for prediction fetch was not ok');
@@ -684,9 +688,6 @@ async function predictAvailability(selectedHour, stationid) {
 async function showJourneyDetails(sourceInfo, destInfo, stationsData) {
   const journeyDetails = document.getElementById("journey-details");
  const hoursDropdown = (hour) => `<select id="hoursInput${hour}">${Array.from({length: 24}, (_, i) => `<option value="${i}">${i.toString().padStart(2, '0')}</option>`).join('')}</select>`;
-
-console.log(sourceInfo);
-console.log(destInfo);
 
 const sourceID = sourceInfo[0]; // Extracting the id from sourceInfo
 const sourceData = sourceInfo[1];

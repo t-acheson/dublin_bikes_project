@@ -3,7 +3,7 @@ from flask import Flask, jsonify, render_template, request
 import mysql.connector
 import pickle
 import pandas as pd 
-import predict
+# import predict
 import subprocess
 from flask_cors import CORS 
 import config
@@ -13,16 +13,23 @@ import occupancy
 app = Flask(__name__)
 CORS(app)
 
-
+# # Database configuration for local db
 DATABASE_CONFIG = {
     'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+    'password': 'lemon', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
     'host': '127.0.0.1',
     'port': 3306,
     'database': 'dublinbikesgroup20',
 }
+
 # Function to connect to the database
 def connect_db():
+    # DATABASE_CONFIG = {
+    #     "host": "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
+    #     "database": "dublinbikesgroup20",
+    #     "user": "admin",
+    #     "password": "dublinbikesgroup20",
+    # }
     return mysql.connector.connect(**DATABASE_CONFIG)
 
 # ! This Route works DO NOT TOUCH 
@@ -147,7 +154,7 @@ def get_recentoccupancy(stationid):
         return jsonify({'error': str(e)}), 500
 
  
-@app.route('/predict/<int:stationid>', methods=['POST']) # id of station needs to be included here
+@app.route('/predict/<int:stationid>', methods=['GET']) # id of station needs to be included here
 def predictAvailability(stationid):
     try:
         data = request.get_json()
@@ -168,7 +175,7 @@ def predictAvailability(stationid):
 
 # ! this route works DO NOT TOUCH 
 # weather only route so i can use for predictions 
-@app.route('/weather', methods=['POST'])
+@app.route('/weather', methods=['GET'])
 def get_weather():
     try:
         db = connect_db()
