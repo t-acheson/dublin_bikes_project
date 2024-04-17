@@ -13,19 +13,25 @@ import occupancy
 app = Flask(__name__)
 CORS(app)
 
+# # Database configuration for local db
+# DATABASE_CONFIG = {
+#     'user': 'root',
+#     'password': '', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
+#     'host': '127.0.0.1',
+#     'port': 3306,
+#     'database': 'dublinbikesgroup20',
+# }
 
-DATABASE_CONFIG = {
-    'user': 'root',
-    'password': 'Wingpunt96?', #INSERT YOUR OWN MYSQL WORKBENCH PASSWORD HERE
-    'host': '127.0.0.1',
-    'port': 3306,
-    'database': 'dublinbikesgroup20',
-}
 # Function to connect to the database
 def connect_db():
+    DATABASE_CONFIG = {
+        "host": "dublinbikes20.c9g2qa8qkqxt.eu-north-1.rds.amazonaws.com",
+        "database": "dublinbikesgroup20",
+        "user": "admin",
+        "password": "dublinbikesgroup20",
+    }
     return mysql.connector.connect(**DATABASE_CONFIG)
 
-# ! This Route works DO NOT TOUCH 
 # API route to retrieve stations data
 @app.route('/')
 def get_data():
@@ -87,7 +93,7 @@ def get_data():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# TODO this route not currently working with JS 
+
 # API route to retrieve availability data
 @app.route('/occupancy/<stationid>') # id of station needs to be included here
 def get_occupancy(stationid):
@@ -156,7 +162,7 @@ def predictAvailability(stationid):
         temp_c = float(data.get('temp_c', 0))
         wind_mph = float(data.get('wind_mph', 0))
         precip_mm = float(data.get('precip_mm', 0))
-        hours = float(data.get('hours', 0)) #TODO need to use input somehow here too 
+        hours = float(data.get('hours', 0)) 
 
         predicted_bikes = predict.predict(stationid, temp_c, wind_mph, precip_mm, hours)
         
@@ -166,7 +172,6 @@ def predictAvailability(stationid):
 
 
 
-# ! this route works DO NOT TOUCH 
 # weather only route so i can use for predictions 
 @app.route('/weather', methods=['POST'])
 def get_weather():
