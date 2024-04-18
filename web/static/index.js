@@ -234,7 +234,7 @@ async function GetOccupancyData(stationId) {
   try {
       // Fetch occupancy data from the specified endpoint
       
-       const response = await fetch(`http://localhost:5000/occupancy/${stationId}`, { method: "GET", mode: "cors" });
+       const response = await fetch(`/occupancy/${stationId}`, { method: "GET", mode: "cors" });
 
       // Check if the response is successful
       if (!response.ok) {
@@ -252,7 +252,7 @@ async function GetOccupancyData(stationId) {
       return occupancyData.occupancy[0];
   } catch (error) {
       // If there's an error, log the error message and return an empty object
-      console.error("Failed to fetch occupancy data:", error);
+      // console.error("Failed to fetch occupancy data:", error);
       return {};
   }
 }
@@ -260,7 +260,7 @@ async function GetOccupancyData(stationId) {
 async function GetRecentOccupancyData(stationId) {
   try {
     // Fetch last 7 days occupancy data from the specified endpoint
-    const response = await fetch(`http://localhost:5000/recentoccupancy/${stationId}`, { method: "GET", mode: "cors" });
+    const response = await fetch(`/recentoccupancy/${stationId}`, { method: "GET", mode: "cors" });
 
     // Check if the response is successful
     if (!response.ok) {
@@ -285,7 +285,7 @@ async function GetRecentOccupancyData(stationId) {
 
 async function GetWeatherData() {
   try {
-      const response = await fetch("http://localhost:5000/weather", {method: "GET", mode: "cors"});
+      const response = await fetch("/weather", {method: "GET", mode: "cors"});
  
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -298,7 +298,7 @@ async function GetWeatherData() {
       console.log(wData);
       return wData;
   } catch (error) {
-      console.error("Failed to fetch weather data:", error);
+      // console.error("Failed to fetch weather data:", error);
       return {};
   }
  }
@@ -370,7 +370,7 @@ for(var i=0 ; i< closestStations.length; i++)
       })
       .catch(error => {
           // Handle any errors that occur during the fetch operation
-          console.error('There was a problem with the fetch operation:', error);
+          // console.error('There was a problem with the fetch operation:', error);
       });
     }
 
