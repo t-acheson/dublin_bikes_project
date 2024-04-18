@@ -9,7 +9,7 @@ from flask import jsonify
 
 def predict(stationid, temp_c, wind_mph, precip_mm, hours):
 
-    filename = f'/mlModel/model_{stationid}.pkl' # Replaces {station} with the actual station ID
+    filename = f'./mlModel/model_{stationid}.pkl' # Replaces {station} with the actual station ID
     with open(filename, 'rb') as file:
         model = pickle.load(file)
 
