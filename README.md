@@ -20,8 +20,6 @@ This project was for COMP30830. The goal of this project was to develop a web ap
     - `weather.html`
 - `app.py`
     - Main application file responsible for routing and server setup.
-- `config.py`
-    -  Configuration file for application settings.
 - `occupany.py`
     - Script to calculate average historical occupancy of a given station. 
 - `predict.py`
